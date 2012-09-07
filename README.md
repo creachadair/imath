@@ -55,48 +55,46 @@ Here is a simple example that reads one base-10 integer from the command line,
 multiplies it by another (fixed) value, and prints the result to the standard
 output in base-10 notation:
 
-<pre><code>
-#include <stdio.h>
-#include <stdlib.h>
-#include "imath.h"
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "imath.h"
 
-int main(int argc, char *argv[])
-{
-  mpz_t  a, b;
-  char  *buf;
-  int    len;
+    int main(int argc, char *argv[])
+    {
+      mpz_t  a, b;
+      char  *buf;
+      int    len;
 
-  if(argc < 2) {
-    fprintf(stderr, "Usage: testprogram <integer>\n");
-    return 1;
-  }
+      if(argc < 2) {
+        fprintf(stderr, "Usage: testprogram <integer>\n");
+        return 1;
+      }
 
-  /* Initialize a new zero-valued mpz_t structure */
-  mp_int_init(&a);
+      /* Initialize a new zero-valued mpz_t structure */
+      mp_int_init(&a);
 
-  /* Initialize a new mpz_t with a small integer value */
-  mp_int_init_value(&b, 25101);
+      /* Initialize a new mpz_t with a small integer value */
+      mp_int_init_value(&b, 25101);
 
-  /* Read a string value in the specified radix */
-  mp_int_read_string(&a, 10, argv[1]);
+      /* Read a string value in the specified radix */
+      mp_int_read_string(&a, 10, argv[1]);
 
-  /* Multiply the two together... */
-  mp_int_mul(&a, &b, &a);
+      /* Multiply the two together... */
+      mp_int_mul(&a, &b, &a);
 
-  /* Print out the result */
-  len = mp_int_string_len(&a, 10);
-  buf = calloc(len, sizeof(*buf));
-  mp_int_to_string(&a, 10, buf, len);
-  printf("result = %s\n", buf);
-  free(buf);
+      /* Print out the result */
+      len = mp_int_string_len(&a, 10);
+      buf = calloc(len, sizeof(*buf));
+      mp_int_to_string(&a, 10, buf, len);
+      printf("result = %s\n", buf);
+      free(buf);
 
-  /* Release memory occupied by mpz_t structures when finished */
-  mp_int_clear(&b);
-  mp_int_clear(&a);
+      /* Release memory occupied by mpz_t structures when finished */
+      mp_int_clear(&b);
+      mp_int_clear(&a);
 
-  return 0;
-}
-</code></pre>
+      return 0;
+    }
 
 This simple example program does not do any error checking, but all the IMath
 API functions return an `mp_result` value which can be used to detect various
