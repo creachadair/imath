@@ -55,7 +55,7 @@ VERS=1.18
 
 REGRESSIONS=bug-swap
 TARGETS=imtest imtimer pi bintest $(REGRESSIONS)
-HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h
+HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
 SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
 OTHER=LICENSE ChangeLog Makefile doc.txt findsizes.py \
@@ -87,7 +87,7 @@ $(REGRESSIONS):%: imath.o %.o
 
 examples: $(EXAMPLES)
 
-libimath.so: imath.o imrat.o
+libimath.so: imath.o imrat.o gmp_compat.o
 	$(CC) $(CFLAGS) $(LIBFLAGS) -o $@ $^
 
 imtest: imtest.o imath.o imrat.o imdrover.o
