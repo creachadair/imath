@@ -466,6 +466,19 @@ mp_result mp_int_init_value(mp_int z, mp_small value)
 
 /* }}} */
 
+/* {{{ mp_int_init_uvalue(z, uvalue) */
+
+mp_result mp_int_init_uvalue(mp_int z, mp_usmall uvalue)
+{
+  mpz_t    vtmp;
+  mp_digit vbuf[MP_VALUE_DIGITS(uvalue)];
+
+  s_ufake(&vtmp, uvalue, vbuf);
+  return mp_int_init_copy(z, &vtmp);
+}
+
+/* }}} */
+
 /* {{{ mp_int_set_value(z, value) */
 
 mp_result  mp_int_set_value(mp_int z, mp_small value)
