@@ -175,11 +175,30 @@ mp_result mp_rat_numer(mp_rat r, mp_int z)
 
 /* }}} */
 
+/* {{{ mp_rat_numer_ref(r) */
+
+mp_int mp_rat_numer_ref(mp_rat r)
+{
+  return MP_NUMER_P(r);
+}
+
+/* }}} */
+
+
 /* {{{ mp_rat_denom(r, z) */
 
 mp_result mp_rat_denom(mp_rat r, mp_int z)
 {
   return mp_int_copy(MP_DENOM_P(r), z);
+}
+
+/* }}} */
+
+/* {{{ mp_rat_denom_ref(r) */
+
+mp_int    mp_rat_denom_ref(mp_rat r)
+{
+  return MP_DENOM_P(r);
 }
 
 /* }}} */

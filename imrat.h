@@ -57,7 +57,9 @@ mp_result mp_rat_set_value(mp_rat r, int numer, int denom);
 void      mp_rat_clear(mp_rat r);
 void      mp_rat_free(mp_rat r);
 mp_result mp_rat_numer(mp_rat r, mp_int z);             /* z = num(r)  */
+mp_int    mp_rat_numer_ref(mp_rat r);                   /* &num(r)     */
 mp_result mp_rat_denom(mp_rat r, mp_int z);             /* z = den(r)  */
+mp_int    mp_rat_denom_ref(mp_rat r);                   /* &den(r)     */
 mp_sign   mp_rat_sign(mp_rat r);
 
 mp_result mp_rat_copy(mp_rat a, mp_rat c);              /* c = a       */
