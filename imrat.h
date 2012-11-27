@@ -54,6 +54,7 @@ mp_rat    mp_rat_alloc(void);
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec);
 mp_result mp_rat_init_copy(mp_rat r, mp_rat old);
 mp_result mp_rat_set_value(mp_rat r, int numer, int denom);
+mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom);
 void      mp_rat_clear(mp_rat r);
 void      mp_rat_free(mp_rat r);
 mp_result mp_rat_numer(mp_rat r, mp_int z);             /* z = num(r)  */

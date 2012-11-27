@@ -141,6 +141,25 @@ mp_result mp_rat_set_value(mp_rat r, int numer, int denom)
 
 /* }}} */
 
+/* {{{ mp_rat_set_uvalue(r, numer, denom) */
+
+mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom)
+{
+  mp_result res;
+
+  if (denom == 0)
+    return MP_UNDEF;
+
+  if ((res = mp_int_set_uvalue(MP_NUMER_P(r), numer)) != MP_OK)
+    return res;
+  if ((res = mp_int_set_uvalue(MP_DENOM_P(r), denom)) != MP_OK)
+    return res;
+
+  return s_rat_reduce(r);
+}
+
+/* }}} */
+
 /* {{{ mp_rat_clear(r) */
 
 void      mp_rat_clear(mp_rat r)
