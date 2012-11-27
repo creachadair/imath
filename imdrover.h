@@ -46,6 +46,7 @@ void reset_registers(void);
 
 /* Integer tests, and general */
 int test_init(testspec_t* t, FILE* ofp);
+int test_set(testspec_t* t, FILE* ofp);
 int test_neg(testspec_t* t, FILE* ofp);
 int test_abs(testspec_t* t, FILE* ofp);
 int test_add(testspec_t* t, FILE* ofp);

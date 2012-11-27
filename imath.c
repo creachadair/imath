@@ -492,6 +492,19 @@ mp_result  mp_int_set_value(mp_int z, mp_small value)
 
 /* }}} */
 
+/* {{{ mp_int_set_uvalue(z, value) */
+
+mp_result  mp_int_set_uvalue(mp_int z, mp_usmall uvalue)
+{
+  mpz_t    vtmp;
+  mp_digit vbuf[MP_VALUE_DIGITS(uvalue)];
+
+  s_ufake(&vtmp, uvalue, vbuf);
+  return mp_int_copy(&vtmp, z);
+}
+
+/* }}} */
+
 /* {{{ mp_int_clear(z) */
 
 void      mp_int_clear(mp_int z)

@@ -115,6 +115,7 @@ mp_result mp_int_init_copy(mp_int z, mp_int old);
 mp_result mp_int_init_value(mp_int z, mp_small value);
 mp_result mp_int_init_uvalue(mp_int z, mp_usmall uvalue);
 mp_result mp_int_set_value(mp_int z, mp_small value);
+mp_result mp_int_set_uvalue(mp_int z, mp_usmall uvalue);
 void      mp_int_clear(mp_int z);
 void      mp_int_free(mp_int z);
 
