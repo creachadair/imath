@@ -124,7 +124,7 @@ mp_result mp_rat_init_copy(mp_rat r, mp_rat old)
 
 /* {{{ mp_rat_set_value(r, numer, denom) */
 
-mp_result mp_rat_set_value(mp_rat r, int numer, int denom)
+mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom)
 {
   mp_result res;
 
