@@ -3522,7 +3522,7 @@ STATIC mp_size   s_inlen(int len, mp_size r)
   double  raw = (double)len / s_log2[r];
   mp_size bits = (mp_size)(raw + 0.5);
 
-  return (mp_size)((bits + (MP_DIGIT_BIT - 1)) / MP_DIGIT_BIT);
+  return (mp_size)((bits + (MP_DIGIT_BIT - 1)) / MP_DIGIT_BIT) + 1;
 }
 
 /* }}} */
