@@ -38,6 +38,13 @@ typedef unsigned int       mp_size;
 typedef int                mp_result;
 typedef long               mp_small;  /* must be a signed type */
 typedef unsigned long      mp_usmall; /* must be an unsigned type */
+
+/* Force building with long long so that the library builds consistently
+ * whether we build from the makefile or by embedding imath in another project.
+ */
+#undef  USE_LONG_LONG
+#define USE_LONG_LONG
+
 #ifdef USE_LONG_LONG
 typedef unsigned int       mp_digit;
 typedef unsigned long long mp_word;
