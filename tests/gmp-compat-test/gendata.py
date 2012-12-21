@@ -234,7 +234,7 @@ def mpz_get_str_data(api):
   bases = list(range(2,37)) + list(range(-2, -37, -1))
   bases = list(map(str, bases))
   ops = gen_mpz_args(1000)
-  return [("0", b, op) for b in bases for op in ops]
+  return [("NULL", b, op) for b in bases for op in ops]
 
 def get_div_data(n, d, rate=0.2):
   """Generate some inputs that are perfectly divisible"""

@@ -60,7 +60,10 @@ def run_tests(test_file, options):
         call_args.append(ctypes.c_int(int(input_args[i])))
       # pass null for charp
       elif param == charp:
-        call_args.append(ctypes.c_void_p(None))
+        if input_args[i] == "NULL":
+          call_args.append(ctypes.c_void_p(None))
+        else:
+          call_args.append(bytes(input_args[i],"utf-8"))
       else:
         raise RuntimeError("Unknown param type: {}".format(param))
 
