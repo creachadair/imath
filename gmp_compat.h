@@ -113,6 +113,9 @@ mp_int GMPQAPI(denref)(mp_rat op);
 /* gmp: mpq_num_ref */
 mp_int GMPQAPI(numref)(mp_rat op);
 
+/* gmp: mpq_canonicalize */
+void GMPQAPI(canonicalize)(mp_rat op);
+
 /*************************************************************************
  *
  * Functions that can be implemented as a combination of imath functions
