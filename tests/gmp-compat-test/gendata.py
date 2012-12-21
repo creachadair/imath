@@ -94,8 +94,16 @@ def gen_large_mpzs(count=default_count):
 def is_large_mpz(s):
   return len(s) >= 21
 
+def gen_mpz_spread(count=default_count):
+  return gen_small_mpzs(count) + gen_medium_mpzs(count) + gen_large_mpzs(count)
+
 def gen_mpz_args(count=default_count):
-    return mpz_std_list + gen_small_mpzs(count) + gen_medium_mpzs(count) + gen_large_mpzs(count)
+    return mpz_std_list + gen_mpz_spread(count)
+
+def gen_mpq_args(count=4):
+  nums = zero_one + gen_mpz_spread(count)
+  dens = ["1"]    + gen_mpz_spread(count)
+  return [n+"/"+d for n in nums for d in dens if int(d) != 0]
 
 def gen_si_args():
   return si_std_list + gen_sis()
@@ -104,15 +112,16 @@ def gen_ui_args():
   return ui_std_list + gen_uis()
 
 def gen_list_for_type(t, is_write_only):
-  if t == gmpapi.mpz_t:
-    if is_write_only:
-      return ["0"]
-    else:
+  if (t == gmpapi.mpz_t or t == gmpapi.mpq_t) and is_write_only:
+    return ["0"]
+  elif t == gmpapi.mpz_t:
       return gen_mpz_args()
   elif t == gmpapi.ilong:
     return gen_si_args()
   elif t == gmpapi.ulong:
     return gen_ui_args()
+  elif t == gmpapi.mpq_t:
+    return gen_mpq_args()
   else:
     raise RuntimeError("Unknown type: {}".format(t))
 

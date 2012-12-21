@@ -43,6 +43,7 @@ size_tp= CType("size_t*")
 ilong = CType("long")
 ulong = CType("unsigned long")
 mpz_t = CType("mpz_t")
+mpq_t = CType("mpq_t")
 
 apis = [
           GMPAPI(void,  "mpz_abs", mpz_t, mpz_t),

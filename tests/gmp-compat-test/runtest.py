@@ -17,6 +17,7 @@ from gmpapi import size_t
 from gmpapi import size_tp
 from gmpapi import iint
 from gmpapi import charp
+from gmpapi import mpq_t
 
 def print_failure(line, test):
   print("FAIL: {}@{}".format(line,test))
@@ -44,6 +45,8 @@ def run_tests(test_file, options):
     for i in range(len(api.params)):
       param = api.params[i]
       if param == mpz_t:
+        call_args.append(bytes(input_args[i],"utf-8"))
+      elif param == mpq_t:
         call_args.append(bytes(input_args[i],"utf-8"))
       elif param == ulong:
         call_args.append(ctypes.c_ulong(int(input_args[i])))

@@ -8,6 +8,7 @@ from gmpapi import ulong
 from gmpapi import mpz_t
 from gmpapi import size_t
 from gmpapi import charp
+from gmpapi import mpq_t
 
 class APITest:
   def __init__(self, gmpapi):
@@ -27,12 +28,14 @@ class APITest:
       pname = "p_i"
     elif ty == charp:
       pname = "p_cs"
+    elif ty == mpq_t:
+      pname = "p_qs"
     else:
       raise RuntimeError("Unknown param type: "+str(ty))
     return pname + str(i)
 
   def test_param_type(self, ty):
-    if ty == mpz_t:
+    if ty == mpz_t or ty == mpq_t:
       pty_name = "char *"
     else:
       pty_name = str(ty)
@@ -51,6 +54,8 @@ class APITest:
       vname = "v_st"
     elif ty == charp:
       vname = "v_cs"
+    elif ty == mpq_t:
+      vname = "v_q"
     else:
       raise RuntimeError("Unknown param type: "+str(ty))
     return vname + str(i)
@@ -58,14 +63,16 @@ class APITest:
   def test_var_type(self, ty):
     if ty == mpz_t:
       return self.mpz_type()
+    elif ty == mpq_t:
+      return self.mpq_type()
     else:
       return str(ty)
 
   def init_var_from_param(self, ty, var, param):
     code = "\t"
-    if ty == mpz_t:
-      code += self.api_call_prefix()+"init("+var+");\n\t"
-      code += self.api_call_prefix()+"set_str("+",".join([var,param,"10"])+")"
+    if ty == mpz_t or ty == mpq_t:
+      code += self.api_call_prefix(ty)+"init("+var+");\n\t"
+      code += self.api_call_prefix(ty)+"set_str("+",".join([var,param,"10"])+")"
     else:
       code += var + "=" + param
     return code
@@ -88,7 +95,12 @@ class APITest:
     ret_ty = self.api.ret_ty
     if ret_ty != void:
       ret += self.test_var_type(ret_ty)+" "+self.test_var_name(ret_ty, "_ret") + " = "
-    return ret+self.api_call_prefix() + bare_name + "(" + ",".join(call_params) + ");\n"
+    # call mpq or mpz function
+    if self.api.name.startswith("mpz_"):
+      prefix = self.api_call_prefix(mpz_t)
+    else:
+      prefix = self.api_call_prefix(mpq_t)
+    return ret + prefix + bare_name + "(" + ",".join(call_params) + ");\n"
 
   def normalize_cmp(self, ty):
     cmpval = self.test_var_name(ty, "_ret")
@@ -103,9 +115,9 @@ class APITest:
 
   def extract_result(self, ty, pos):
     code = ""
-    if ty == mpz_t:
+    if ty == mpz_t or ty == mpq_t:
       var = self.test_var_name(ty, pos)
-      code += self.api_call_prefix() + "get_str(out+offset, 10,"+var+");\n"
+      code += self.api_call_prefix(ty) + "get_str(out+offset, 10,"+var+");\n"
       code += "\toffset = offset + strlen(out); "
       code += "out[offset] = ' '; out[offset+1] = 0; offset += 1;"
     else:
@@ -151,9 +163,9 @@ class APITest:
   def clear_local_vars(self):
     code = ""
     for (i,p) in enumerate(self.api.params):
-      if p == mpz_t:
+      if p == mpz_t or p == mpq_t:
         var   = self.test_var_name(p, i)
-        code += "\t"+self.api_call_prefix()+"clear("+var+");\n"
+        code += "\t"+self.api_call_prefix(p)+"clear("+var+");\n"
     return code
 
   def print_test_code(self, outf):
@@ -173,21 +185,37 @@ class GMPTest(APITest):
   def __init__(self, gmpapi):
     super().__init__(gmpapi)
 
-  def api_call_prefix(self):
-    return "mpz_"
+  def api_call_prefix(self, kind):
+    if kind == mpz_t:
+      return "mpz_"
+    elif kind == mpq_t:
+      return "mpq_"
+    else:
+      raise RuntimeError("Unknown call kind: "+str(kind))
 
   def mpz_type(self):
     return "mpz_t"
+
+  def mpq_type(self):
+    return "mpq_t"
 
 class ImathTest(APITest):
   def __init__(self, gmpapi):
     super().__init__(gmpapi)
 
-  def api_call_prefix(self):
-    return "impz_"
+  def api_call_prefix(self, kind):
+    if kind == mpz_t:
+      return "impz_"
+    elif kind == mpq_t:
+      return "impq_"
+    else:
+      raise RuntimeError("Unknown call kind: "+str(kind))
 
   def mpz_type(self):
     return "impz_t"
+
+  def mpq_type(self):
+    return "impq_t"
 
 def print_gmp_header(outf):
   code  = ""
@@ -203,6 +231,7 @@ def print_imath_header(outf):
   code += "#include <stdio.h>\n"
   code += "#include <string.h>\n"
   code += "typedef mpz_t impz_t[1];\n"
+  code += "typedef mpq_t impq_t[1];\n"
   code += '#include "imath_custom_test.c"\n'
   outf.write(code)
 
