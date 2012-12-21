@@ -88,6 +88,14 @@ mp_rat mp_rat_alloc(void)
 
 /* }}} */
 
+/* {{{ mp_rat_reduce(r) */
+
+mp_result mp_rat_reduce(mp_rat r) {
+  return s_rat_reduce(r);
+}
+
+/* }}} */
+
 /* {{{ mp_rat_init_size(r, n_prec, d_prec) */
 
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec)

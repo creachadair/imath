@@ -450,6 +450,11 @@ const char *mp_int_error_string(mp_result res);
 mp_result mp_rat_init(mp_rat r);
           Initialize a new zero-valued rational number in r.
 
+mp_result mp_rat_reduce(mp_rat r);
+          Reduce a rational to canonical form.
+          Removes common factors from the numerator and denomenator and makes
+          the denomenator positive.
+
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec);
           As mp_rat_init(), but specifies the number of long digits of
           precision for numerator (n_prec) and denominator (d_prec).  Use this
