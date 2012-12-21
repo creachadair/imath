@@ -174,6 +174,9 @@ char* GMPQAPI(get_str)(char *str, int radix, mp_rat op);
 /* gmp: Allow and ignore spaces in string. */
 int GMPZAPI(set_str)(mp_int rop, char *str, int base);
 
+/* gmp: mpq_set_str */
+int GMPQAPI(set_str)(mp_rat rop, char *str, int base);
+
 /* gmp: mpz_get_ui */
 /* gmp: Return least significant bits if value is too big for a long. */
 unsigned long GMPZAPI(get_ui)(mp_int op);

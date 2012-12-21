@@ -83,6 +83,9 @@ apis = [
           GMPAPI(void,  "mpz_import", voidp, size_t,  iint, size_t, iint, size_t, mpz_t, custom=True),
           GMPAPI(size_t,"mpz_sizeinbase", mpz_t, iint),
           GMPAPI(charp, "mpz_get_str", charp, iint, mpz_t),
+
+          # mpq functions
+          GMPAPI(iint, "mpq_set_str", mpq_t, charp, iint, out=[0], mixed=True),
        ]
 
 def get_api(name):

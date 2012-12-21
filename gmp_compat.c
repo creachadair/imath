@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 
 #define CHECK(res) assert(((res) == MP_OK) && "expected MP_OK")
 
@@ -360,6 +361,40 @@ char* GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
 int GMPZAPI(set_str)(mp_int rop, char *str, int base) {
   mp_result res = mp_int_read_string(rop, base, str);
   return ((res == MP_OK) ? 0 : -1);
+}
+
+/* gmp: mpq_set_str */
+int GMPQAPI(set_str)(mp_rat rop, char *s, int base) {
+  char *slash;
+  char *str;
+  mp_result resN;
+  mp_result resD;
+  int res = 0;
+
+  /* Copy string to temporary storage so we can modify it below */
+  str = malloc(strlen(s)+1);
+  strcpy(str, s);
+
+  /* Properly format the string as an int by terminating at the / */
+  slash = strchr(str, '/');
+  if (slash)
+    *slash = '\0';
+
+  /* Parse numerator */
+  resN = mp_int_read_string(mp_rat_numer_ref(rop), base, str);
+
+  /* Parse denomenator if given or set to 1 if not */
+  if (slash)
+    resD = mp_int_read_string(mp_rat_denom_ref(rop), base, slash+1);
+  else
+    resD = mp_int_set_uvalue(mp_rat_denom_ref(rop), 1);
+
+  /* Return failure if either parse failed */
+  if (resN != MP_OK || resD != MP_OK)
+    res = -1;
+
+  free(str);
+  return res;
 }
 
 static unsigned long get_long_bits(mp_int op) {

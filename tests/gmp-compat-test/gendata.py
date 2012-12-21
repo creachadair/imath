@@ -236,6 +236,25 @@ def mpz_get_str_data(api):
   ops = gen_mpz_args(1000)
   return [("NULL", b, op) for b in bases for op in ops]
 
+def mpq_set_str_data(api):
+  args = gen_mpq_args(20) + gen_mpz_args()
+  # zero does not match results exactly because the
+  # results are not canonicalized first. We choose to
+  # exclude zero from test results. The other option is
+  # to canonicalize the results after parsing the strings.
+  # Instead we exclude zero so that we can independently
+  # test correctness of set_str and canonicalization
+  nonzero = []
+  for arg in args:
+    if "/" in arg:
+      pos = arg.find("/")
+      if int(arg[:pos]) != 0:
+        nonzero.append(arg)
+    elif int(arg) != 0:
+        nonzero.append(arg)
+
+  return [("0", q, "10") for q in nonzero]
+
 def get_div_data(n, d, rate=0.2):
   """Generate some inputs that are perfectly divisible"""
   if random.random() < rate:
@@ -290,10 +309,11 @@ custom = {
   "mpz_import" : mpz_export_data,
   "mpz_sizeinbase" : mpz_sizeinbase_data,
   "mpz_get_str" : mpz_get_str_data,
+  "mpq_set_str" : mpq_set_str_data,
 }
 
 if __name__ == "__main__":
-  #apis = [gmpapi.get_api("mpz_get_str"),]
+  #apis = [gmpapi.get_api("mpq_set_str"),]
   apis = gmpapi.apis
   for api in apis:
     tests = gen_args(api)
