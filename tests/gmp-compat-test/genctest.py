@@ -73,6 +73,9 @@ class APITest:
     if ty == mpz_t or ty == mpq_t:
       code += self.api_call_prefix(ty)+"init("+var+");\n\t"
       code += self.api_call_prefix(ty)+"set_str("+",".join([var,param,"10"])+")"
+      if ty == mpq_t:
+        code += ";\n\t"
+        code += self.api_call_prefix(ty)+"canonicalize("+var+")"
     else:
       code += var + "=" + param
     return code
