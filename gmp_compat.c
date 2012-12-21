@@ -26,6 +26,7 @@
 #include "gmp_compat.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
 
 #define CHECK(res) assert(((res) == MP_OK) && "expected MP_OK")
 
@@ -298,27 +299,60 @@ void GMPZAPI(gcd)(mp_int rop, mp_int op1, mp_int op2) {
 
 /* gmp: mpz_get_str */
 char* GMPZAPI(get_str)(char *str, int radix, mp_int op) {
-  int len = mp_int_string_len(op, radix);
+  int i, r, len;
+
+  /* Support negative radix like gmp */
+  r = radix;
+  if (r < 0)
+    r = -r;
+
+  /* Compute the length of the string needed to hold the int */
+  len = mp_int_string_len(op, r);
   if (str == NULL) {
     str = malloc(len);
   }
-  CHECK(mp_int_to_string(op, radix, str, len));
+
+  /* Convert to string using imath function */
+  CHECK(mp_int_to_string(op, r, str, len));
+
+  /* Change case to match gmp */
+  for (i = 0; i < len; i++)
+    if (radix < 0)
+      str[i] = toupper(str[i]);
+    else
+      str[i] = tolower(str[i]);
   return str;
 }
 
 /* gmp: mpq_get_str */
 char* GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
-  int len;
+  int i, r, len;
 
   /* Only print numerator if it is a whole number */
   if (mp_int_compare_value(mp_rat_denom_ref(op), 1) == 0)
     return GMPZAPI(get_str)(str, radix, mp_rat_numer_ref(op));
 
-  len = mp_rat_string_len(op, radix);
+  /* Support negative radix like gmp */
+  r = radix;
+  if (r < 0)
+    r = -r;
+
+  /* Compute the length of the string needed to hold the int */
+  len = mp_rat_string_len(op, r);
   if (str == NULL) {
     str = malloc(len);
   }
-  CHECK(mp_rat_to_string(op, radix, str, len));
+
+  /* Convert to string using imath function */
+  CHECK(mp_rat_to_string(op, r, str, len));
+
+  /* Change case to match gmp */
+  for (i = 0; i < len; i++)
+    if (radix < 0)
+      str[i] = toupper(str[i]);
+    else
+      str[i] = tolower(str[i]);
+
   return str;
 }
 

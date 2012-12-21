@@ -7,6 +7,7 @@ from gmpapi import iint
 from gmpapi import ulong
 from gmpapi import mpz_t
 from gmpapi import size_t
+from gmpapi import charp
 
 class APITest:
   def __init__(self, gmpapi):
@@ -24,6 +25,8 @@ class APITest:
       pname = "p_ui"
     elif ty == iint:
       pname = "p_i"
+    elif ty == charp:
+      pname = "p_cs"
     else:
       raise RuntimeError("Unknown param type: "+str(ty))
     return pname + str(i)
@@ -46,6 +49,8 @@ class APITest:
       vname = "v_i"
     elif ty == size_t:
       vname = "v_st"
+    elif ty == charp:
+      vname = "v_cs"
     else:
       raise RuntimeError("Unknown param type: "+str(ty))
     return vname + str(i)
@@ -117,6 +122,9 @@ class APITest:
       elif ty == size_t:
         var = self.test_var_name(ty, "_ret")
         code += 'offset = sprintf(out+offset, " %zu ", '+var+');'
+      elif ty == charp:
+        var = self.test_var_name(ty, "_ret")
+        code += 'offset = sprintf(out+offset, " %s ", '+var+');'
       else:
         raise RuntimeError("Unknown param type: "+str(ty))
     return code

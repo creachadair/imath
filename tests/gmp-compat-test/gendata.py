@@ -221,6 +221,12 @@ def mpz_sizeinbase_data(api):
   ops    = gen_mpz_args(1000) + gen_mpzs(count=1000,mindigits=100,maxdigits=2000)
   return [(op, b) for op in ops for b in bases]
 
+def mpz_get_str_data(api):
+  bases = list(range(2,37)) + list(range(-2, -37, -1))
+  bases = list(map(str, bases))
+  ops = gen_mpz_args(1000)
+  return [("0", b, op) for b in bases for op in ops]
+
 def get_div_data(n, d, rate=0.2):
   """Generate some inputs that are perfectly divisible"""
   if random.random() < rate:
@@ -274,10 +280,11 @@ custom = {
   "mpz_export" : mpz_export_data,
   "mpz_import" : mpz_export_data,
   "mpz_sizeinbase" : mpz_sizeinbase_data,
+  "mpz_get_str" : mpz_get_str_data,
 }
 
 if __name__ == "__main__":
-  #apis = [gmpapi.get_api("mpz_sizeinbase"),]
+  #apis = [gmpapi.get_api("mpz_get_str"),]
   apis = gmpapi.apis
   for api in apis:
     tests = gen_args(api)

@@ -16,6 +16,7 @@ from gmpapi import voidp
 from gmpapi import size_t
 from gmpapi import size_tp
 from gmpapi import iint
+from gmpapi import charp
 
 def print_failure(line, test):
   print("FAIL: {}@{}".format(line,test))
@@ -54,6 +55,9 @@ def run_tests(test_file, options):
         call_args.append(ctypes.c_size_t(int(input_args[i])))
       elif param == iint:
         call_args.append(ctypes.c_int(int(input_args[i])))
+      # pass null for charp
+      elif param == charp:
+        call_args.append(ctypes.c_void_p(None))
       else:
         raise RuntimeError("Unknown param type: {}".format(param))
 

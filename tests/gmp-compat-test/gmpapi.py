@@ -36,6 +36,7 @@ class GMPAPI:
 
 void  = CType("void")
 voidp = CType("void *")
+charp = CType("char *")
 iint  = CType("int")
 size_t= CType("size_t")
 size_tp= CType("size_t*")
@@ -80,6 +81,7 @@ apis = [
           # The mpz_import signature is a bit of a lie, but it is ok because it is custom
           GMPAPI(void,  "mpz_import", voidp, size_t,  iint, size_t, iint, size_t, mpz_t, custom=True),
           GMPAPI(size_t,"mpz_sizeinbase", mpz_t, iint),
+          GMPAPI(charp, "mpz_get_str", charp, iint, mpz_t),
        ]
 
 def get_api(name):
