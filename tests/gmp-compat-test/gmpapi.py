@@ -87,6 +87,12 @@ apis = [
           # mpq functions
           GMPAPI(iint, "mpq_set_str", mpq_t, charp, iint, out=[0], mixed=True),
           GMPAPI(void, "mpq_canonicalize", mpq_t, inout=[0]),
+          GMPAPI(iint, "mpq_cmp", mpq_t, mpq_t),
+          GMPAPI(void, "mpq_mul", mpq_t, mpq_t, mpq_t),
+          GMPAPI(void, "mpq_set", mpq_t, mpq_t),
+          GMPAPI(void, "mpq_set_ui", mpq_t, ulong, ulong),
+          GMPAPI(iint, "mpq_sgn", mpq_t),
+          GMPAPI(charp,"mpq_get_str", charp, iint, mpq_t),
        ]
 
 def get_api(name):

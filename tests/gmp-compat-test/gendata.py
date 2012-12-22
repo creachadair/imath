@@ -230,11 +230,22 @@ def mpz_sizeinbase_data(api):
   ops    = gen_mpz_args(1000) + gen_mpzs(count=1000,mindigits=100,maxdigits=2000)
   return [(op, b) for op in ops for b in bases]
 
-def mpz_get_str_data(api):
+def get_str_data(ty):
   bases = list(range(2,37)) + list(range(-2, -37, -1))
   bases = list(map(str, bases))
-  ops = gen_mpz_args(1000)
+  if ty == gmpapi.mpz_t:
+    ops = gen_mpz_args(1000)
+  elif ty == gmpapi.mpq_t:
+    ops = gen_mpq_args(20)
+  else:
+    raise RuntimeError("Unsupported get_str type: "+str(ty))
   return [("NULL", b, op) for b in bases for op in ops]
+
+def mpz_get_str_data(api):
+  return get_str_data(gmpapi.mpz_t)
+
+def mpq_get_str_data(api):
+  return get_str_data(gmpapi.mpq_t)
 
 def mpq_set_str_data(api):
   args = gen_mpq_args(20) + gen_mpz_args()
@@ -287,6 +298,7 @@ blacklists = {
   "mpz_divexact"    : [(2, ["0", "-0"])],
   "mpz_divisible_p" : [(1, ["0", "-0"])],
   "mpz_divexact_ui" : [(2, ["0", "-0"])],
+  "mpq_set_ui"      : [(2, ["0", "-0"])],
 }
 
 fixups = {
@@ -310,6 +322,7 @@ custom = {
   "mpz_sizeinbase" : mpz_sizeinbase_data,
   "mpz_get_str" : mpz_get_str_data,
   "mpq_set_str" : mpq_set_str_data,
+  "mpq_get_str" : mpq_get_str_data,
 }
 
 if __name__ == "__main__":

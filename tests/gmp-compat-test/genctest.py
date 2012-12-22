@@ -152,6 +152,10 @@ class APITest:
     if ret_ty == iint and "cmp" in self.api.name:
       code += self.normalize_cmp(ret_ty)
 
+    # call canonicalize for mpq_set_ui
+    if self.api.name == "mpq_set_ui":
+      code += self.api_call_prefix(mpq_t) + "canonicalize("+self.test_var_name(mpq_t, 0)+");\n\t"
+
     # get return value
     if ret_ty != void:
       code += self.extract_result(ret_ty, -1) + "\n"
