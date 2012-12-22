@@ -110,7 +110,8 @@ if __name__ == "__main__":
   print("="*70)
   print("Total")
   print("  Tests: {}. Passes: {}. Failures: {}.".format(total_pass+total_fail, total_pass, total_fail))
-  print("Failing Tests:")
-  for (line, test) in all_fail_lines:
-    print(test.rstrip())
+  if len(all_fail_lines) > 0:
+    print("Failing Tests:")
+    for (line, test) in all_fail_lines:
+      print(test.rstrip())
 

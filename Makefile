@@ -72,12 +72,20 @@ all: objs examples test
 
 objs: $(OBJS)
 
+check: test gmp-compat-test
+	@ echo "Completed running imath and gmp-compat unit tests"
+
 test: imtest pi bug-swap
 	@ echo ""
 	@ echo "Running tests, you should not see any 'FAILED' lines here."
 	@ echo "If you do, please see doc.txt for how to report a bug."
 	@ echo ""
 	(cd tests && ./test.sh)
+
+gmp-compat-test: libimath.so
+	@ echo "Running gmp-compat unit tests"
+	@ echo "Printing progress after every 100,000 tests"
+	make -C tests/gmp-compat-test TESTS="-p 100000 random.tests"
 
 $(EXAMPLES):%: imath.o imrat.o iprime.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
@@ -107,6 +115,7 @@ bintest: imath.o bintest.o
 
 clean:
 	rm -f *.o *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
+	make -C tests/gmp-compat-test clean
 
 distclean: clean
 	rm -f $(TARGETS) imath-$(VERS).tar imath-$(VERS).tar.gz
