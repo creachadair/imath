@@ -46,8 +46,8 @@ DFLAGSY=-g -DDEBUG=1
 ## If USELONG=N, disable the use of the "long long" data type; it is
 ## enabled by default even though it is non-standard.  Define
 ## USELONG=Y to explicitly enable the use of "long long"
-SIZEFLAGS = -Wno-long-long -DUSE_LONG_LONG -D_GNU_SOURCE
-SIZEFLAGSN =
+SIZEFLAGS = -std=c99 -DUSE_64BIT_WORDS
+SIZEFLAGSN = -std=c99
 SIZEFLAGSY = $(SIZEFLAGS)
 
 # --- end of configuration section ---
@@ -94,7 +94,7 @@ imtest: imtest.o imath.o imrat.o imdrover.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 imtimer: imath.c imtimer.c
-	$(CC) $(CFLAGS) -DIMATH_TEST -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) -D_GNU_SOURCE -DIMATH_TEST -o $@ $^ $(LIBS)
 
 pi: pi.o imath.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)

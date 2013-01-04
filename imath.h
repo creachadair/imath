@@ -27,6 +27,7 @@
 #ifndef IMATH_H_
 #define IMATH_H_
 
+#include <stdint.h>
 #include <limits.h>
 
 #ifdef __cplusplus
@@ -39,18 +40,17 @@ typedef int                mp_result;
 typedef long               mp_small;  /* must be a signed type */
 typedef unsigned long      mp_usmall; /* must be an unsigned type */
 
-/* Force building with long long so that the library builds consistently
+/* Force building with uint64_t so that the library builds consistently
  * whether we build from the makefile or by embedding imath in another project.
  */
-#undef  USE_LONG_LONG
-#define USE_LONG_LONG
-
-#ifdef USE_LONG_LONG
-typedef unsigned int       mp_digit;
-typedef unsigned long long mp_word;
+#undef  USE_64BIT_WORDS
+#define USE_64BIT_WORDS
+#ifdef  USE_64BIT_WORDS
+typedef uint32_t           mp_digit;
+typedef uint64_t           mp_word;
 #else
-typedef unsigned short     mp_digit;
-typedef unsigned int       mp_word;
+typedef uint16_t           mp_digit;
+typedef uint32_t           mp_word;
 #endif
 
 typedef struct mpz {
@@ -83,19 +83,12 @@ extern const mp_result MP_MINERR;
 #define MP_USMALL_MIN   ULONG_MIN
 #define MP_USMALL_MAX   ULONG_MAX
 
-#ifdef USE_LONG_LONG
-#  ifndef ULONG_LONG_MAX
-#    ifdef ULLONG_MAX
-#      define ULONG_LONG_MAX   ULLONG_MAX
-#    else
-#      error "Maximum value of unsigned long long not defined!"
-#    endif
-#  endif
-#  define MP_DIGIT_MAX   (UINT_MAX * 1ULL)
-#  define MP_WORD_MAX    ULONG_LONG_MAX
+#ifdef USE_64BIT_WORDS
+#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
+#  define MP_WORD_MAX    (UINT64_MAX)
 #else
-#  define MP_DIGIT_MAX    (USHRT_MAX * 1UL)
-#  define MP_WORD_MAX     (UINT_MAX * 1UL)
+#  define MP_DIGIT_MAX   (UINT16_MAX * 1UL)
+#  define MP_WORD_MAX    (UINT32_MAX * 1UL)
 #endif
 
 #define MP_MIN_RADIX    2
