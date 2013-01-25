@@ -29,7 +29,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifdef  NDEBUG
+#define CHECK(res) (res)
+#else
 #define CHECK(res) assert(((res) == MP_OK) && "expected MP_OK")
+#endif
 
 /*************************************************************************
  *
