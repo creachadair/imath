@@ -2133,7 +2133,6 @@ mp_result mp_int_read_unsigned(mp_int z, unsigned char *buf, int len)
 {
   mp_size need, i;
   unsigned char *tmp;
-  mp_digit *dz;
 
   CHECK(z != NULL && buf != NULL && len > 0);
 
@@ -2144,10 +2143,9 @@ mp_result mp_int_read_unsigned(mp_int z, unsigned char *buf, int len)
 
   mp_int_zero(z);
 
-  dz = MP_DIGITS(z);
   for (tmp = buf, i = len; i > 0; --i, ++tmp) {
     (void) s_qmul(z, CHAR_BIT);
-    *dz |= *tmp;
+    *MP_DIGITS(z) |= *tmp;
   }
 
   return MP_OK;
