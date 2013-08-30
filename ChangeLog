@@ -231,7 +231,7 @@
 	enabled (the standard configuration).
 
 	Fixed a bug found by the Samba team running Valgrind on the
-	Heimdal project, and reported by Love Hörnquist Âstrand:  One of
+	Heimdal project, and reported by Love HÃ¶rnquist Ã‚strand:  One of
 	the intermediate values used during modular exponentiation could
 	be overflowed during recursive multiplication.  Fixed by taking a
 	more conservative approach to buffer sizing.
@@ -242,7 +242,7 @@
 
 1.8
 	Fixed a bug in s_udiv() affecting the computation of quotient
-	digits.  Thanks to Love Âstrand for isolating this bug.  Also in
+	digits.  Thanks to Love Ã‚strand for isolating this bug.  Also in
 	this release, defining USELLONG=Y or USELLONG=N on the command
 	line for make will switch support for the "long long" data type on
 	or off without having to edit the Makefile.  The default is still
@@ -275,7 +275,7 @@
 
 	Fixed several uninitialized memory reads and one subtle read past
 	the end of a buffer in s_kmul(), found during a run of Purify.
-	Thanks to Love Hörnquist Âstrand for finding this one, and
+	Thanks to Love HÃ¶rnquist Ã‚strand for finding this one, and
 	providing a good test case so I could isolate the problem.  Also
 	fixed a buglet in s_kmul(), in which free() was being called
 	instead of s_free(), which would break if you provided a custom
@@ -313,7 +313,7 @@
 1.13
 	Cosmetic change -- updated all the files with my new web address.
 
-	Fixed a buglet caught by Love Hörnquist Âstrand using the LLVM
+	Fixed a buglet caught by Love HÃ¶rnquist Ã‚strand using the LLVM
 	static checker tools, in which a mp_int_copy() failure would be
 	silently ignored and cause an extra copy to be generated.
 
@@ -372,3 +372,6 @@
 	Fixed an off-by-one bug in s_udiv() which could cause the quotient
 	guessing loop to spin.  Reported by Andres Navarro.  Added
 	triggering example to div.t as a regression test.
+
+1.19
+	Fix signedness error in compile.  Reported by PaweÅ‚ Sikora.

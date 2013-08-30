@@ -1159,7 +1159,7 @@ mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c)
 {
   mpz_t t;
   mp_result res;
-  int ix, jx;
+  unsigned ix, jx;
 
   CHECK(a != NULL && b != NULL && c != NULL);
   if (MP_SIGN(b) == MP_NEG)
