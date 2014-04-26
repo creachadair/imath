@@ -492,6 +492,59 @@ void reset_registers(void)
 
 /* }}} */
 
+int test_init(testspec_t* t, FILE* ofp)
+{
+  mp_int in[2], out[1];
+  mp_small   v;
+  mp_usmall uv;
+  mp_result expect;
+
+  ACHECK(parse_int_values(t, in, out, &expect));
+
+  if (strcmp(t->code, "initu") == 0) {
+    CHECK(mp_int_to_uint(in[1], &uv));
+    ECHECK(mp_int_init_uvalue(in[0], uv));
+  }
+  else { /* initv */
+    CHECK(mp_int_to_int(in[1], &v));
+    ECHECK(mp_int_init_value(in[0], v));
+  }
+
+
+  if (expect == MP_OK && mp_int_compare(in[0], out[0]) != 0) {
+    mp_int_to_string(in[0], 10, g_output, OUTPUT_LIMIT);
+    FAIL(OTHER_ERROR);
+  }
+
+  return 1;
+}
+
+int test_set(testspec_t* t, FILE* ofp)
+{
+  mp_int in[2], out[1];
+  mp_small   v;
+  mp_usmall uv;
+  mp_result expect;
+
+  ACHECK(parse_int_values(t, in, out, &expect));
+
+  if (strcmp(t->code, "setu") == 0) {
+    CHECK(mp_int_to_uint(in[1], &uv));
+    ECHECK(mp_int_set_uvalue(in[0], uv));
+  }
+  else { /* setv */
+    CHECK(mp_int_to_int(in[1], &v));
+    ECHECK(mp_int_set_value(in[0], v));
+  }
+
+  if (expect == MP_OK && mp_int_compare(in[0], out[0]) != 0) {
+    mp_int_to_string(in[0], 10, g_output, OUTPUT_LIMIT);
+    FAIL(OTHER_ERROR);
+  }
+
+  return 1;
+}
+
 /* {{{ test_neg(t, ofp) */
 
 int test_neg(testspec_t* t, FILE* ofp)

@@ -88,6 +88,14 @@ mp_rat mp_rat_alloc(void)
 
 /* }}} */
 
+/* {{{ mp_rat_reduce(r) */
+
+mp_result mp_rat_reduce(mp_rat r) {
+  return s_rat_reduce(r);
+}
+
+/* }}} */
+
 /* {{{ mp_rat_init_size(r, n_prec, d_prec) */
 
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec)
@@ -124,7 +132,7 @@ mp_result mp_rat_init_copy(mp_rat r, mp_rat old)
 
 /* {{{ mp_rat_set_value(r, numer, denom) */
 
-mp_result mp_rat_set_value(mp_rat r, int numer, int denom)
+mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom)
 {
   mp_result res;
 
@@ -134,6 +142,25 @@ mp_result mp_rat_set_value(mp_rat r, int numer, int denom)
   if ((res = mp_int_set_value(MP_NUMER_P(r), numer)) != MP_OK)
     return res;
   if ((res = mp_int_set_value(MP_DENOM_P(r), denom)) != MP_OK)
+    return res;
+
+  return s_rat_reduce(r);
+}
+
+/* }}} */
+
+/* {{{ mp_rat_set_uvalue(r, numer, denom) */
+
+mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom)
+{
+  mp_result res;
+
+  if (denom == 0)
+    return MP_UNDEF;
+
+  if ((res = mp_int_set_uvalue(MP_NUMER_P(r), numer)) != MP_OK)
+    return res;
+  if ((res = mp_int_set_uvalue(MP_DENOM_P(r), denom)) != MP_OK)
     return res;
 
   return s_rat_reduce(r);
@@ -175,11 +202,30 @@ mp_result mp_rat_numer(mp_rat r, mp_int z)
 
 /* }}} */
 
+/* {{{ mp_rat_numer_ref(r) */
+
+mp_int mp_rat_numer_ref(mp_rat r)
+{
+  return MP_NUMER_P(r);
+}
+
+/* }}} */
+
+
 /* {{{ mp_rat_denom(r, z) */
 
 mp_result mp_rat_denom(mp_rat r, mp_int z)
 {
   return mp_int_copy(MP_DENOM_P(r), z);
+}
+
+/* }}} */
+
+/* {{{ mp_rat_denom_ref(r) */
+
+mp_int    mp_rat_denom_ref(mp_rat r)
+{
+  return MP_DENOM_P(r);
 }
 
 /* }}} */

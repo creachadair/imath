@@ -88,6 +88,10 @@ typedef struct {
 } test_t;
 
 test_t g_tests[] = {                  /* What it does...    */
+  { "initu",   2,  1, test_init},     /* r0 = uv(r1)        */
+  { "initv",   2,  1, test_init},     /* r0 = v(r1)         */
+  { "setu",    2,  1, test_set},      /* r0 = uv(r1)        */
+  { "setv",    2,  1, test_set},      /* r0 = v(r1)         */
   { "neg",     2,  1, test_neg },     /* r1 = -r0           */
   { "abs",     2,  1, test_abs },     /* r1 = |r0|          */
   { "add",     3,  1, test_add },     /* r3 = r1 + r2       */

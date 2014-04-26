@@ -334,7 +334,7 @@ STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
 
 /* Unsigned magnitude division.  Assumes |a| > |b|.  Allocates temporaries;
    overwrites a with quotient, b with remainder. */
-STATIC mp_result s_udiv(mp_int a, mp_int b);
+STATIC mp_result s_udiv_knuth(mp_int a, mp_int b);
 
 /* Compute the number of digits in radix r required to represent the given
    value.  Does not account for sign flags, terminators, etc. */
@@ -466,6 +466,19 @@ mp_result mp_int_init_value(mp_int z, mp_small value)
 
 /* }}} */
 
+/* {{{ mp_int_init_uvalue(z, uvalue) */
+
+mp_result mp_int_init_uvalue(mp_int z, mp_usmall uvalue)
+{
+  mpz_t    vtmp;
+  mp_digit vbuf[MP_VALUE_DIGITS(uvalue)];
+
+  s_ufake(&vtmp, uvalue, vbuf);
+  return mp_int_init_copy(z, &vtmp);
+}
+
+/* }}} */
+
 /* {{{ mp_int_set_value(z, value) */
 
 mp_result  mp_int_set_value(mp_int z, mp_small value)
@@ -474,6 +487,19 @@ mp_result  mp_int_set_value(mp_int z, mp_small value)
   mp_digit vbuf[MP_VALUE_DIGITS(value)];
 
   s_fake(&vtmp, value, vbuf);
+  return mp_int_copy(&vtmp, z);
+}
+
+/* }}} */
+
+/* {{{ mp_int_set_uvalue(z, value) */
+
+mp_result  mp_int_set_uvalue(mp_int z, mp_usmall uvalue)
+{
+  mpz_t    vtmp;
+  mp_digit vbuf[MP_VALUE_DIGITS(uvalue)];
+
+  s_ufake(&vtmp, uvalue, vbuf);
   return mp_int_copy(&vtmp, z);
 }
 
@@ -974,7 +1000,7 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r)
       SETUP(mp_int_init_copy(LAST_TEMP(), b));
     }
 
-    if ((res = s_udiv(qout, rout)) != MP_OK) goto CLEANUP;
+    if ((res = s_udiv_knuth(qout, rout)) != MP_OK) goto CLEANUP;
   }
   else {
     if (q && (res = mp_int_copy(a, q)) != MP_OK) goto CLEANUP;
@@ -3172,7 +3198,13 @@ STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c)
 
 /* }}} */
 
+#if 0
 /* {{{ s_udiv(a, b) */
+/* The s_udiv function produces incorrect results. For example, with test
+     div:11141460315522012760862883825:48318382095:0,230584300062375935
+   commenting out the function for now and using s_udiv_knuth instead.
+   STATIC mp_result s_udiv(mp_int a, mp_int b);
+*/
 
 /* Precondition:  a >= b and b > 0
    Postcondition: a' = a / b, b' = a % b
@@ -3267,6 +3299,204 @@ STATIC mp_result s_udiv(mp_int a, mp_int b)
 }
 
 /* }}} */
+#endif
+
+/* Division of nonnegative integers
+
+   This function implements division algorithm for unsigned multi-precision
+   integers. The algorithm is based on Algorithm D from Knuth's "The Art of
+   Computer Programming", 3rd ed. 1998, pg 272-273.
+
+   We diverge from Knuth's algorithm in that we do not perform the subtraction
+   from the remainder until we have determined that we have the correct
+   quotient digit. This makes our algorithm less efficient that Knuth because
+   we might have to perform multiple multiplication and comparison steps before
+   the subtraction. The advantage is that it is easy to implement and ensure
+   correctness without worrying about underflow from the subtraction.
+
+   inputs: u   a n+m digit integer in base b (b is 2^MP_DIGIT_BIT)
+           v   a n   digit integer in base b (b is 2^MP_DIGIT_BIT)
+           n >= 1
+           m >= 0
+  outputs: u / v stored in u
+           u % v stored in v
+ */
+STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
+  mpz_t q, r, t;
+  mp_result
+  res = MP_OK;
+  int k,j;
+  mp_size m,n;
+
+  /* Force signs to positive */
+  MP_SIGN(u) = MP_ZPOS;
+  MP_SIGN(v) = MP_ZPOS;
+
+  /* Use simple division algorithm when v is only one digit long */
+  if (MP_USED(v) == 1) {
+    mp_digit d, rem;
+    d   = v->digits[0];
+    rem = s_ddiv(u, d);
+    mp_int_set_value(v, rem);
+    return MP_OK;
+  }
+
+  /************************************************************/
+  /* Algorithm D */
+  /************************************************************/
+  /* The n and m variables are defined as used by Knuth.
+     u is an n digit number with digits u_{n-1}..u_0.
+     v is an n+m digit number with digits from v_{m+n-1}..v_0.
+     We require that n > 1 and m >= 0 */
+  n = MP_USED(v);
+  m = MP_USED(u) - n;
+  assert(n >  1);
+  assert(m >= 0);
+
+  /************************************************************/
+  /* D1: Normalize.
+     The normalization step provides the necessary condition for Theorem B,
+     which states that the quotient estimate for q_j, call it qhat
+
+       qhat = u_{j+n}u_{j+n-1} / v_{n-1}
+
+     is bounded by
+
+      qhat - 2 <= q_j <= qhat.
+
+     That is, qhat is always greater than the actual quotient digit q,
+     and it is never more than two larger than the actual quotient digit.  */
+  k = s_norm(u, v);
+
+  /* Extend size of u by one if needed.
+
+     The algorithm begins with a value of u that has one more digit of input.
+     The normalization step sets u_{m+n}..u_0 = 2^k * u_{m+n-1}..u_0. If the
+     multiplication did not increase the number of digits of u, we need to add
+     a leading zero here.
+   */
+  if (k == 0 || MP_USED(u) != m + n + 1) {
+    if (!s_pad(u, m+n+1))
+      return MP_MEMORY;
+    u->digits[m+n] = 0;
+    u->used = m+n+1;
+  }
+
+  /* Add a leading 0 to v.
+
+     The multiplication in step D4 multiplies qhat * 0v_{n-1}..v_0.  We need to
+     add the leading zero to v here to ensure that the multiplication will
+     produce the full n+1 digit result.  */
+  if (!s_pad(v, n+1)) return MP_MEMORY; v->digits[n] = 0;
+
+  /* Initialize temporary variables q and t.
+     q allocates space for m+1 digits to store the quotient digits
+     t allocates space for n+1 digits to hold the result of q_j*v */
+  if ((res = mp_int_init_size(&q, m + 1)) != MP_OK) return res;
+  if ((res = mp_int_init_size(&t, n + 1)) != MP_OK) goto CLEANUP;
+
+  /************************************************************/
+  /* D2: Initialize j */
+  j = m;
+  r.digits = MP_DIGITS(u) + j;  /* The contents of r are shared with u */
+  r.used   = n + 1;
+  r.sign   = MP_ZPOS;
+  r.alloc  = MP_ALLOC(u);
+  ZERO(t.digits, t.alloc);
+
+  /* Calculate the m+1 digits of the quotient result */
+  for (; j >= 0; j--) {
+    /************************************************************/
+    /* D3: Calculate q' */
+    /* r->digits is aligned to position j of the number u */
+    mp_word pfx, qhat;
+    pfx   = r.digits[n];
+    pfx <<= MP_DIGIT_BIT / 2;
+    pfx <<= MP_DIGIT_BIT / 2;
+    pfx |= r.digits[n-1]; /* pfx = u_{j+n}{j+n-1} */
+
+    qhat = pfx / v->digits[n-1];
+    /* Check to see if qhat > b, and decrease qhat if so.
+       Theorem B guarantess that qhat is at most 2 larger than the
+       actual value, so it is possible that qhat is greater than
+       the maximum value that will fit in a digit */
+    if (qhat > MP_DIGIT_MAX)
+      qhat = MP_DIGIT_MAX;
+
+    /************************************************************/
+    /* D4,D5,D6: Multiply qhat * v and test for a correct value of q
+
+       We proceed a bit different than the way described by Knuth. This way is
+       simpler but less efficent. Instead of doing the multiply and subtract
+       then checking for underflow, we first do the multiply of qhat * v and
+       see if it is larger than the current remainder r. If it is larger, we
+       decrease qhat by one and try again. We may need to decrease qhat one
+       more time before we get a value that is smaller than r.
+
+       This way is less efficent than Knuth becuase we do more multiplies, but
+       we do not need to worry about underflow this way.  */
+    /* t = qhat * v */
+    s_dbmul(MP_DIGITS(v), (mp_digit) qhat, t.digits, n+1); t.used = n + 1;
+    CLAMP(&t);
+
+    /* Clamp r for the comparison. Comparisons do not like leading zeros. */
+    CLAMP(&r);
+    if (s_ucmp(&t, &r) > 0) {   /* would the remainder be negative? */
+      qhat -= 1;   /* try a smaller q */
+      s_dbmul(MP_DIGITS(v), (mp_digit) qhat, t.digits, n+1);
+      t.used = n + 1; CLAMP(&t);
+      if (s_ucmp(&t, &r) > 0) { /* would the remainder be negative? */
+        assert(qhat > 0);
+        qhat -= 1; /* try a smaller q */
+        s_dbmul(MP_DIGITS(v), (mp_digit) qhat, t.digits, n+1);
+        t.used = n + 1; CLAMP(&t);
+      }
+      assert(s_ucmp(&t, &r) <=  0 && "The mathematics failed us.");
+    }
+    /* Unclamp r. The D algorithm expects r = u_{j+n}..u_j to always be n+1
+       digits long. */
+    r.used = n + 1;
+
+    /************************************************************/
+    /* D4: Multiply and subtract */
+    /* note: The multiply was completed above so we only need to subtract here.
+     **/
+    s_usub(r.digits, t.digits, r.digits, r.used, t.used);
+
+    /************************************************************/
+    /* D5: Test remainder */
+    /* note: Not needed because we always check that qhat is the correct value
+     *       before performing the subtract. */
+    q.digits[j] = qhat;
+
+    /************************************************************/
+    /* D6: Add back */
+    /* note: Not needed because we always check that qhat is the correct value
+     *       before performing the subtract. */
+
+    /************************************************************/
+    /* D7: Loop on j */
+    r.digits--;
+    ZERO(t.digits, t.alloc);
+  }
+
+  /* Get rid of leading zeros in q */
+  q.used = m + 1;
+  CLAMP(&q);
+
+  /* Denormalize the remainder */
+  CLAMP(u); /* use u here because the r.digits pointer is off-by-one */
+  if (k != 0)
+    s_qdiv(u, k);
+
+  mp_int_copy(u, v);  /* ok:  0 <= r < v */
+  mp_int_copy(&q, u); /* ok:  q <= u     */
+
+  mp_int_clear(&t);
+ CLEANUP:
+  mp_int_clear(&q);
+  return res;
+}
 
 /* {{{ s_outlen(z, r) */
 
@@ -3292,7 +3522,7 @@ STATIC mp_size   s_inlen(int len, mp_size r)
   double  raw = (double)len / s_log2[r];
   mp_size bits = (mp_size)(raw + 0.5);
 
-  return (mp_size)((bits + (MP_DIGIT_BIT - 1)) / MP_DIGIT_BIT);
+  return (mp_size)((bits + (MP_DIGIT_BIT - 1)) / MP_DIGIT_BIT) + 1;
 }
 
 /* }}} */
