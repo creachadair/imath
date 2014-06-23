@@ -3467,7 +3467,8 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
     /* D5: Test remainder */
     /* note: Not needed because we always check that qhat is the correct value
      *       before performing the subtract. */
-    q.digits[j] = qhat;
+     *       Value cast to mp_digit to prevent warning, qhat has been clamped to MP_DIGIT_MAX */
+    q.digits[j] = (mp_digit)qhat;
 
     /************************************************************/
     /* D6: Add back */
