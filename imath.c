@@ -1759,7 +1759,7 @@ mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, char **e
     return MP_RANGE;
 
   /* Skip leading whitespace */
-  while (isspace((int)*str))
+  while (isspace((unsigned char) *str))
     ++str;
 
   /* Handle leading sign tag (+/-, positive default) */
@@ -3139,10 +3139,16 @@ STATIC int       s_ch2val(char c, int r)
 {
   int out;
 
+  /*
+   * In some locales, isalpha() accepts characters outside the range A-Z,
+   * producing out<0 or out>=36.  The "out >= r" check will always catch
+   * out>=36.  Though nothing explicitly catches out<0, our caller reacts the
+   * same way to every negative return value.
+   */
   if (isdigit((unsigned char) c))
     out = c - '0';
   else if (r > 10 && isalpha((unsigned char) c))
-    out = toupper(c) - 'A' + 10;
+    out = toupper((unsigned char) c) - 'A' + 10;
   else
     return -1;
 
@@ -3159,7 +3165,7 @@ STATIC char      s_val2ch(int v, int caps)
     char out = (v - 10) + 'a';
 
     if (caps)
-      return toupper(out);
+      return toupper((unsigned char) out);
     else
       return out;
   }
