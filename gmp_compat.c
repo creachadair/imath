@@ -832,6 +832,7 @@ void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size, int endia
 
   /* Copy to destination */
   mp_int_copy(tmp, rop);
+  mp_int_clear(tmp);
 }
 
 /* gmp: mpz_sizeinbase */
