@@ -41,6 +41,14 @@ typedef SSIZE_T ssize_t;
 #define CHECK(res) assert(((res) == MP_OK) && "expected MP_OK")
 #endif
 
+#ifdef _MSC_VER
+#ifdef _WIN64
+typedef signed __int64 ssize_t;
+#else
+typedef signed int ssize_t;
+#endif
+#endif
+
 /* *(signed char *)&endian_test will thus either be:
  *     0b00000001 =  1 on big-endian
  *     0b11111111 = -1 on little-endian */
