@@ -2511,7 +2511,7 @@ STATIC void     s_qmod(mp_int z, mp_size p2)
 {
   mp_size start = p2 / MP_DIGIT_BIT + 1, rest = p2 % MP_DIGIT_BIT;
   mp_size uz = MP_USED(z);
-  mp_digit mask = (1 << rest) - 1;
+  mp_digit mask = (1u << rest) - 1;
 
   if (start <= uz) {
     MP_USED(z) = start;
@@ -2679,7 +2679,7 @@ STATIC int      s_norm(mp_int a, mp_int b)
   mp_digit d = b->digits[MP_USED(b) - 1];
   int k = 0;
 
-  while (d < (mp_digit) (1 << (MP_DIGIT_BIT - 1))) { /* d < (MP_RADIX / 2) */
+  while (1u << (mp_digit)(MP_DIGIT_BIT - 1))) { /* d < (MP_RADIX / 2) */
     d <<= 1;
     ++k;
   }
