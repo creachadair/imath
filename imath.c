@@ -1635,7 +1635,7 @@ mp_result mp_int_to_int(mp_int z, mp_small *out)
   }
 
   if (out)
-    *out = (sz == MP_NEG) ? -(mp_small)uv : (mp_small)uv;
+    *out = (mp_small)((sz == MP_NEG) ? -uv : uv);
 
   return MP_OK;
 }
