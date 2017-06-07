@@ -2679,7 +2679,7 @@ STATIC int      s_norm(mp_int a, mp_int b)
   mp_digit d = b->digits[MP_USED(b) - 1];
   int k = 0;
 
-  while (1u << (mp_digit)(MP_DIGIT_BIT - 1))) { /* d < (MP_RADIX / 2) */
+  while (d < (1u << (mp_digit)(MP_DIGIT_BIT - 1))) { /* d < (MP_RADIX / 2) */
     d <<= 1;
     ++k;
   }
@@ -2865,7 +2865,7 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
    */
   n = MP_USED(v);
   m = MP_USED(u) - n;
-  assert(n >  1);
+  assert(n > 1);
   assert(m >= 0);
 
   /* D1: Normalize.
