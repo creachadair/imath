@@ -380,3 +380,10 @@
 	Fix broken comments, apparently from a previous bad merge.
 	Remove emacs folding-mode comments throughout.
 	Some minor Makefile cleanup to make clang happier.
+
+1.21
+	Fix a syntax error. TODO: Run tests before merging, or better
+	still set up CI someplace.
+	Remove dead division code.
+	Restore a missing comparison.
+	Drop dead flags from the Makefile.

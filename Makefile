@@ -51,7 +51,7 @@ SIZEFLAGSN = -std=c99
 SIZEFLAGSY = $(SIZEFLAGS)
 
 # --- end of configuration section ---
-VERS=1.20
+VERS=1.21
 
 REGRESSIONS=bug-swap
 TARGETS=imtest imtimer pi bintest $(REGRESSIONS)
