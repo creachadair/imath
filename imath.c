@@ -2856,19 +2856,18 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
     return MP_OK;
   }
 
-  /************************************************************/
-  /* Algorithm D */
-  /************************************************************/
-  /* The n and m variables are defined as used by Knuth.
+  /* Algorithm D
+
+     The n and m variables are defined as used by Knuth.
      u is an n digit number with digits u_{n-1}..u_0.
      v is an n+m digit number with digits from v_{m+n-1}..v_0.
-     We require that n > 1 and m >= 0 */
+     We require that n > 1 and m >= 0
+   */
   n = MP_USED(v);
   m = MP_USED(u) - n;
   assert(n >  1);
   assert(m >= 0);
 
-  /************************************************************/
   /* D1: Normalize.
      The normalization step provides the necessary condition for Theorem B,
      which states that the quotient estimate for q_j, call it qhat
@@ -2880,7 +2879,8 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
       qhat - 2 <= q_j <= qhat.
 
      That is, qhat is always greater than the actual quotient digit q,
-     and it is never more than two larger than the actual quotient digit.  */
+     and it is never more than two larger than the actual quotient digit.
+   */
   k = s_norm(u, v);
 
   /* Extend size of u by one if needed.
@@ -2901,16 +2901,17 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
 
      The multiplication in step D4 multiplies qhat * 0v_{n-1}..v_0.  We need to
      add the leading zero to v here to ensure that the multiplication will
-     produce the full n+1 digit result.  */
+     produce the full n+1 digit result.
+   */
   if (!s_pad(v, n+1)) return MP_MEMORY; v->digits[n] = 0;
 
   /* Initialize temporary variables q and t.
      q allocates space for m+1 digits to store the quotient digits
-     t allocates space for n+1 digits to hold the result of q_j*v */
+     t allocates space for n+1 digits to hold the result of q_j*v
+   */
   if ((res = mp_int_init_size(&q, m + 1)) != MP_OK) return res;
   if ((res = mp_int_init_size(&t, n + 1)) != MP_OK) goto CLEANUP;
 
-  /************************************************************/
   /* D2: Initialize j */
   j = m;
   r.digits = MP_DIGITS(u) + j;  /* The contents of r are shared with u */
@@ -2921,7 +2922,6 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
 
   /* Calculate the m+1 digits of the quotient result */
   for (; j >= 0; j--) {
-    /************************************************************/
     /* D3: Calculate q' */
     /* r->digits is aligned to position j of the number u */
     mp_word pfx, qhat;
@@ -2938,7 +2938,6 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
     if (qhat > MP_DIGIT_MAX)
       qhat = MP_DIGIT_MAX;
 
-    /************************************************************/
     /* D4,D5,D6: Multiply qhat * v and test for a correct value of q
 
        We proceed a bit different than the way described by Knuth. This way is
@@ -2949,7 +2948,8 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
        more time before we get a value that is smaller than r.
 
        This way is less efficent than Knuth becuase we do more multiplies, but
-       we do not need to worry about underflow this way.  */
+       we do not need to worry about underflow this way.
+     */
     /* t = qhat * v */
     s_dbmul(MP_DIGITS(v), (mp_digit) qhat, t.digits, n+1); t.used = n + 1;
     CLAMP(&t);
@@ -2972,25 +2972,25 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
        digits long. */
     r.used = n + 1;
 
-    /************************************************************/
-    /* D4: Multiply and subtract */
-    /* note: The multiply was completed above so we only need to subtract here.
-     **/
+    /* D4: Multiply and subtract
+
+       Note: The multiply was completed above so we only need to subtract here.
+     */
     s_usub(r.digits, t.digits, r.digits, r.used, t.used);
 
-    /************************************************************/
-    /* D5: Test remainder */
-    /* note: Not needed because we always check that qhat is the correct value
-     *       before performing the subtract.
-     *       Value cast to mp_digit to prevent warning, qhat has been clamped to MP_DIGIT_MAX */
+    /* D5: Test remainder
+
+       Note: Not needed because we always check that qhat is the correct value
+             before performing the subtract.  Value cast to mp_digit to prevent
+             warning, qhat has been clamped to MP_DIGIT_MAX
+     */
     q.digits[j] = (mp_digit)qhat;
 
-    /************************************************************/
-    /* D6: Add back */
-    /* note: Not needed because we always check that qhat is the correct value
-     *       before performing the subtract. */
+    /* D6: Add back
+       Note: Not needed because we always check that qhat is the correct value
+             before performing the subtract.
+     */
 
-    /************************************************************/
     /* D7: Loop on j */
     r.digits--;
     ZERO(t.digits, t.alloc);
