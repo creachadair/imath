@@ -32,7 +32,7 @@
 ## If building under MacOS 10.1.x, use CC=cc instead.
 ##
 CC=gcc
-CFLAGS+=-ansi -pedantic -Wall -Werror -Wno-error=unused-command-line-argument \
+CFLAGS+=-pedantic -Wall -Werror \
 	-I. $(DFLAGS$(DEBUG)) $(SIZEFLAGS$(USELLONG))
 LIBFLAGS=-dynamiclib
 LIBS=$(DLIBS$(DEBUG))
