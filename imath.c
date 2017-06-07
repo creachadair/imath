@@ -993,7 +993,7 @@ mp_result mp_int_expt(mp_int a, mp_small b, mp_int c)
 {
   mpz_t t;
   mp_result res;
-  unsigned int v = abs(b);
+  unsigned int v = labs(b);
 
   CHECK(c != NULL);
   if (b < 0)
@@ -1025,7 +1025,7 @@ mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c)
 {
   mpz_t     t;
   mp_result res;
-  unsigned int v = abs(b);
+  unsigned int v = labs(b);
 
   CHECK(c != NULL);
   if (b < 0)
