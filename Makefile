@@ -32,7 +32,7 @@
 ## If building under MacOS 10.1.x, use CC=cc instead.
 ##
 CC=gcc
-CFLAGS+=-ansi -pedantic -Wall -Werror -Wno-error=unused-command-line-argument \
+CFLAGS+=-pedantic -Wall -Werror \
 	-I. $(DFLAGS$(DEBUG)) $(SIZEFLAGS$(USELLONG))
 LIBFLAGS=-dynamiclib
 LIBS=$(DLIBS$(DEBUG))
@@ -51,7 +51,7 @@ SIZEFLAGSN = -std=c99
 SIZEFLAGSY = $(SIZEFLAGS)
 
 # --- end of configuration section ---
-VERS=1.20
+VERS=1.21
 
 REGRESSIONS=bug-swap
 TARGETS=imtest imtimer pi bintest $(REGRESSIONS)
