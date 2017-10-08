@@ -2586,7 +2586,7 @@ STATIC int      s_qmul(mp_int z, mp_size p2)
  */
 STATIC int       s_qsub(mp_int z, mp_size p2)
 {
-  mp_digit hi = ((mp_digit) 1 << (p2 % MP_DIGIT_BIT)), *zp;
+  mp_digit hi = (1u << (p2 % MP_DIGIT_BIT)), *zp;
   mp_size  tdig = (p2 / MP_DIGIT_BIT), pos;
   mp_word  w = 0;
 
@@ -2668,7 +2668,7 @@ STATIC int       s_2expt(mp_int z, mp_small k)
 
   dz = MP_DIGITS(z);
   ZERO(dz, ndig);
-  *(dz + ndig - 1) = ((mp_digit) 1 << rest);
+  *(dz + ndig - 1) = (1u << rest);
   MP_USED(z) = ndig;
 
   return 1;
