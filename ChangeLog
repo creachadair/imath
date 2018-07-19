@@ -390,3 +390,4 @@
 
 1.22
 	Remove MP_USMALL_MIN, which was unused by anything in imath.
+	Rework doc.txt into Markdown.
