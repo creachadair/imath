@@ -802,15 +802,11 @@ integer, you will have access to several things:
 
 The IMath library was written by Michael J. Fromberger.
 
-If you discover any bugs or testing failures, please send e-mail to
-the following address:
-
-    <michael.j.fromberger+imath@gmail.com>
-
-Please be sure to include, with any bug report, a complete description of what
-goes wrong, and if possible, a test vector for imtest or a minimal test program
-that will demonstrate the bug on your system.  Please also let me know what
-hardware, operating system, and compiler you're using.
+If you discover any bugs or testing failures, please send e-mail to the above
+address. Please be sure to include, with any bug report, a complete description
+of what goes wrong, and if possible, a test vector for imtest or a minimal test
+program that will demonstrate the bug on your system.  Please also let me know
+what hardware, operating system, and compiler you're using.
 
 ## Acknowledgements
 
