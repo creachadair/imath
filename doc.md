@@ -2,6 +2,11 @@
 
 M. J. Fromberger <michael.j.fromberger+imath@gmail.com>
 
+> Disclaimer: This document was converted fairly naively to Markdown from the
+> original IMath doc.txt file. The API documentation should still be correct,
+> but the build instructions are somewhat ridiculous at this point. I'll try to
+> clean it up as time allows.
+
 ## Installation
 
 1. Edit Makefile to select compiler and options.  The default uses gcc.  If you
