@@ -1,12 +1,17 @@
-Name:     doc.txt
-Purpose:  User documentation for IMath library
-Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+# User Documentation for the IMath Library
 
---- Installation:
+M. J. Fromberger <michael.j.fromberger+imath@gmail.com>
+
+> Disclaimer: This document was converted fairly naively to Markdown from the
+> original IMath doc.txt file. The API documentation should still be correct,
+> but the build instructions are somewhat ridiculous at this point. I'll try to
+> clean it up as time allows.
+
+## Installation
 
 1. Edit Makefile to select compiler and options.  The default uses gcc.  If you
-   are building under MacOS 10.1.x, you will need to change CC to 'cc' instead
-   of 'gcc', but otherwise you can use the default GCC settings.
+   are building under MacOS 10.1.x, you will need to change CC to `cc` instead
+   of `gcc`, but otherwise you can use the default GCC settings.
  
    By default, the Makefile assumes you can use the "long long" integer type,
    even though it is not standard in ANSI C90.  You can control this by setting
@@ -15,14 +20,14 @@ Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
 
    If the built-in types do not work for your particular platform, you can try
    to find suitable integer type sizes by running the Python program
-   `findsizes.py'.  This requires a Python interpreter, version 2.4.x or later.
+   `findsizes.py`.  This requires a Python interpreter, version 2.4.x or later.
 
-2. Type 'make' or 'make test' to build the test driver and run the unit tests.
+2. Type `make` or `make test` to build the test driver and run the unit tests.
    None of these should fail.  If they do, see below for how you can report
    bugs.
 
-   To build with debugging enabled (and optimization disabled), run make
-   DEBUG=Y.  This sets the preprocessor macro DEBUG to 1, and several other
+   To build with debugging enabled (and optimization disabled), run `make
+   DEBUG=Y`.  This sets the preprocessor macro `DEBUG` to 1, and several other
    things (see Makefile for details).
 
 To use the library in your code, include "imath.h" wherever you intend to use
@@ -30,28 +35,31 @@ the library's routines.  The integer library is just a single source file, so
 you can compile it into your project in whatever way makes sense.  If you wish
 to use rational arithmetic, you will also need to include "imrat.h".
 
---- Background:
+## Background
 
-The basic types defined by the imath library are mpz_t, an arbitrary precision
-signed integer, and mpq_t, an arbitrary precision signed rational number.  The
-type mp_int is a pointer to an mpz_t, and mp_rat is a pointer to an mpq_t.
+The basic types defined by the imath library are `mpz_t`, an arbitrary
+precision signed integer, and `mpq_t`, an arbitrary precision signed rational
+number.  The type `mp_int` is a pointer to an `mpz_t`, and `mp_rat` is a
+pointer to an `mpq_t`.
 
-Most of the functions in the imath library return a value of type mp_result.
+Most of the functions in the imath library return a value of type `mp_result`.
 This is a signed integer type which can be used to convey status information
 and also return small values.  Any negative value is considered to be a status
 message.  The following constants are defined for processing these:
 
- MP_OK        operation successful, all is well (= 0)
- MP_FALSE     boolean false (= MP_OK)
- MP_TRUE      boolean true
- MP_MEMORY    out of memory
- MP_RANGE     parameter out of range
- MP_UNDEF     result is undefined (e.g., division by zero)
- MP_TRUNC     output value was truncated
- MP_BADARG    an invalid parameter was passed
+| Status      | Description                                  |
+| ----------- | -------------------------------------------- |
+| `MP_OK`     | operation successful, all is well (= 0)      |
+| `MP_FALSE`  | boolean false (= `MP_OK`)                    |
+| `MP_TRUE`   | boolean true                                 |
+| `MP_MEMORY` | out of memory                                |
+| `MP_RANGE`  | parameter out of range                       |
+| `MP_UNDEF`  | result is undefined (e.g., division by zero) |
+| `MP_TRUNC`  | output value was truncated                   |
+| `MP_BADARG` | an invalid parameter was passed              |
 
-If you obtain a zero or negative value of an mp_result, you can use the
-mp_int_error_string() routine to obtain a pointer to a brief human readable
+If you obtain a zero or negative value of an `mp_result`, you can use the
+`mp_int_error_string()` routine to obtain a pointer to a brief human-readable
 string describing the error.  These strings are statically allocated, so they
 need not be freed by the caller; the same strings are re-used from call to
 call.
@@ -60,39 +68,45 @@ Unless otherwise noted, it is legal to use the same parameter for both inputs
 and output with most of the functions in this library.  For example, you can
 add a number to itself and replace the original by writing:
 
-  mp_int_add(a, a, a);  /* a = a + a */
+    mp_int_add(a, a, a);  /* a = a + a */
 
 Any cases in which this is not legal will be noted in the function summaries
 below (if you discover that this is not so, please report it as a bug; I will
 fix either the function or the documentation :)
 
---- The IMath API
+## The IMath API
 
 Each of the API functions is documented here.  The general format of the
 entries is:
 
+```
 return_type function_name(parameters ...)
             English description.
-
-Unless otherwise noted, any API function that returns mp_result may be expected
-to return MP_OK, MP_BADARG, or MP_MEMORY.  Other return values should be
-documented in the description.  Please let me know if you discover this is not
-the case.
+```
+			
+Unless otherwise noted, any API function that returns `mp_result` may be
+expected to return `MP_OK`, `MP_BADARG`, or `MP_MEMORY`.  Other return values
+should be documented in the description.  Please let me know if you discover
+this is not the case.
 
 The following macros are defined in "imath.h", to define the sizes of the
 various data types used in the library:
 
- MP_DIGIT_BIT    : the number of bits in a single mpz_t digit.
- MP_WORD_BIT     : the number of bits in a mpz_t word.
- MP_SMALL_MIN    : the minimum value representable by an mp_small.
- MP_SMALL_MAX    : the maximum value representable by an mp_small.
- MP_USMALL_MAX   : the maximum value representable by an mp_usmall.
- MP_MIN_RADIX    : the minimum radix accepted for base conversion.
- MP_MAX_RADIX    : the maximum radix accepted for base conversion.
+| Constant        | Description
+| --------------- | ----------------------------------------
+| `MP_DIGIT_BIT`  | the number of bits in a single `mpz_t` digit.
+| `MP_WORD_BIT`   | the number of bits in a `mpz_t` word.
+| `MP_SMALL_MIN`  | the minimum value representable by an `mp_small`.
+| `MP_SMALL_MAX`  | the maximum value representable by an `mp_small`.
+| `MP_USMALL_MIN` | the minimum value representable by an `mp_usmall`.
+| `MP_USMALL_MAX` | the maximum value representable by an `mp_usmall`.
+| `MP_MIN_RADIX`  | the minimum radix accepted for base conversion.
+| `MP_MAX_RADIX`  | the maximum radix accepted for base conversion.
 
-An mp_int must be initialized before use.  This may be accomplished using the
+An `mp_int` must be initialized before use.  This may be accomplished using the
 following functions:
 
+```
 mp_result mp_int_init(mp_int z);
           Initializes z with a default precision, sets the value to zero.  This
           function cannot fail unless z is NULL.
@@ -115,15 +129,19 @@ mp_result mp_int_init_copy(mp_int z, mp_int old);
 mp_result mp_int_init_value(mp_int z, mp_small value);
           Initializes z with default precision and sets its value to the value
           of the supplied integer.
+```
 
-To copy one mp_int to another, use:
+To copy one `mp_int` to another, use:
 
+```
 mp_result mp_int_copy(mp_int a, mp_int c);
           Copies the value of a into c.  Does not allocate new memory unless a
           has more significant digits than c has room for.
+```
 
-When you are finished with an mp_int, you must free the memory it uses:
+When you are finished with an `mp_int`, you must free the memory it uses:
 
+```
 void      mp_int_clear(mp_int z);
           Releases the storage used by z.
 
@@ -131,18 +149,22 @@ void      mp_int_free(mp_int z);
           Releases the storage used by z, and frees the mpz_t structure z
           points to.  This should only be used for values allocated by
           mp_int_alloc().
+```
 
-To set an mp_int, which has already been initialized, to a small integer value,
-use the following:
+To set an `mp_int`, which has already been initialized, to a small integer
+value, use the following:
 
+```
 mp_result mp_int_set_value(mp_int z, mp_small value);
           Sets the value of z to the value of the supplied integer.
+```
 
-By default, an mp_int is initialized with a certain minimum amount of storage
+By default, an `mp_int` is initialized with a certain minimum amount of storage
 for digits.  This storage is expanded automatically as needed.
 
-- The arithmetic functions are:
+### Arithmetic Functions
 
+```
 int       mp_int_is_odd(mp_int z);
           Returns true if z is an odd integer (z = 1 (mod 2))
           [currently implemented as a macro]
@@ -235,12 +257,14 @@ mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c);
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
           Raises a to the b power, and assigns the result to c.  It is an error
           if b < 0.
+```
 
-- Comparison functions:
+### Comparison Functions
 
 Unless otherwise specified, comparison between values x and y returns a value <
 0 if x is less than y, = 0 if x is equal to y, and > 0 if x is greater than y.
 
+```
 int       mp_int_compare(mp_int a, mp_int b);
           Signed comparison of a and b.
 
@@ -262,9 +286,11 @@ int       mp_int_divisible_value(mp_int a, mp_small v);
 int       mp_int_is_pow2(mp_int z);
           Returns k >= 0 such that z = 2^k, if such a k exists; otherwise a
           value < 0 is returned.
+```
 
-- Other useful functions:
+### Other Useful Functions
 
+```
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
           Efficiently computes c = a^b (mod m).
           Returns MP_UNDEF if m = 0; returns MP_RANGE if b < 0.
@@ -415,8 +441,9 @@ mp_result mp_int_read_unsigned(mp_int z, unsigned char *buf, int len);
 mp_result mp_int_unsigned_len(mp_int z);
           Return the number of bytes required to represent z as an unsigned
           binary value using mp_int_to_unsigned().
+```
 
-- Other functions:
+### Other Functions
 
 Ordinarily, integer multiplication and squaring are done using the simple
 quadratic "schoolbook" algorithm.  However, for sufficiently large values,
@@ -425,34 +452,32 @@ that is usually faster.  See Knuth Vol. 2 for more details about how this
 algorithm works.
 
 The breakpoint between the "normal" and the recursive algorithm is controlled
-by a static constant "multiply_threshold" defined in imath.c, which contains
+by a static constant `multiply_threshold` defined in imath.c, which contains
 the number of significant digits below which the standard algorithm should be
 used.  This is initialized to the value of the compile-time constant
-MP_MULT_THRESH from imath.h.  If you wish to be able to modify this value at
-runtime, compile imath.c with IMATH_TEST defined true in the preprocessor, and
-declare
+`MP_MULT_THRESH` from imath.h.  If you wish to be able to modify this value at
+runtime, compile imath.c with `IMATH_TEST` defined true in the preprocessor,
+and declare
 
-  extern mp_size multiply_threshold;
+    extern mp_size multiply_threshold;
 
-When IMATH_TEST is defined, this variable is defined as a mutable global, and
+When `IMATH_TEST` is defined, this variable is defined as a mutable global, and
 can be changed.  Otherwise, it is defined as an immutable static constant.  The
-`imtimer' program and the `findthreshold.py' script (Python) can help you find
-a suitable value for MP_MULT_THRESH for your particular platform.
+`imtimer` program and the `findthreshold.py` script (Python) can help you find
+a suitable value for `MP_MULT_THRESH` for your particular platform.
 
+```
 const char *mp_int_error_string(mp_result res);
           Return a pointer to a brief string describing 'res'.  These strings
           are defined as a constant array in `imath.c', if you wish to change
           them for your application.
+```
 
---- Rational Arithmetic:
+## Rational Arithmetic
 
+```
 mp_result mp_rat_init(mp_rat r);
           Initialize a new zero-valued rational number in r.
-
-mp_result mp_rat_reduce(mp_rat r);
-          Reduce a rational to canonical form.
-          Removes common factors from the numerator and denomenator and makes
-          the denomenator positive.
 
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec);
           As mp_rat_init(), but specifies the number of long digits of
@@ -614,12 +639,13 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, char *str, char **end);
           Read a zero-terminated string in the format "z.f" (including sign
           flag), and replace r with its value.  If end is not NULL, a pointer
           to the first unconsumed character of the string is returned.
+```
 
---- Representation Details
+## Representation Details
 
-    NOTE:  You do not need to read this section to use IMath.  This is provided
-           for the benefit of developers wishing to extend or modify the
-           internals of the library.
+> NOTE: You do not need to read this section to use IMath.  This is provided
+> for the benefit of developers wishing to extend or modify the internals of
+> the library.
 
 IMath uses a signed magnitude representation for arbitrary precision integers.
 The magnitude is represented as an array of radix-R digits in increasing order
@@ -627,92 +653,96 @@ of significance; the value of R is chosen to be half the size of the largest
 available unsigned integer type, so typically 16 or 32 bits.  Digits are
 represented as mp_digit, which must be an unsigned integral type.
 
-Digit arrays are allocated using malloc(3) and realloc(3).  Because this can be
-an expensive operation, the library takes pains to avoid allocation as much as
-possible.  For this reason, the mpz_t structure distinguishes between how many
-digits are allocated and how many digits are actually consumed by the
-representation.  The fields of an mpz_t are:
+Digit arrays are allocated using `malloc(3)` and `realloc(3)`.  Because this
+can be an expensive operation, the library takes pains to avoid allocation as
+much as possible.  For this reason, the `mpz_t` structure distinguishes between
+how many digits are allocated and how many digits are actually consumed by the
+representation.  The fields of an `mpz_t` are:
 
-       mp_digit    single;  /* single-digit value (see note) */
-       mp_digit   *digits;  /* array of digits               */
-       mp_size     alloc;   /* how many digits are allocated */
-       mp_size     used;    /* how many digits are in use    */
-       mp_sign     sign;    /* the sign of the value         */
+    mp_digit    single;  /* single-digit value (see note) */
+    mp_digit   *digits;  /* array of digits               */
+    mp_size     alloc;   /* how many digits are allocated */
+    mp_size     used;    /* how many digits are in use    */
+    mp_sign     sign;    /* the sign of the value         */
 
-The elements of "digits" at indices less than "used" are the significant
-figures of the value; the elements at indices greater than or equal to "used"
-are undefined (and may contain garbage).  At all times, "used" must be at least
-1 and at most "alloc".
+The elements of `digits` at indices less than `used` are the significant
+figures of the value; the elements at indices greater than or equal to `used`
+are undefined (and may contain garbage).  At all times, `used` must be at least
+1 and at most `alloc`.
 
 To avoid interaction with the memory allocator, single-digit values are stored
-directly in the mpz_t structure, in the .single field.  The semantics of access
-are the same as the more general case.
+directly in the `mpz_t` structure, in the `single` field.  The semantics of
+access are the same as the more general case.
 
-The number of digits allocated for an mpz_t is referred to in the library
-documentation as its "precision".  Operations that affect an mpz_t cause
+The number of digits allocated for an `mpz_t` is referred to in the library
+documentation as its "precision".  Operations that affect an `mpz_t` cause
 precision to increase as needed.  In any case, all allocations are measured in
-digits, and rounded up to the nearest mp_word boundary.  There is a default
+digits, and rounded up to the nearest `mp_word` boundary.  There is a default
 minimum precision stored as a static constant default_precision (imath.c); its
-value is set to MP_DEFAULT_PREC (imath.h).  If the preprocessor symbol
-IMATH_TEST is defined, this value becomes global and modifiable.
+value is set to `MP_DEFAULT_PREC` (imath.h).  If the preprocessor symbol
+`IMATH_TEST` is defined, this value becomes global and modifiable.
 
-Note that the allocated size of an mpz_t can only grow; the library never
+Note that the allocated size of an `mpz_t` can only grow; the library never
 reallocates in order to decrease the size.  A simple way to do so explicitly is
-to use mp_int_init_copy(), as in:
+to use `mp_int_init_copy()`, as in:
 
-  mpz_t big, new;
+```
+mpz_t big, new;
 
-  /* ... */
-  mp_int_init_copy(&new, &big);
-  mp_int_swap(&new, &big);
-  mp_int_clear(&new);
+/* ... */
+mp_int_init_copy(&new, &big);
+mp_int_swap(&new, &big);
+mp_int_clear(&new);
+```
 
-The value of "sign" is 0 for positive values and zero, 1 for negative values.
-Constants MP_ZPOS and MP_NEG are defined for these; no other sign values are
-used.
+The value of `sign` is 0 for positive values and zero, 1 for negative values.
+Constants `MP_ZPOS` and `MP_NEG` are defined for these; no other sign values
+are used.
 
 If you are adding to this library, you should be careful to preserve the
 convention that inputs and outputs can overlap, as described above.  So, for
-example, mp_int_add(a, a, a) is legal.  Often, this means you must maintain one
-or more temporary mpz_t structures for intermediate values.  The private macros
-SETUP(E, C) and TEMP(K) can be used to enforce a conventional structure like
-this:
+example, `mp_int_add(a, a, a)` is legal.  Often, this means you must maintain
+one or more temporary mpz_t structures for intermediate values.  The private
+macros `SETUP(E, C)` and `TEMP(K)` can be used to enforce a conventional
+structure like this:
 
-  {
-    mpz_t     temp[NUM_TEMPS];  /* declare how many you need here */
-    int       last = 0;         /* number of in-use temps         */
-    mp_result res;              /* used for checking results      */
-    ...
+```
+{
+  mpz_t     temp[NUM_TEMPS];  /* declare how many you need here */
+  int       last = 0;         /* number of in-use temps         */
+  mp_result res;              /* used for checking results      */
+  ...
 
-    /* Initialization phase */ 
-    SETUP(mp_int_init(TEMP(0)), last);
-    SETUP(mp_int_init_copy(TEMP(1), x), last);
-    ...
-    SETUP(mp_int_init_value(TEMP(7), 3), last);
+  /* Initialization phase */ 
+  SETUP(mp_int_init(TEMP(0)), last);
+  SETUP(mp_int_init_copy(TEMP(1), x), last);
+  ...
+  SETUP(mp_int_init_value(TEMP(7), 3), last);
 
-    /* Work phase */
-    ...
+  /* Work phase */
+  ...
 
-  CLEANUP:
-    while(--last >= 0)
-      mp_int_clear(TEMP(last));
-
-    return res;
+CLEANUP:
+  while(--last >= 0) {
+    mp_int_clear(TEMP(last));
   }
+  return res;
+}
+```
 
-The names "temp" and "res" are fixed -- the SETUP and TEMP macros assume they
-exist.  TEMP(k) returns a pointer to the kth entry of temp.  This structure
-insures that even if a failure occurs during the "initialization phase", no
-memory is leaked.
+The names `temp` and `res` are fixed -- the `SETUP` and `TEMP` macros assume
+they exist.  `TEMP(k)` returns a pointer to the kth entry of temp.  This
+structure insures that even if a failure occurs during the "initialization
+phase", no memory is leaked.
 
-"Small" integer values are represented by the types mp_small and mp_usmall,
+"Small" integer values are represented by the types `mp_small` and `mp_usmall`,
 which are mapped to appropriately-sized types on the host system.  The default
-for mp_small is "long" and the default for mp_usmall is "unsigned long".  You
-may change these, provided you insure that mp_small is signed and mp_usmall is
-unsigned.  You will also need to adjust the size macros:
+for `mp_small` is "long" and the default for `mp_usmall` is "unsigned long".
+You may change these, provided you insure that `mp_small` is signed and
+`mp_usmall` is unsigned.  You will also need to adjust the size macros:
 
-  MP_SMALL_MIN, MP_SMALL_MAX
-  MP_USMALL_MIN, MP_USMALL_MAX
+    MP_SMALL_MIN, MP_SMALL_MAX
+    MP_USMALL_MIN, MP_USMALL_MAX
 
 ... which are defined in <imath.h>, if you change these.
 
@@ -722,71 +752,68 @@ value, and that the result of any rational operation is always represented in
 lowest terms.  The canonical representation for rational zero is 0/1.  See
 "imrat.h".
 
---- Testing and Reporting of Bugs:
+## Testing and Reporting of Bugs
 
-Test vectors are included in the 'tests' subdirectory of the imath
-distribution.  When you run 'make test', it builds the imtest program and runs
-all available test vectors.  If any tests fail, you will get a line like this:
+Test vectors are included in the `tests/` subdirectory of the imath
+distribution.  When you run `make test`, it builds the `imtest` program and
+runs all available test vectors.  If any tests fail, you will get a line like
+this:
 
-  x    y    FAILED      v
+    x    y    FAILED      v
 
-Here, x is the line number of the test which failed, y is index of the test
-within the file, and v is the value(s) actually computed.  The name of the file
-is printed at the beginning of each test, so you can find out what test vector
-failed by executing the following (with x, y, and v replaced by the above
-values, and where "foo.t" is the name of the test file that was being processed
-at the time):
+Here, _x_ is the line number of the test which failed, _y_ is index of the test
+within the file, and _v_ is the value(s) actually computed.  The name of the
+file is printed at the beginning of each test, so you can find out what test
+vector failed by executing the following (with x, y, and v replaced by the
+above values, and where "foo.t" is the name of the test file that was being
+processed at the time):
 
-   % tail +x tests/foo.t | head -1
+    % tail +x tests/foo.t | head -1
 
-None of the tests should fail [but see Note 2]; if any do, it probably
-indicates a bug in the library (or at the very least, some assumption I made
-which I shouldn't have).  Please send a bug report to the address below, which
-includes the FAILED test line above, as well as the output of the above 'tail'
-command (so I know what inputs caused the failure).
+None of the tests should fail (but see [Note 2](#note2)); if any do, it
+probably indicates a bug in the library (or at the very least, some assumption
+I made which I shouldn't have).  Please send a bug report to the address below,
+which includes the `FAILED` test line above, as well as the output of the above
+`tail` command (so I know what inputs caused the failure).
 
-If you build with the preprocessor symbol DEBUG defined as a positive integer,
-you will have access to several things:
+If you build with the preprocessor symbol `DEBUG` defined as a positive
+integer, you will have access to several things:
 
  1. The static functions defined in imath.c are made globally visible so that
     you can call them from a test driver.
 
- 2. The s_print() and s_print_buf() routines are defined; these make it easier
-    to dump the contents of an mpz_t to text.
+ 2. The `s_print()` and `s_print_buf()` routines are defined; these make it
+    easier to dump the contents of an `mpz_t` to text.
 
- 3. If DEBUG > 1, the digit allocators (s_alloc, s_realloc) fill all new
-    buffers with the value 0xDEADBEEF, or as much of it as will fit in a digit,
-    so that you can more easily catch uninitialized reads in the debugger.
+ 3. If `DEBUG > 1`, the digit allocators (`s_alloc`, `s_realloc`) fill all new
+    buffers with the value `0xDEADBEEF`, or as much of it as will fit in a
+    digit, so that you can more easily catch uninitialized reads in the
+    debugger.
 
---- Notes:
+## Notes
 
-1. You can generally use the same variables for both input and output.  One
-   exception is that you may not use the same variable for both the quotient
-   and the remainder of mp_int_div().
+1. <a name="note1"></a>You can generally use the same variables for both input
+   and output.  One exception is that you may not use the same variable for
+   both the quotient and the remainder of `mp_int_div()`.
 
-2. Many of the tests for this library were written under the assumption that
-   the mp_small type is 32 bits or more.  If you compile with a smaller type,
-   you may see MP_RANGE errors in some of the tests that otherwise pass (due to
-   conversion failures).  Also, the pi generator (pi.c) will not work correctly
-   if mp_small is too short, as its algorithm for arc tangent is fairly
-   simple-minded.
+2. <a name="note2"></a>Many of the tests for this library were written under
+   the assumption that the `mp_small` type is 32 bits or more.  If you compile
+   with a smaller type, you may see `MP_RANGE` errors in some of the tests that
+   otherwise pass (due to conversion failures).  Also, the pi generator (pi.c)
+   will not work correctly if `mp_small` is too short, as its algorithm for arc
+   tangent is fairly simple-minded.
 
---- Contacts:
+## Contacts
 
-The IMath library was written by 
-Michael J. Fromberger <http://spinning-yarns.org/michael/>
+The IMath library was written by Michael J. Fromberger.
 
-If you discover any bugs or testing failures, please send e-mail to
-the following address:
+If you discover any bugs or testing failures, please send e-mail to the above
+address. Please be sure to include, with any bug report, a complete description
+of what goes wrong, and if possible, a test vector for imtest or a minimal test
+program that will demonstrate the bug on your system.  Please also let me know
+what hardware, operating system, and compiler you're using.
 
-    <michael.j.fromberger@gmail.com>
-
-Please be sure to include, with any bug report, a complete description of what
-goes wrong, and if possible, a test vector for imtest or a minimal test program
-that will demonstrate the bug on your system.  Please also let me know what
-hardware, operating system, and compiler you're using.
-
---- Acknowledgements:
+## Acknowledgements
 
 The algorithms used in this library came from Vol. 2 of Donald Knuth's "The Art
 of Computer Programming" (Seminumerical Algorithms).  Thanks to Nelson Bolyard,
@@ -795,7 +822,7 @@ feedback on earlier versions of this code.  Special thanks to Jonathan Shapiro
 for some very helpful design advice, as well as feedback and some clever ideas
 for improving performance in some common use cases.
 
---- License and Disclaimers:
+## License and Disclaimers
 
 IMath is Copyright 2002-2009 Michael J. Fromberger
 You may use it subject to the following Licensing Terms:
