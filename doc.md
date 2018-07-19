@@ -701,6 +701,7 @@ one or more temporary mpz_t structures for intermediate values.  The private
 macros `SETUP(E, C)` and `TEMP(K)` can be used to enforce a conventional
 structure like this:
 
+```
 {
   mpz_t     temp[NUM_TEMPS];  /* declare how many you need here */
   int       last = 0;         /* number of in-use temps         */
@@ -722,6 +723,7 @@ CLEANUP:
   }
   return res;
 }
+```
 
 The names `temp` and `res` are fixed -- the `SETUP` and `TEMP` macros assume
 they exist.  `TEMP(k)` returns a pointer to the kth entry of temp.  This
