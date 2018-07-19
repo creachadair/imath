@@ -86,7 +86,6 @@ various data types used in the library:
  MP_WORD_BIT     : the number of bits in a mpz_t word.
  MP_SMALL_MIN    : the minimum value representable by an mp_small.
  MP_SMALL_MAX    : the maximum value representable by an mp_small.
- MP_USMALL_MIN   : the minimum value representable by an mp_usmall.
  MP_USMALL_MAX   : the maximum value representable by an mp_usmall.
  MP_MIN_RADIX    : the minimum radix accepted for base conversion.
  MP_MAX_RADIX    : the maximum radix accepted for base conversion.

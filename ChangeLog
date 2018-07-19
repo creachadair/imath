@@ -387,3 +387,6 @@
 	Remove dead division code.
 	Restore a missing comparison.
 	Drop dead flags from the Makefile.
+
+1.22
+	Remove MP_USMALL_MIN, which was unused by anything in imath.
