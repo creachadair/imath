@@ -287,7 +287,7 @@ int       mp_int_is_pow2(mp_int z);
           value < 0 is returned.
 ```
 
-### Other Useful Functions
+### Modular Operations
 
 ```
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
@@ -296,6 +296,7 @@ mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
 
 mp_result mp_int_exptmod_evalue(mp_int a, mp_small v, mp_int m, mp_int c);
           Efficiently computes c = a^v (mod m).
+
 mp_result mp_int_exptmod_bvalue(mp_small v, mp_int b, mp_int m, mp_int c);
           Efficiently computes c = v^b (mod m).
 
@@ -337,9 +338,11 @@ mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c)
           Compute the least common multiple of a and b, and assign the result
           to c.  Returns MP_UNDEF if the LCM is not defined (e.g., if a = 0 and
           b = 0).
+```
 
-- Conversion of values:
+### Conversion of Values
 
+```
 mp_result mp_int_to_int(mp_int z, mp_small *out);
           Convert z to an int type, if it is representable as such.  Returns
           MP_RANGE if z cannot be represented as an value of type mp_small.  If
