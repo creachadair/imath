@@ -59,7 +59,7 @@ message.  The following constants are defined for processing these:
 | `MP_BADARG` | an invalid parameter was passed              |
 
 If you obtain a zero or negative value of an `mp_result`, you can use the
-`mp_int_error_string()` routine to obtain a pointer to a brief human-readable
+`mp_error_string()` routine to obtain a pointer to a brief human-readable
 string describing the error.  These strings are statically allocated, so they
 need not be freed by the caller; the same strings are re-used from call to
 call.
@@ -466,9 +466,9 @@ can be changed.  Otherwise, it is defined as an immutable static constant.  The
 a suitable value for `MP_MULT_THRESH` for your particular platform.
 
 ```
-const char *mp_int_error_string(mp_result res);
-          Return a pointer to a brief string describing 'res'.  These strings
-          are defined as a constant array in `imath.c', if you wish to change
+const char *mp_error_string(mp_result res);
+          Return a pointer to a brief string describing res.  These strings
+          are defined as a constant array in imath.c, if you wish to change
           them for your application.
 ```
 
