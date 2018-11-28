@@ -64,7 +64,7 @@ mp_result mp_rat_init(mp_rat r)
 
 mp_rat mp_rat_alloc(void)
 {
-  mp_rat out = malloc(sizeof(*out));
+  mp_rat out = (mp_rat) malloc(sizeof(*out));
 
   if (out != NULL) {
     if (mp_rat_init(out) != MP_OK) {

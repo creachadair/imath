@@ -32,7 +32,7 @@
 ## If building under MacOS 10.1.x, use CC=cc instead.
 ##
 CC=gcc
-CFLAGS+=-pedantic -Wall -Werror \
+CFLAGS+=-pedantic -Wall -Werror -Wc++-compat \
 	-I. $(DFLAGS$(DEBUG)) $(SIZEFLAGS$(USELLONG))
 LIBFLAGS=-dynamiclib
 LIBS=$(DLIBS$(DEBUG))

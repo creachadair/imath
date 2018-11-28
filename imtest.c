@@ -306,11 +306,11 @@ int  parse_line(char *line, testspec_t *t)
   t->num_outputs = num_fields;
 
   if (t->num_inputs > 0) {
-    t->input = calloc(t->num_inputs, sizeof(char *));
+    t->input = (char **) calloc(t->num_inputs, sizeof(char *));
     parse_fields(code_brk + 1, ',', t->input);
   }
   if (t->num_outputs > 0) {
-    t->output = calloc(t->num_outputs, sizeof(char *));
+    t->output = (char **) calloc(t->num_outputs, sizeof(char *));
     parse_fields(in_brk + 1, ',', t->output);
   }
   return 1;

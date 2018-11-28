@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #if defined(_MSC_VER)
 #include <BaseTsd.h>
@@ -331,7 +332,7 @@ char* GMPZAPI(get_str)(char *str, int radix, mp_int op) {
   /* Compute the length of the string needed to hold the int */
   len = mp_int_string_len(op, r);
   if (str == NULL) {
-    str = malloc(len);
+    str = (char *) malloc(len);
   }
 
   /* Convert to string using imath function */
@@ -362,7 +363,7 @@ char* GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
   /* Compute the length of the string needed to hold the int */
   len = mp_rat_string_len(op, r);
   if (str == NULL) {
-    str = malloc(len);
+    str = (char *) malloc(len);
   }
 
   /* Convert to string using imath function */
@@ -393,7 +394,7 @@ int GMPQAPI(set_str)(mp_rat rop, char *s, int base) {
   int res = 0;
 
   /* Copy string to temporary storage so we can modify it below */
-  str = malloc(strlen(s)+1);
+  str = (char *) malloc(strlen(s)+1);
   strcpy(str, s);
 
   /* Properly format the string as an int by terminating at the / */

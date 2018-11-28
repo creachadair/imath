@@ -1195,9 +1195,9 @@ int test_meta(testspec_t* t, FILE* ofp)
   mp_result expect;
 
   if (t->num_inputs > 0)
-    in = calloc(t->num_inputs, sizeof(mp_int));
+    in = (struct mpz **) calloc(t->num_inputs, sizeof(mp_int));
   if (t->num_outputs > 0)
-    out = calloc(t->num_outputs, sizeof(mp_int));
+    out = (struct mpz **) calloc(t->num_outputs, sizeof(mp_int));
 
   ACHECK(parse_int_values(t, in, out, &expect));
 

@@ -30,12 +30,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <limits.h>
 #include <ctype.h>
 #include <errno.h>
 #include <assert.h>
 
 #include <unistd.h>
+#include <getopt.h>
 
 #include "imath.h"
 #include "imrat.h"
@@ -395,7 +397,7 @@ static void      print_value(mp_int v)
 {
   if(g_output_radix == 0) {
     mp_result len = mp_int_binary_len(v);
-    unsigned char *buf = malloc(len);
+    unsigned char *buf = (unsigned char *) malloc(len);
     int ix;
 
     if(buf != NULL) {
@@ -411,7 +413,7 @@ static void      print_value(mp_int v)
   }
   else {
     mp_result len = mp_int_string_len(v, g_output_radix);
-    char *buf = malloc(len);
+    char *buf = (char *) malloc(len);
 
     if(buf != NULL) {
       mp_int_to_string(v, g_output_radix, buf, len);
@@ -472,18 +474,18 @@ static mp_result state_init(cstate_t *sp, mp_size n_elts)
 
   assert(sp != NULL && n_elts > 0);
 
-  if((sp->elts = malloc(n_elts * sizeof(*(sp->elts)))) == NULL)
+  if((sp->elts = (struct mpz **) malloc(n_elts * sizeof(*(sp->elts)))) == NULL)
     return MP_MEMORY;
-  if((sp->mem = malloc(n_elts * sizeof(*(sp->mem)))) == NULL) {
+  if((sp->mem = (struct mpz **) malloc(n_elts * sizeof(*(sp->mem)))) == NULL) {
     free(sp->elts);
     return MP_MEMORY;
   }
-  if((sp->names = malloc(n_elts * sizeof(*(sp->names)))) == NULL) {
+  if((sp->names = (char **) malloc(n_elts * sizeof(*(sp->names)))) == NULL) {
     free(sp->mem);
     free(sp->elts);
     return MP_MEMORY;
   }
-  if((sp->ibuf = malloc(BUFFER_SIZE * sizeof(char))) == NULL) {
+  if((sp->ibuf = (char *) malloc(BUFFER_SIZE * sizeof(char))) == NULL) {
     free(sp->names);
     free(sp->mem);
     free(sp->elts);
@@ -571,7 +573,7 @@ static mp_result stack_push(cstate_t *sp, mp_int elt)
     mp_int *tmp;
     int ix;
     
-    if((tmp = malloc(nsize * sizeof(*(sp->elts)))) == NULL)
+    if((tmp = (struct mpz **) malloc(nsize * sizeof(*(sp->elts)))) == NULL)
       return MP_MEMORY;
 
     for(ix = 0; ix < sp->used; ++ix)
@@ -623,9 +625,9 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value)
       char   **tc;
       int      jx;
 
-      if((tz = malloc(nsize * sizeof(*(sp->mem)))) == NULL)
+      if((tz = (struct mpz **) malloc(nsize * sizeof(*(sp->mem)))) == NULL)
 	return MP_MEMORY;
-      if((tc = malloc(nsize * sizeof(*(sp->names)))) == NULL) {
+      if((tc = (char **) malloc(nsize * sizeof(*(sp->names)))) == NULL) {
 	free(tz);
 	return MP_MEMORY;
       }
@@ -644,7 +646,7 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value)
     }
 
     sp->mused += 1;
-    sp->names[ix] = malloc(1 + strlen(name));
+    sp->names[ix] = (char *) malloc(1 + strlen(name));
     strcpy(sp->names[ix], name);
   }
 
@@ -1043,16 +1045,16 @@ static mp_result cf_copy(cstate_t *sp)
   
   for(ix = 0; ix < ncopy; ++ix) {
     mp_int old = sp->elts[sp->used - ncopy];
-    mp_int new = mp_int_alloc();
+    mp_int new_ = mp_int_alloc();
 
-    if(new == NULL)
+    if(new_ == NULL)
       return MP_MEMORY;
 
-    if((res = mp_int_copy(old, new)) != MP_OK) {
-      mp_int_free(new);
+    if((res = mp_int_copy(old, new_)) != MP_OK) {
+      mp_int_free(new_);
       return res;
     }
-    if((res = stack_push(sp, new)) != MP_OK)
+    if((res = stack_push(sp, new_)) != MP_OK)
       return res;
   }
 

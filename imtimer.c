@@ -31,6 +31,8 @@
 #include <time.h>
 
 #include <unistd.h>
+#include <getopt.h>
+
 
 #include "imath.h"
 
@@ -136,7 +138,7 @@ double clocks_to_seconds(clock_t start, clock_t end)
 
 mp_int alloc_values(int nt, int prec)
 {
-  mp_int out = malloc(nt * sizeof(mpz_t));
+  mp_int out = (mp_int) malloc(nt * sizeof(mpz_t));
   int i;
 
   if (out == NULL)

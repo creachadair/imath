@@ -42,6 +42,7 @@
 #include <limits.h>
 
 #include <unistd.h>
+#include <getopt.h>
 
 #include "imath.h"
 #include "iprime.h"
@@ -203,7 +204,7 @@ mp_result mp_int_randomize(mp_int a, mp_size n_bits)
   unsigned char *buf;
   mp_result res = MP_OK;
   
-  if((buf = malloc(n_bytes)) == NULL)
+  if((buf = (unsigned char *) malloc(n_bytes)) == NULL)
     return MP_MEMORY;
   
   if(randomize(buf, n_bytes) != n_bytes) {
@@ -283,7 +284,7 @@ void      rsa_key_write(rsa_key *kp, FILE *ofp)
   char *obuf;
 
   len = mp_int_string_len(&(kp->n), 10);
-  obuf = malloc(len);
+  obuf = (char *) malloc(len);
   mp_int_to_string(&(kp->p), 10, obuf, len);
   fprintf(ofp, "p = %s\n", obuf);
   mp_int_to_string(&(kp->q), 10, obuf, len);

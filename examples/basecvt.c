@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
       len = mp_rat_string_len(&value, out_rdx);
     }
     
-    if((buf = malloc(len)) == NULL) {
+    if((buf = (char *) malloc(len)) == NULL) {
       fprintf(stderr, "basecvt:  out of memory\n");
       break;
     }

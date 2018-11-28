@@ -372,7 +372,7 @@ mp_result mp_int_init(mp_int z)
 
 mp_int    mp_int_alloc(void)
 {
-  mp_int out = malloc(sizeof(mpz_t));
+  mp_int out = (mp_int) malloc(sizeof(mpz_t));
 
   if (out != NULL)
     mp_int_init(out);
@@ -1967,7 +1967,7 @@ const char *mp_error_string(mp_result res)
 
 STATIC mp_digit *s_alloc(mp_size num)
 {
-  mp_digit *out = malloc(num * sizeof(mp_digit));
+  mp_digit *out = (mp_digit *) malloc(num * sizeof(mp_digit));
 
   assert(out != NULL); /* for debugging */
 #if DEBUG > 1
@@ -1986,19 +1986,19 @@ STATIC mp_digit *s_alloc(mp_size num)
 STATIC mp_digit *s_realloc(mp_digit *old, mp_size osize, mp_size nsize)
 {
 #if DEBUG > 1
-  mp_digit *new = s_alloc(nsize);
+  mp_digit *new_ = s_alloc(nsize);
   int       ix;
 
   for (ix = 0; ix < nsize; ++ix)
-    new[ix] = (mp_digit) 0xdeadbeef;
+    new_[ix] = (mp_digit) 0xdeadbeef;
 
-  memcpy(new, old, osize * sizeof(mp_digit));
+  memcpy(new_, old, osize * sizeof(mp_digit));
 #else
-  mp_digit *new = realloc(old, nsize * sizeof(mp_digit));
+  mp_digit *new_ = (mp_digit *) realloc(old, nsize * sizeof(mp_digit));
 
-  assert(new != NULL); /* for debugging */
+  assert(new_ != NULL); /* for debugging */
 #endif
-  return new;
+  return new_;
 }
 
 STATIC void s_free(void *ptr)

@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
       /* Allocate a buffer big enough to hold the given value, including
 	 sign and zero terminator. */
       buf_size = mp_int_string_len(MP_NUMER_P(&value), radix);
-      obuf = malloc(buf_size);
+      obuf = (char *) malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
       if((res = mp_int_to_string(MP_NUMER_P(&value), radix, 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
       /* Allocate a buffer big enough to hold the given value, including
 	 sign and zero terminator. */
       buf_size = mp_rat_string_len(&value, radix);
-      obuf = malloc(buf_size);
+      obuf = (char *) malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
       if((res = mp_rat_to_string(&value, radix, obuf, buf_size)) != MP_OK) {

@@ -41,6 +41,7 @@
 #include <limits.h>
 
 #include <unistd.h>
+#include <getopt.h>
 
 #include "imath.h"
 #include "iprime.h"
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
     char *obuf;
 
     len = mp_int_string_len(&value, 10);
-    obuf = malloc(len);
+    obuf = (char *) malloc(len);
     mp_int_to_string(&value, 10, obuf, len);
     fputs(obuf, ofp);
     fputc('\n', ofp);
@@ -152,7 +153,7 @@ mp_result mp_int_randomize(mp_int a, mp_size n_bits)
   unsigned char *buf;
   mp_result res = MP_OK;
   
-  if((buf = malloc(n_bytes)) == NULL)
+  if((buf = (unsigned char *) malloc(n_bytes)) == NULL)
     return MP_MEMORY;
   
   if(randomize(buf, n_bytes) != n_bytes) {
