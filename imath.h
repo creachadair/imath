@@ -40,17 +40,14 @@ typedef int                mp_result;
 typedef long               mp_small;  /* must be a signed type */
 typedef unsigned long      mp_usmall; /* must be an unsigned type */
 
-/* Force building with uint64_t so that the library builds consistently
- * whether we build from the makefile or by embedding imath in another project.
- */
-#undef  USE_64BIT_WORDS
-#define USE_64BIT_WORDS
-#ifdef  USE_64BIT_WORDS
-typedef uint32_t           mp_digit;
-typedef uint64_t           mp_word;
-#else
+
+/* Build with words as uint64_t by default. */
+#ifdef USE_32BIT_WORDS
 typedef uint16_t           mp_digit;
 typedef uint32_t           mp_word;
+#else
+typedef uint32_t           mp_digit;
+typedef uint64_t           mp_word;
 #endif
 
 typedef struct mpz {
@@ -82,19 +79,19 @@ extern const mp_result MP_MINERR;
 #define MP_SMALL_MAX    LONG_MAX
 #define MP_USMALL_MAX   ULONG_MAX
 
-#ifdef USE_64BIT_WORDS
-#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
-#  define MP_WORD_MAX    (UINT64_MAX)
-#else
+#ifdef USE_32BIT_WORDS
 #  define MP_DIGIT_MAX   (UINT16_MAX * 1UL)
 #  define MP_WORD_MAX    (UINT32_MAX * 1UL)
+#else
+#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
+#  define MP_WORD_MAX    (UINT64_MAX)
 #endif
 
 #define MP_MIN_RADIX    2
 #define MP_MAX_RADIX    36
 
 /* Values with fewer than this many significant digits use the standard
-   multiplication algorithm; otherwise, a recursive algorithm is used.  
+   multiplication algorithm; otherwise, a recursive algorithm is used.
    Choose a value to suit your platform.
  */
 #define MP_MULT_THRESH  22

@@ -33,7 +33,7 @@
 ##
 CC=gcc
 CFLAGS+=-pedantic -Wall -Werror \
-	-I. $(DFLAGS$(DEBUG)) $(SIZEFLAGS$(USELLONG))
+	-I. $(DFLAGS$(DEBUG)) -std=c99
 LIBFLAGS=-dynamiclib
 LIBS=$(DLIBS$(DEBUG))
 
@@ -42,13 +42,6 @@ DFLAGSN=$(DFLAGS)
 DFLAGSY=-g -DDEBUG=1
 #DLIBS=
 #DLIBSY=-lefence
-
-## If USELONG=N, disable the use of the "long long" data type; it is
-## enabled by default even though it is non-standard.  Define
-## USELONG=Y to explicitly enable the use of "long long"
-SIZEFLAGS = -std=c99 -DUSE_64BIT_WORDS
-SIZEFLAGSN = -std=c99
-SIZEFLAGSY = $(SIZEFLAGS)
 
 # --- end of configuration section ---
 VERS=1.23
