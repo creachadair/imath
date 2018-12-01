@@ -28,20 +28,13 @@
 
 ## Generic settings for systems with GCC (default)
 ## To build with debugging, add DEBUG=Y on the "make" command line.
-##
-## If building under MacOS 10.1.x, use CC=cc instead.
-##
 CC=gcc
-CFLAGS+=-pedantic -Wall -Werror \
-	-I. $(DFLAGS$(DEBUG)) -std=c99
-LIBFLAGS=-dynamiclib
-LIBS=$(DLIBS$(DEBUG))
+CFLAGS+=-pedantic -Wall -Werror -I. -std=c99 $(DFLAGS$(DEBUG))
+#LIBS=
 
 DFLAGS=-O3 -funroll-loops -finline-functions
 DFLAGSN=$(DFLAGS)
 DFLAGSY=-g -DDEBUG=1
-#DLIBS=
-#DLIBSY=-lefence
 
 # --- end of configuration section ---
 VERS=1.23
@@ -89,7 +82,7 @@ $(REGRESSIONS):%: imath.o %.o
 examples: $(EXAMPLES)
 
 libimath.so: imath.o imrat.o gmp_compat.o
-	$(CC) $(CFLAGS) $(LIBFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -dynamiclib -o $@ $^
 
 imtest: imtest.o imath.o imrat.o imdrover.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
