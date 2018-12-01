@@ -30,14 +30,13 @@
 
 #include "imath.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   unsigned char buf[512];
-  mpz_t  v, w;
+  mpz_t v, w;
   mp_result res;
   int len;
 
-  if(argc < 2 || argv[1][0] == '\0') {
+  if (argc < 2 || argv[1][0] == '\0') {
     fprintf(stderr, "Usage: bintest <value>\n");
     return 1;
   }
@@ -45,20 +44,19 @@ int main(int argc, char *argv[])
   mp_int_init(&v);
   mp_int_init(&w);
   res = mp_int_read_string(&v, 10, argv[1]);
-  printf("Result code from mp_int_read_string() = %d (%s)\n",
-	 res, mp_error_string(res));
+  printf("Result code from mp_int_read_string() = %d (%s)\n", res,
+         mp_error_string(res));
 
   len = mp_int_binary_len(&v);
   printf("%d bytes needed to write this value in 2's complement.\n", len);
 
   res = mp_int_to_binary(&v, buf, sizeof(buf));
-  printf("Result code from mp_int_to_binary() = %d (%s)\n",
-	 res, mp_error_string(res));
-  if(res == MP_OK) {
+  printf("Result code from mp_int_to_binary() = %d (%s)\n", res,
+         mp_error_string(res));
+  if (res == MP_OK) {
     int ix;
 
-    for(ix = 0; ix < (len - 1); ++ix)
-      printf("%d.", buf[ix]);
+    for (ix = 0; ix < (len - 1); ++ix) printf("%d.", buf[ix]);
 
     printf("%d\n", buf[ix]);
   } else {
@@ -67,10 +65,10 @@ int main(int argc, char *argv[])
 
   /* Try converting back... */
   res = mp_int_read_binary(&w, buf, len);
-  printf("Result code from mp_int_read_binary() = %d (%s)\n",
-	 res, mp_error_string(res));
-  if(res == MP_OK) {
-    mp_int_to_string(&w, 10, (char *) buf, sizeof(buf));
+  printf("Result code from mp_int_read_binary() = %d (%s)\n", res,
+         mp_error_string(res));
+  if (res == MP_OK) {
+    mp_int_to_string(&w, 10, (char *)buf, sizeof(buf));
 
     printf("[%s]\n\n", buf);
   }
@@ -80,11 +78,10 @@ int main(int argc, char *argv[])
 
   res = mp_int_to_unsigned(&v, buf, sizeof(buf));
   printf("Result code from mp_int_to_unsigned() = %d\n", res);
-  if(res == MP_OK) {
+  if (res == MP_OK) {
     int ix;
 
-    for(ix = 0; ix < (len - 1); ++ix)
-      printf("%d.", buf[ix]);
+    for (ix = 0; ix < (len - 1); ++ix) printf("%d.", buf[ix]);
 
     printf("%d\n", buf[ix]);
   } else {
@@ -92,10 +89,10 @@ int main(int argc, char *argv[])
   }
 
   res = mp_int_read_unsigned(&w, buf, len);
-  printf("Result code from mp_int_read_unsigned() = %d (%s)\n",
-	 res, mp_error_string(res));
-  if(res == MP_OK) {
-    mp_int_to_string(&w, 10, (char *) buf, sizeof(buf));
+  printf("Result code from mp_int_read_unsigned() = %d (%s)\n", res,
+         mp_error_string(res));
+  if (res == MP_OK) {
+    mp_int_to_string(&w, 10, (char *)buf, sizeof(buf));
 
     printf("[%s]\n\n", buf);
   }

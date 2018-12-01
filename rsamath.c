@@ -26,19 +26,17 @@
 
 #include "rsamath.h"
 
-#include <string.h>
 #include <limits.h>
+#include <string.h>
 
-static mp_result s_rsa_transform(mp_int msg, mp_int exp, 
-				 mp_int mod, mp_int out);
+static mp_result s_rsa_transform(mp_int msg, mp_int exp, mp_int mod,
+                                 mp_int out);
 
 /* Convert integer to octet string, per PKCS#1 v.2.1 */
-mp_result rsa_i2osp(mp_int z, unsigned char *out, int len)
-{
-  int  excess_len = mp_int_binary_len(z);
+mp_result rsa_i2osp(mp_int z, unsigned char *out, int len) {
+  int excess_len = mp_int_binary_len(z);
 
-  if(excess_len < len)
-    return MP_RANGE;
+  if (excess_len < len) return MP_RANGE;
 
   memset(out, 0, len);
 
@@ -49,56 +47,48 @@ mp_result rsa_i2osp(mp_int z, unsigned char *out, int len)
 }
 
 /* Convert octet string to integer, per PKCS#1 v.2.1 */
-mp_result rsa_os2ip(mp_int z, unsigned char *in, int len)
-{
+mp_result rsa_os2ip(mp_int z, unsigned char *in, int len) {
   return mp_int_read_binary(z, in, len);
 }
 
 /* Primitive RSA encryption operation */
-mp_result rsa_rsaep(mp_int msg, mp_int exp, mp_int mod, mp_int cipher)
-{
+mp_result rsa_rsaep(mp_int msg, mp_int exp, mp_int mod, mp_int cipher) {
   return s_rsa_transform(msg, exp, mod, cipher);
 }
 
 /* Primitive RSA decryption operation */
-mp_result rsa_rsadp(mp_int cipher, mp_int exp, mp_int mod, mp_int msg)
-{
+mp_result rsa_rsadp(mp_int cipher, mp_int exp, mp_int mod, mp_int msg) {
   return s_rsa_transform(cipher, exp, mod, msg);
 }
 
 /* Primitive RSA signing operation */
-mp_result rsa_rsasp(mp_int msg, mp_int exp, mp_int mod, mp_int signature)
-{
+mp_result rsa_rsasp(mp_int msg, mp_int exp, mp_int mod, mp_int signature) {
   return s_rsa_transform(msg, exp, mod, signature);
 }
 
 /* Primitive RSA verification operation */
-mp_result rsa_rsavp(mp_int signature, mp_int exp, mp_int mod, mp_int msg)
-{
+mp_result rsa_rsavp(mp_int signature, mp_int exp, mp_int mod, mp_int msg) {
   return s_rsa_transform(signature, exp, mod, msg);
 }
 
 /* Compute the maximum length in bytes a message can have using PKCS#1
    v.1.5 encoding with the given modulus */
-int       rsa_max_message_len(mp_int mod)
-{
-  int  num_bits = mp_int_count_bits(mod);
-  int  num_bytes = num_bits / CHAR_BIT;
+int rsa_max_message_len(mp_int mod) {
+  int num_bits = mp_int_count_bits(mod);
+  int num_bytes = num_bits / CHAR_BIT;
 
-  if(num_bytes < 11)
+  if (num_bytes < 11)
     return 0; /* at least eleven bytes are required for padding */
   else
     return num_bytes - 11;
 }
 
-mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, 
-			      int buf_len, int tag, random_f filler)
-{
-  int  pad_len, msg_start;
+mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
+                              int tag, random_f filler) {
+  int pad_len, msg_start;
 
   /* Make sure there is enough space for the encoded output */
-  if(msg_len > (buf_len - 11))
-    return MP_RANGE;
+  if (msg_len > (buf_len - 11)) return MP_RANGE;
 
   msg_start = buf_len - msg_len;
   pad_len = msg_start - 3;
@@ -122,19 +112,17 @@ mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len,
   return MP_OK;
 }
 
-mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len, 
-			      int tag, int *msg_len)
-{
-  int  pad_len = 0, data_len, data_start, i;
+mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len, int tag,
+                              int *msg_len) {
+  int pad_len = 0, data_len, data_start, i;
 
   /* Make sure the buffer is syntactically valid */
-  if(buf_len < 11 || buf[0] != 0x00 || buf[1] != (unsigned char)tag)
+  if (buf_len < 11 || buf[0] != 0x00 || buf[1] != (unsigned char)tag)
     return MP_UNDEF;
 
   /* Figure out how many bytes of random padding there are */
   i = 2;
-  while(buf[i++] != '\0')
-    ++pad_len;
+  while (buf[i++] != '\0') ++pad_len;
 
   data_start = i;
   data_len = buf_len - data_start;
@@ -150,11 +138,9 @@ mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len,
   return MP_OK;
 }
 
-static mp_result s_rsa_transform(mp_int msg, mp_int exp, 
-				 mp_int mod, mp_int out)
-{
-  if(mp_int_compare_zero(msg) < 0 ||
-     mp_int_compare(msg, mod) >= 0)
+static mp_result s_rsa_transform(mp_int msg, mp_int exp, mp_int mod,
+                                 mp_int out) {
+  if (mp_int_compare_zero(msg) < 0 || mp_int_compare(msg, mod) >= 0)
     return MP_RANGE;
 
   return mp_int_exptmod(msg, exp, mod, out);

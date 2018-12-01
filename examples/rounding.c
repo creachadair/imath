@@ -25,27 +25,26 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #include "imath.h"
 #include "imrat.h"
 
-int main(int argc, char *argv[])
-{
-  mp_result  mode, len, res = 0;
-  mp_size    prec, radix;
-  mpq_t      value;
-  char      *buf;
+int main(int argc, char *argv[]) {
+  mp_result mode, len, res = 0;
+  mp_size prec, radix;
+  mpq_t value;
+  char *buf;
 
-  if(argc < 5) {
+  if (argc < 5) {
     fprintf(stderr, "Usage: rounding <mode> <precision> <radix> <value>\n");
     return 1;
   }
 
-  if((res = mp_rat_init(&value)) != MP_OK) {
+  if ((res = mp_rat_init(&value)) != MP_OK) {
     fprintf(stderr, "Error initializing: %s\n", mp_error_string(res));
     return 2;
   }
@@ -53,29 +52,29 @@ int main(int argc, char *argv[])
   mode = atoi(argv[1]);
   prec = atoi(argv[2]);
   radix = atoi(argv[3]);
-  
-  printf("Rounding mode:   %d\n"
-	 "Precision:       %u digits\n"
-	 "Radix:           %u\n"
-	 "Input string:    \"%s\"\n", mode, prec, radix, argv[4]);
-  
-  if((res = mp_rat_read_decimal(&value, radix, argv[4])) != MP_OK) {
-    fprintf(stderr, "Error reading input string: %s\n", 
-	    mp_error_string(res));
+
+  printf(
+      "Rounding mode:   %d\n"
+      "Precision:       %u digits\n"
+      "Radix:           %u\n"
+      "Input string:    \"%s\"\n",
+      mode, prec, radix, argv[4]);
+
+  if ((res = mp_rat_read_decimal(&value, radix, argv[4])) != MP_OK) {
+    fprintf(stderr, "Error reading input string: %s\n", mp_error_string(res));
     goto CLEANUP;
   }
 
   len = mp_rat_decimal_len(&value, radix, prec);
   buf = malloc(len);
 
-  if((res = mp_rat_to_decimal(&value, radix, prec, mode, buf, len)) != MP_OK)
-    fprintf(stderr, "Error converting output: %s\n",
-	    mp_error_string(res));
+  if ((res = mp_rat_to_decimal(&value, radix, prec, mode, buf, len)) != MP_OK)
+    fprintf(stderr, "Error converting output: %s\n", mp_error_string(res));
 
   printf("Result string:   \"%s\"\n", buf);
   free(buf);
 
- CLEANUP:
+CLEANUP:
   mp_rat_clear(&value);
   return res;
 }

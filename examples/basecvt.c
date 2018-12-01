@@ -25,94 +25,92 @@
   SOFTWARE.
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "imath.h"
 #include "imrat.h"
 
-int main(int argc, char *argv[])
-{
-  mp_size   in_rdx, out_rdx;
-  mpq_t     value;
+int main(int argc, char *argv[]) {
+  mp_size in_rdx, out_rdx;
+  mpq_t value;
   mp_result res;
-  int       ix;
+  int ix;
 
-  if(argc < 4) {
+  if (argc < 4) {
     fprintf(stderr, "Usage: basecvt <ibase> <obase> <values>+\n");
     return 1;
   }
 
-  in_rdx  = atoi(argv[1]);
+  in_rdx = atoi(argv[1]);
   out_rdx = atoi(argv[2]);
 
-  if(in_rdx < MP_MIN_RADIX || in_rdx > MP_MAX_RADIX) {
-    fprintf(stderr, 
-	    "basecvt: input radix %u not allowed (minimum %u, "
-	    "maximum %u)\n", in_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
+  if (in_rdx < MP_MIN_RADIX || in_rdx > MP_MAX_RADIX) {
+    fprintf(stderr,
+            "basecvt: input radix %u not allowed (minimum %u, "
+            "maximum %u)\n",
+            in_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
     return 3;
   }
-  if(out_rdx < MP_MIN_RADIX || out_rdx > MP_MAX_RADIX) {
-    fprintf(stderr, 
-	    "basecvt: output radix %u not allowed (minimum %u, "
-	    "maximum %u)\n", out_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
+  if (out_rdx < MP_MIN_RADIX || out_rdx > MP_MAX_RADIX) {
+    fprintf(stderr,
+            "basecvt: output radix %u not allowed (minimum %u, "
+            "maximum %u)\n",
+            out_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
     return 3;
   }
-  
-  if((res = mp_rat_init(&value)) != MP_OK) {
+
+  if ((res = mp_rat_init(&value)) != MP_OK) {
     fprintf(stderr, "basecvt: out of memory\n");
     return 2;
   }
 
-  for(ix = 3; ix < argc; ++ix) {
+  for (ix = 3; ix < argc; ++ix) {
     char *buf, *endp = NULL;
-    mp_result   len;
-    int         is_int;
+    mp_result len;
+    int is_int;
 
-    if((res = mp_rat_read_ustring(&value, in_rdx, argv[ix], &endp)) != MP_OK &&
-       res != MP_TRUNC) {
+    if ((res = mp_rat_read_ustring(&value, in_rdx, argv[ix], &endp)) != MP_OK &&
+        res != MP_TRUNC) {
       fprintf(stderr, "basecvt:  error reading argument %d: %s\n", ix,
-	      mp_error_string(res));
+              mp_error_string(res));
       break;
-    }
-    else if(*endp != '\0') {
+    } else if (*endp != '\0') {
       fprintf(stderr, "basecvt:  argument %d contains '%s' not in base %u\n",
-	      ix, endp, in_rdx);
+              ix, endp, in_rdx);
       continue;
     }
 
-    if((is_int = mp_rat_is_integer(&value)) != 0) {
+    if ((is_int = mp_rat_is_integer(&value)) != 0) {
       len = mp_int_string_len(MP_NUMER_P(&value), out_rdx);
-    }
-    else {
+    } else {
       len = mp_rat_string_len(&value, out_rdx);
     }
-    
-    if((buf = malloc(len)) == NULL) {
+
+    if ((buf = malloc(len)) == NULL) {
       fprintf(stderr, "basecvt:  out of memory\n");
       break;
     }
-    
-    if(is_int) {
+
+    if (is_int) {
       res = mp_int_to_string(MP_NUMER_P(&value), out_rdx, buf, len);
-    }
-    else {
+    } else {
       res = mp_rat_to_string(&value, out_rdx, buf, len);
     }
 
-    if(res != MP_OK) {
+    if (res != MP_OK) {
       fprintf(stderr, "basecvt:  error converting argument %d: %s\n", ix,
-	      mp_error_string(res));
+              mp_error_string(res));
       free(buf);
       break;
     }
-   
+
     printf("%s\n", buf);
     free(buf);
   }
-  
+
   mp_rat_clear(&value);
 
   return (res != MP_OK);

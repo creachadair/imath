@@ -113,6 +113,10 @@ rtest: rtest.o imath.o rsamath.o
 bintest: imath.o bintest.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
+format:
+	find . -type f -name '*.h' -o -name '*.c' -print0 | \
+		 xargs -0 clang-format --style=Google -i
+
 clean:
 	rm -f *.o *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
 	make -C tests/gmp-compat-test clean

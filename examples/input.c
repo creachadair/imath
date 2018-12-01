@@ -32,78 +32,72 @@
 
 #include "imrat.h"
 
-int main(int argc, char *argv[])
-{
-  mp_size   radix = 10;  /* Default output radix */
-  mpq_t     value;
+int main(int argc, char *argv[]) {
+  mp_size radix = 10; /* Default output radix */
+  mpq_t value;
   mp_result res;
-  char      *endp;
+  char *endp;
 
-  if(argc < 2) {
+  if (argc < 2) {
     fprintf(stderr, "Usage: input <value> [output-base]\n");
     return 1;
   }
-  if(argc > 2) {
-    if((radix = atoi(argv[2])) < MP_MIN_RADIX ||
-       (radix > MP_MAX_RADIX)) {
-      fprintf(stderr, "Error:  Specified radix is out of range (%d)\n",
-	      radix);
+  if (argc > 2) {
+    if ((radix = atoi(argv[2])) < MP_MIN_RADIX || (radix > MP_MAX_RADIX)) {
+      fprintf(stderr, "Error:  Specified radix is out of range (%d)\n", radix);
       return 1;
     }
   }
 
   /* Initialize a new value, initially zero; illustrates how to check
      for errors (e.g., out of memory) and display a message.  */
-  if((res = mp_rat_init(&value)) != MP_OK) {
-    fprintf(stderr, "Error in mp_rat_init(): %s\n", 
-	    mp_error_string(res));
+  if ((res = mp_rat_init(&value)) != MP_OK) {
+    fprintf(stderr, "Error in mp_rat_init(): %s\n", mp_error_string(res));
     return 1;
   }
 
   /* Read value in base 10 */
-  if((res = mp_rat_read_ustring(&value, 0, argv[1], &endp)) != MP_OK) {
+  if ((res = mp_rat_read_ustring(&value, 0, argv[1], &endp)) != MP_OK) {
     fprintf(stderr, "Error in mp_rat_read_ustring(): %s\n",
-	    mp_error_string(res));
-    
-    if(res == MP_TRUNC)
-      fprintf(stderr, " -- remaining input is: %s\n", endp);
-    
+            mp_error_string(res));
+
+    if (res == MP_TRUNC) fprintf(stderr, " -- remaining input is: %s\n", endp);
+
     mp_rat_clear(&value);
     return 1;
   }
-  
+
   printf("Here is your value in base %d\n", radix);
   {
     mp_result buf_size, res;
     char *obuf;
 
-    if(mp_rat_is_integer(&value)) {
+    if (mp_rat_is_integer(&value)) {
       /* Allocate a buffer big enough to hold the given value, including
-	 sign and zero terminator. */
+         sign and zero terminator. */
       buf_size = mp_int_string_len(MP_NUMER_P(&value), radix);
       obuf = malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
-      if((res = mp_int_to_string(MP_NUMER_P(&value), radix, 
-				 obuf, buf_size)) != MP_OK) {
-	fprintf(stderr, "Converstion to base %d failed: %s\n",
-		radix, mp_error_string(res));
-	mp_rat_clear(&value);
-	return 1;
+      if ((res = mp_int_to_string(MP_NUMER_P(&value), radix, obuf, buf_size)) !=
+          MP_OK) {
+        fprintf(stderr, "Converstion to base %d failed: %s\n", radix,
+                mp_error_string(res));
+        mp_rat_clear(&value);
+        return 1;
       }
-    } 
-    else {
+    } else {
       /* Allocate a buffer big enough to hold the given value, including
-	 sign and zero terminator. */
+         sign and zero terminator. */
       buf_size = mp_rat_string_len(&value, radix);
       obuf = malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
-      if((res = mp_rat_to_string(&value, radix, obuf, buf_size)) != MP_OK) {
-	fprintf(stderr, "Conversion to base %d failed: %s\n",
-		radix, mp_error_string(res));
-	mp_rat_clear(&value);
-	return 1;
+      if ((res = mp_rat_to_string(&value, radix, obuf, buf_size)) != MP_OK) {
+        fprintf(stderr, "Conversion to base %d failed: %s\n", radix,
+                mp_error_string(res));
+        mp_rat_clear(&value);
+        return 1;
       }
     }
     fputs(obuf, stdout);
