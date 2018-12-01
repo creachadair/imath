@@ -397,4 +397,23 @@
 	Portability fixes from PostgreSQL (#8), from nmisch.
 
 1.24
-	(pending)
+	A cosmetic update, consisting mainly of readability updates,
+	documentation fixes, and warning fixes. There are not intended to
+	be any functional changes in this update, but a fair bit of code
+	and the Makefile have been modified, so I'm adding a tag.
+
+	My intent is to keep the source formatted with clang-format going
+	forward, though I will need to set up some presubmit checks to
+	enforce that. For now it is still a manual step via "make format".
+
+	7e45d6a Remove a doc reference to MP_USMALL_MIN.
+	544687d Fix the spelling of mp_error_string in doc.md.
+	592d4a0 Fix some mis-converted section breaks in doc.md.
+	df9fe8e Format source files with clang-format.
+	fcb4e21 Build with 64-bit words by default.
+	1579b70 Minor simplifications to the Makefile.
+	0fbe8e6 Style cleanup: More invasive manual changes.
+	1d28177 Add -Wextra and -Wno-unused-parameter to default build flags.
+	15ba02a Fix warnings for signed/unsigned comparisons.
+	3556984 Style cleanup: Insert missing brackets.
+
