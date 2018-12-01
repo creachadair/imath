@@ -398,8 +398,9 @@ static void print_value(mp_int v) {
       }
       fprintf(g_output_file, "%02x\n", buf[ix]);
       free(buf);
-    } else
+    } else {
       fprintf(g_output_file, "<insufficient memory to print>\n");
+    }
   } else {
     mp_result len = mp_int_string_len(v, g_output_radix);
     char *buf = malloc(len);
@@ -409,8 +410,9 @@ static void print_value(mp_int v) {
       fputs(buf, g_output_file);
       fputc('\n', g_output_file);
       free(buf);
-    } else
+    } else {
       fprintf(g_output_file, "<insufficient memory to print>\n");
+    }
   }
 }
 
@@ -431,17 +433,18 @@ static mp_result run_file(FILE *ifp, cstate_t *op_state) {
           goto EXIT;
         break;
       case t_symbol:
-        if ((cpos = find_command(op_state)) < 0)
+        if ((cpos = find_command(op_state)) < 0) {
           fprintf(stderr, "error: command not understood: %s\n",
                   op_state->ibuf);
-        else if (op_state->used < (mp_size)g_ops[cpos].stack_size) {
+        } else if (op_state->used < (mp_size)g_ops[cpos].stack_size) {
           fprintf(stderr, "error: not enough arguments (have %d, want %d)\n",
                   op_state->used, g_ops[cpos].stack_size);
         } else if ((res = (g_ops[cpos].handler)(op_state)) != MP_OK) {
-          if (res == MP_INPUT)
+          if (res == MP_INPUT) {
             fprintf(stderr, "error: incorrect input format\n");
-          else
+          } else {
             fprintf(stderr, "error: %s\n", mp_error_string(res));
+          }
         }
         break;
       default:
