@@ -518,7 +518,8 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
            T1 = remainder, from which fractional part is computed. */
 
   /* Count up leading zeroes after the radix point. */
-  for (lead_0 = 0; lead_0 < prec && mp_int_compare(TEMP(1), MP_DENOM_P(r)) < 0;
+  int zprec = (int)prec;
+  for (lead_0 = 0; lead_0 < zprec && mp_int_compare(TEMP(1), MP_DENOM_P(r)) < 0;
        ++lead_0) {
     if ((res = mp_int_mul_value(TEMP(1), radix, TEMP(1))) != MP_OK) {
       goto CLEANUP;
@@ -527,8 +528,8 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
 
   /* Multiply remainder by a power of the radix sufficient to get the right
      number of significant figures. */
-  if (prec > lead_0) {
-    if ((res = mp_int_expt_value(radix, prec - lead_0, TEMP(2))) != MP_OK) {
+  if (zprec > lead_0) {
+    if ((res = mp_int_expt_value(radix, zprec - lead_0, TEMP(2))) != MP_OK) {
       goto CLEANUP;
     }
     if ((res = mp_int_mul(TEMP(1), TEMP(2), TEMP(1))) != MP_OK) {
@@ -606,7 +607,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
   *start++ = '.';
   left -= 1;
 
-  if (left < prec + 1) {
+  if (left < zprec + 1) {
     res = MP_TRUNC;
     goto CLEANUP;
   }

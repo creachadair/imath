@@ -154,7 +154,7 @@ mp_result mp_int_randomize(mp_int a, mp_size n_bits) {
 
   if ((buf = malloc(n_bytes)) == NULL) return MP_MEMORY;
 
-  if (randomize(buf, n_bytes) != n_bytes) {
+  if ((mp_size)randomize(buf, n_bytes) != n_bytes) {
     res = MP_TRUNC;
     goto CLEANUP;
   }

@@ -377,7 +377,7 @@ static int find_command(cstate_t *op) {
   }
 
   /* If we don't find the command, try a variable lookup */
-  for (jx = 0; jx < op->mused; ++jx) {
+  for (jx = 0; (mp_size)jx < op->mused; ++jx) {
     if (strcmp(buf, op->names[jx]) == 0) return ix; /* sentinel */
   }
 
@@ -434,7 +434,7 @@ static mp_result run_file(FILE *ifp, cstate_t *op_state) {
         if ((cpos = find_command(op_state)) < 0)
           fprintf(stderr, "error: command not understood: %s\n",
                   op_state->ibuf);
-        else if (op_state->used < g_ops[cpos].stack_size) {
+        else if (op_state->used < (mp_size)g_ops[cpos].stack_size) {
           fprintf(stderr, "error: not enough arguments (have %d, want %d)\n",
                   op_state->used, g_ops[cpos].stack_size);
         } else if ((res = (g_ops[cpos].handler)(op_state)) != MP_OK) {
@@ -478,7 +478,7 @@ static mp_result state_init(cstate_t *sp, mp_size n_elts) {
     return MP_MEMORY;
   }
 
-  for (ix = 0; ix < n_elts; ++ix) {
+  for (ix = 0; (mp_size)ix < n_elts; ++ix) {
     sp->elts[ix] = NULL;
     sp->mem[ix] = NULL;
     sp->names[ix] = NULL;
@@ -499,7 +499,7 @@ static void state_clear(cstate_t *sp) {
   if (sp->elts != NULL) {
     int ix;
 
-    for (ix = 0; ix < sp->used; ++ix) {
+    for (ix = 0; (mp_size)ix < sp->used; ++ix) {
       mp_int_clear(sp->elts[ix]);
       sp->elts[ix] = NULL;
     }
@@ -512,7 +512,7 @@ static void state_clear(cstate_t *sp) {
   if (sp->mem != NULL) {
     int ix;
 
-    for (ix = 0; ix < sp->mused; ++ix) {
+    for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
       mp_int_free(sp->mem[ix]);
       sp->mem[ix] = NULL;
       free(sp->names[ix]);
@@ -542,7 +542,7 @@ static void stack_flush(cstate_t *sp) {
 
   assert(sp != NULL && sp->elts != NULL);
 
-  for (ix = 0; ix < sp->used; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->used; ++ix) {
     mp_int_clear(sp->elts[ix]);
     sp->elts[ix] = NULL;
   }
@@ -558,7 +558,9 @@ static mp_result stack_push(cstate_t *sp, mp_int elt) {
 
     if ((tmp = malloc(nsize * sizeof(*(sp->elts)))) == NULL) return MP_MEMORY;
 
-    for (ix = 0; ix < sp->used; ++ix) tmp[ix] = sp->elts[ix];
+    for (ix = 0; (mp_size)ix < sp->used; ++ix) {
+      tmp[ix] = sp->elts[ix];
+    }
 
     free(sp->elts);
     sp->elts = tmp;
@@ -584,7 +586,7 @@ static mp_result stack_pop(cstate_t *sp) {
 static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
   int ix;
 
-  for (ix = 0; ix < sp->mused; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
     if (strcmp(name, sp->names[ix]) == 0) break;
   }
 
@@ -592,7 +594,7 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
      ix < sp->mused   ==> replacing existing entry.
      otherwise        ==> adding new entry, may need to grow dictionary.
    */
-  if (ix < sp->mused) {
+  if ((mp_size)ix < sp->mused) {
     mp_int_free(sp->mem[ix]); /* fall through to the end */
   } else {
     if (sp->mused >= sp->mslots) {
@@ -607,7 +609,7 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
         return MP_MEMORY;
       }
 
-      for (jx = 0; jx < sp->mused; ++jx) {
+      for (jx = 0; (mp_size)jx < sp->mused; ++jx) {
         tz[jx] = sp->mem[jx];
         tc[jx] = sp->names[jx];
       }
@@ -632,7 +634,7 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
 static mp_result mem_recall(cstate_t *sp, const char *name, mp_int value) {
   int ix;
 
-  for (ix = 0; ix < sp->mused; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
     if (strcmp(name, sp->names[ix]) == 0) {
       return mp_int_copy(sp->mem[ix], value);
     }
@@ -644,7 +646,7 @@ static mp_result mem_recall(cstate_t *sp, const char *name, mp_int value) {
 static mp_result mem_clear(cstate_t *sp) {
   int ix;
 
-  for (ix = 0; ix < sp->mused; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
     mp_int_free(sp->mem[ix]);
     free(sp->names[ix]);
   }
@@ -919,7 +921,7 @@ static mp_result cf_pstack(cstate_t *sp) {
   if (sp->used == 0) {
     fprintf(g_output_file, "<stack empty>\n");
   } else {
-    for (ix = 0; ix < sp->used; ++ix) {
+    for (ix = 0; (mp_size)ix < sp->used; ++ix) {
       fprintf(g_output_file, "%2d: ", ix);
       print_value(sp->elts[sp->used - 1 - ix]);
     }
@@ -1089,7 +1091,7 @@ static mp_result cf_pmem(cstate_t *sp) {
     return MP_OK;
   }
 
-  for (ix = 0; ix < sp->mused; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
     int ln = strlen(sp->names[ix]);
 
     if (ln > max_len) max_len = ln;
@@ -1097,7 +1099,7 @@ static mp_result cf_pmem(cstate_t *sp) {
 
   max_len += 1; /* allow for a padding space */
 
-  for (ix = 0; ix < sp->mused; ++ix) {
+  for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
     int ln = strlen(sp->names[ix]);
 
     fprintf(g_output_file, "%s:", sp->names[ix]);
