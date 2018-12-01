@@ -49,15 +49,13 @@ int main(int argc, char *argv[]) {
 
   if (in_rdx < MP_MIN_RADIX || in_rdx > MP_MAX_RADIX) {
     fprintf(stderr,
-            "basecvt: input radix %u not allowed (minimum %u, "
-            "maximum %u)\n",
+            "basecvt: input radix %u not allowed (minimum %u, maximum %u)\n",
             in_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
     return 3;
   }
   if (out_rdx < MP_MIN_RADIX || out_rdx > MP_MAX_RADIX) {
     fprintf(stderr,
-            "basecvt: output radix %u not allowed (minimum %u, "
-            "maximum %u)\n",
+            "basecvt: output radix %u not allowed (minimum %u, maximum %u)\n",
             out_rdx, MP_MIN_RADIX, MP_MAX_RADIX);
     return 3;
   }
@@ -72,8 +70,8 @@ int main(int argc, char *argv[]) {
     mp_result len;
     int is_int;
 
-    if ((res = mp_rat_read_ustring(&value, in_rdx, argv[ix], &endp)) != MP_OK &&
-        res != MP_TRUNC) {
+    res = mp_rat_read_ustring(&value, in_rdx, argv[ix], &endp);
+    if (res != MP_OK && res != MP_TRUNC) {
       fprintf(stderr, "basecvt:  error reading argument %d: %s\n", ix,
               mp_error_string(res));
       break;
@@ -83,7 +81,8 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    if ((is_int = mp_rat_is_integer(&value)) != 0) {
+    is_int = mp_rat_is_integer(&value);
+    if (is_int) {
       len = mp_int_string_len(MP_NUMER_P(&value), out_rdx);
     } else {
       len = mp_rat_string_len(&value, out_rdx);

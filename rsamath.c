@@ -77,10 +77,11 @@ int rsa_max_message_len(mp_int mod) {
   int num_bits = mp_int_count_bits(mod);
   int num_bytes = num_bits / CHAR_BIT;
 
-  if (num_bytes < 11)
+  if (num_bytes < 11) {
     return 0; /* at least eleven bytes are required for padding */
-  else
+  } else {
     return num_bytes - 11;
+  }
 }
 
 mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
@@ -140,8 +141,9 @@ mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len, int tag,
 
 static mp_result s_rsa_transform(mp_int msg, mp_int exp, mp_int mod,
                                  mp_int out) {
-  if (mp_int_compare_zero(msg) < 0 || mp_int_compare(msg, mod) >= 0)
+  if (mp_int_compare_zero(msg) < 0 || mp_int_compare(msg, mod) >= 0) {
     return MP_RANGE;
+  }
 
   return mp_int_exptmod(msg, exp, mod, out);
 }

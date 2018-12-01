@@ -66,7 +66,7 @@ void GMPQAPI(mul)(mp_rat product, mp_rat multiplier, mp_rat multiplicand) {
   CHECK(mp_rat_mul(multiplier, multiplicand, product));
 }
 
-/* gmp: mpq_set*/
+/* gmp: mpq_set */
 void GMPQAPI(set)(mp_rat rop, mp_rat op) { CHECK(mp_rat_copy(op, rop)); }
 
 /* gmp: mpz_abs */
@@ -143,11 +143,10 @@ mp_int GMPQAPI(numref)(mp_rat op) { return mp_rat_numer_ref(op); }
 /* gmp: mpq_canonicalize */
 void GMPQAPI(canonicalize)(mp_rat op) { CHECK(mp_rat_reduce(op)); }
 
-/*************************************************************************
- *
+/*
  * Functions that can be implemented as a combination of imath functions
- *
- *************************************************************************/
+ */
+
 /* gmp: mpz_addmul */
 /* gmp: rop = rop + (op1 * op2) */
 void GMPZAPI(addmul)(mp_int rop, mp_int op1, mp_int op2) {
@@ -302,11 +301,13 @@ char *GMPZAPI(get_str)(char *str, int radix, mp_int op) {
   CHECK(mp_int_to_string(op, r, str, len));
 
   /* Change case to match gmp */
-  for (i = 0; i < len - 1; i++)
-    if (radix < 0)
+  for (i = 0; i < len - 1; i++) {
+    if (radix < 0) {
       str[i] = toupper(str[i]);
-    else
+    } else {
       str[i] = tolower(str[i]);
+    }
+  }
   return str;
 }
 
@@ -332,11 +333,13 @@ char *GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
   CHECK(mp_rat_to_string(op, r, str, len));
 
   /* Change case to match gmp */
-  for (i = 0; i < len; i++)
-    if (radix < 0)
+  for (i = 0; i < len; i++) {
+    if (radix < 0) {
       str[i] = toupper(str[i]);
-    else
+    } else {
       str[i] = tolower(str[i]);
+    }
+  }
 
   return str;
 }
@@ -366,14 +369,17 @@ int GMPQAPI(set_str)(mp_rat rop, char *s, int base) {
   /* Parse numerator */
   resN = mp_int_read_string(mp_rat_numer_ref(rop), base, str);
 
-  /* Parse denomenator if given or set to 1 if not */
-  if (slash)
+  /* Parse denominator if given or set to 1 if not */
+  if (slash) {
     resD = mp_int_read_string(mp_rat_denom_ref(rop), base, slash + 1);
-  else
+  } else {
     resD = mp_int_set_uvalue(mp_rat_denom_ref(rop), 1);
+  }
 
   /* Return failure if either parse failed */
-  if (resN != MP_OK || resD != MP_OK) res = -1;
+  if (resN != MP_OK || resD != MP_OK) {
+    res = -1;
+  }
 
   free(str);
   return res;
@@ -384,9 +390,11 @@ static unsigned long get_long_bits(mp_int op) {
    * the least significant digits that will fit into the long.  Read the digits
    * into the long starting at the most significant digit that fits into a
    * long. The long is shifted over by MP_DIGIT_BIT before each digit is added.
-   * The shift is decomposed into two steps to follow the patten used in the
-   * rest of the imath library. The two step shift is used to accomedate
-   * architectures that don't deal well with 32-bit shifts. */
+   *
+   * The shift is decomposed into two steps (following the pattern used in the
+   * rest of the imath library) to accommodate architectures that don't deal
+   * well with 32-bit shifts.
+   */
   mp_size num_digits_in_long = sizeof(unsigned long) / sizeof(mp_digit);
   mp_digit *digits = MP_DIGITS(op);
   unsigned long out = 0;
@@ -440,7 +448,9 @@ long GMPZAPI(get_si)(mp_int op) {
   uout &= (~(1UL << long_msb));
 
   /* convert to negative if needed based on sign of op */
-  if (MP_SIGN(op) == MP_NEG) uout = 0 - uout;
+  if (MP_SIGN(op) == MP_NEG) {
+    uout = 0 - uout;
+  }
 
   out = (long)uout;
   return out;
@@ -469,11 +479,9 @@ void GMPZAPI(mul_2exp)(mp_int rop, mp_int op1, unsigned long op2) {
     CHECK(mp_int_mul_pow2(op1, op2, rop));
 }
 
-/*************************************************************************
- *
+/*
  * Functions needing expanded functionality
- *
- *************************************************************************/
+ */
 /* [Note]Overview of division implementation
 
     All division operations (N / D) compute q and r such that
@@ -649,7 +657,8 @@ void *GMPZAPI(export)(void *rop, size_t *countp, int order, size_t size,
   int src_bits;
 
   /* We do not have a complete implementation. Assert to ensure our
-   * restrictions are in place. */
+   * restrictions are in place.
+   */
   assert(nails == 0 && "Do not support non-full words");
   assert(endian == 1 || endian == 0 || endian == -1);
   assert(order == 1 || order == -1);

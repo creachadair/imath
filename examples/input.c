@@ -79,8 +79,8 @@ int main(int argc, char *argv[]) {
       obuf = malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
-      if ((res = mp_int_to_string(MP_NUMER_P(&value), radix, obuf, buf_size)) !=
-          MP_OK) {
+      res = mp_int_to_string(MP_NUMER_P(&value), radix, obuf, buf_size);
+      if (res != MP_OK) {
         fprintf(stderr, "Converstion to base %d failed: %s\n", radix,
                 mp_error_string(res));
         mp_rat_clear(&value);
@@ -93,7 +93,8 @@ int main(int argc, char *argv[]) {
       obuf = malloc(buf_size);
 
       /* Convert the value to a string in the desired radix. */
-      if ((res = mp_rat_to_string(&value, radix, obuf, buf_size)) != MP_OK) {
+      res = mp_rat_to_string(&value, radix, obuf, buf_size);
+      if (res != MP_OK) {
         fprintf(stderr, "Conversion to base %d failed: %s\n", radix,
                 mp_error_string(res));
         mp_rat_clear(&value);

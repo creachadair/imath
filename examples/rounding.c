@@ -68,8 +68,9 @@ int main(int argc, char *argv[]) {
   len = mp_rat_decimal_len(&value, radix, prec);
   buf = malloc(len);
 
-  if ((res = mp_rat_to_decimal(&value, radix, prec, mode, buf, len)) != MP_OK)
+  if ((res = mp_rat_to_decimal(&value, radix, prec, mode, buf, len)) != MP_OK) {
     fprintf(stderr, "Error converting output: %s\n", mp_error_string(res));
+  }
 
   printf("Result string:   \"%s\"\n", buf);
   free(buf);

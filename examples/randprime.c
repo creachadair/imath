@@ -184,15 +184,21 @@ mp_result find_prime(mp_int seed, FILE *fb) {
   mp_result res;
   int count = 0;
 
-  if (mp_int_is_even(seed))
-    if ((res = mp_int_add_value(seed, 1, seed)) != MP_OK) return res;
+  if (mp_int_is_even(seed)) {
+    if ((res = mp_int_add_value(seed, 1, seed)) != MP_OK) {
+      return res;
+    }
+  }
 
   while ((res = mp_int_is_prime(seed)) == MP_FALSE) {
     ++count;
 
-    if (fb != NULL && (count % 50) == 0) fputc('.', fb);
-
-    if ((res = mp_int_add_value(seed, 2, seed)) != MP_OK) return res;
+    if (fb != NULL && (count % 50) == 0) {
+      fputc('.', fb);
+    }
+    if ((res = mp_int_add_value(seed, 2, seed)) != MP_OK) {
+      return res;
+    }
   }
 
   if (res == MP_TRUE && fb != NULL) fputc('+', fb);
@@ -206,12 +212,13 @@ mp_result find_strong_prime(mp_int seed, FILE *fb) {
 
   mp_int_init(&t);
   for (;;) {
-    if ((res = find_prime(seed, fb)) != MP_TRUE) break;
-    if ((res = mp_int_copy(seed, &t)) != MP_OK) break;
+    if (find_prime(seed, fb) != MP_TRUE) break;
+    if (mp_int_copy(seed, &t) != MP_OK) break;
 
-    if ((res = mp_int_mul_pow2(&t, 1, &t)) != MP_OK ||
-        (res = mp_int_add_value(&t, 1, &t)) != MP_OK)
+    if (mp_int_mul_pow2(&t, 1, &t) != MP_OK ||
+        mp_int_add_value(&t, 1, &t) != MP_OK) {
       break;
+    }
 
     if ((res = mp_int_is_prime(&t)) == MP_TRUE) {
       if (fb != NULL) fputc('!', fb);
@@ -222,7 +229,7 @@ mp_result find_strong_prime(mp_int seed, FILE *fb) {
       break;
 
     if (fb != NULL) fputc('x', fb);
-    if ((res = mp_int_add_value(seed, 2, seed)) != MP_OK) break;
+    if (mp_int_add_value(seed, 2, seed) != MP_OK) break;
   }
 
   mp_int_clear(&t);

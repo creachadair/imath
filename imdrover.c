@@ -96,8 +96,9 @@ static int parse_binary(char* str, unsigned char* buf, int limit);
 /* Clean up registers (called from atexit()) */
 static void done_testing(void);
 
-/*------------------------------------------------------------------------*/
-/* Utility subroutines for writing tests (explained above)                */
+/*
+ * Utility subroutines for writing tests (explained above)
+ */
 
 static mp_result read_int_value(mp_int z, char* str) {
   int radix = 10;
@@ -402,8 +403,9 @@ static void done_testing(void) {
   }
 }
 
-/*------------------------------------------------------------------------*/
-/* Global functions visible to callers outside this file                  */
+/*
+ * Global functions visible to callers outside this file.
+ */
 
 void init_testing(void) {
   static int is_done = 0;
@@ -1123,8 +1125,12 @@ int test_meta(testspec_t* t, FILE* ofp) {
   int i, j;
   mp_result expect;
 
-  if (t->num_inputs > 0) in = calloc(t->num_inputs, sizeof(mp_int));
-  if (t->num_outputs > 0) out = calloc(t->num_outputs, sizeof(mp_int));
+  if (t->num_inputs > 0) {
+    in = calloc(t->num_inputs, sizeof(mp_int));
+  }
+  if (t->num_outputs > 0) {
+    out = calloc(t->num_outputs, sizeof(mp_int));
+  }
 
   ACHECK(parse_int_values(t, in, out, &expect));
 

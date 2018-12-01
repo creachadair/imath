@@ -53,15 +53,14 @@ int main(int argc, char *argv[]) {
   res = mp_int_to_binary(&v, buf, sizeof(buf));
   printf("Result code from mp_int_to_binary() = %d (%s)\n", res,
          mp_error_string(res));
-  if (res == MP_OK) {
-    int ix;
-
-    for (ix = 0; ix < (len - 1); ++ix) printf("%d.", buf[ix]);
-
-    printf("%d\n", buf[ix]);
-  } else {
+  if (res != MP_OK) {
     return 1;
   }
+  int ix;
+  for (ix = 0; ix < (len - 1); ++ix) {
+    printf("%d.", buf[ix]);
+  }
+  printf("%d\n", buf[ix]);
 
   /* Try converting back... */
   res = mp_int_read_binary(&w, buf, len);
@@ -81,7 +80,9 @@ int main(int argc, char *argv[]) {
   if (res == MP_OK) {
     int ix;
 
-    for (ix = 0; ix < (len - 1); ++ix) printf("%d.", buf[ix]);
+    for (ix = 0; ix < (len - 1); ++ix) {
+      printf("%d.", buf[ix]);
+    }
 
     printf("%d\n", buf[ix]);
   } else {

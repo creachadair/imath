@@ -81,7 +81,9 @@ mp_result mp_rat_reduce(mp_rat r) { return s_rat_reduce(r); }
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec) {
   mp_result res;
 
-  if ((res = mp_int_init_size(MP_NUMER_P(r), n_prec)) != MP_OK) return res;
+  if ((res = mp_int_init_size(MP_NUMER_P(r), n_prec)) != MP_OK) {
+    return res;
+  }
   if ((res = mp_int_init_size(MP_DENOM_P(r), d_prec)) != MP_OK) {
     mp_int_clear(MP_NUMER_P(r));
     return res;
@@ -93,8 +95,9 @@ mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec) {
 mp_result mp_rat_init_copy(mp_rat r, mp_rat old) {
   mp_result res;
 
-  if ((res = mp_int_init_copy(MP_NUMER_P(r), MP_NUMER_P(old))) != MP_OK)
+  if ((res = mp_int_init_copy(MP_NUMER_P(r), MP_NUMER_P(old))) != MP_OK) {
     return res;
+  }
   if ((res = mp_int_init_copy(MP_DENOM_P(r), MP_DENOM_P(old))) != MP_OK)
     mp_int_clear(MP_NUMER_P(r));
 
@@ -106,8 +109,12 @@ mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom) {
 
   if (denom == 0) return MP_UNDEF;
 
-  if ((res = mp_int_set_value(MP_NUMER_P(r), numer)) != MP_OK) return res;
-  if ((res = mp_int_set_value(MP_DENOM_P(r), denom)) != MP_OK) return res;
+  if ((res = mp_int_set_value(MP_NUMER_P(r), numer)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_set_value(MP_DENOM_P(r), denom)) != MP_OK) {
+    return res;
+  }
 
   return s_rat_reduce(r);
 }
@@ -117,8 +124,12 @@ mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom) {
 
   if (denom == 0) return MP_UNDEF;
 
-  if ((res = mp_int_set_uvalue(MP_NUMER_P(r), numer)) != MP_OK) return res;
-  if ((res = mp_int_set_uvalue(MP_DENOM_P(r), denom)) != MP_OK) return res;
+  if ((res = mp_int_set_uvalue(MP_NUMER_P(r), numer)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_set_uvalue(MP_DENOM_P(r), denom)) != MP_OK) {
+    return res;
+  }
 
   return s_rat_reduce(r);
 }
@@ -153,7 +164,9 @@ mp_sign mp_rat_sign(mp_rat r) { return MP_SIGN(MP_NUMER_P(r)); }
 mp_result mp_rat_copy(mp_rat a, mp_rat c) {
   mp_result res;
 
-  if ((res = mp_int_copy(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) return res;
+  if ((res = mp_int_copy(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) {
+    return res;
+  }
 
   res = mp_int_copy(MP_DENOM_P(a), MP_DENOM_P(c));
   return res;
@@ -167,7 +180,9 @@ void mp_rat_zero(mp_rat r) {
 mp_result mp_rat_abs(mp_rat a, mp_rat c) {
   mp_result res;
 
-  if ((res = mp_int_abs(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) return res;
+  if ((res = mp_int_abs(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) {
+    return res;
+  }
 
   res = mp_int_abs(MP_DENOM_P(a), MP_DENOM_P(c));
   return res;
@@ -176,7 +191,9 @@ mp_result mp_rat_abs(mp_rat a, mp_rat c) {
 mp_result mp_rat_neg(mp_rat a, mp_rat c) {
   mp_result res;
 
-  if ((res = mp_int_neg(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) return res;
+  if ((res = mp_int_neg(MP_NUMER_P(a), MP_NUMER_P(c))) != MP_OK) {
+    return res;
+  }
 
   res = mp_int_copy(MP_DENOM_P(a), MP_DENOM_P(c));
   return res;
@@ -217,9 +234,10 @@ mp_result mp_rat_mul(mp_rat a, mp_rat b, mp_rat c) {
     return res;
 
   if (mp_int_compare_zero(MP_NUMER_P(c)) != 0) {
-    if ((res = mp_int_mul(MP_DENOM_P(a), MP_DENOM_P(b), MP_DENOM_P(c))) !=
-        MP_OK)
+    res = mp_int_mul(MP_DENOM_P(a), MP_DENOM_P(b), MP_DENOM_P(c));
+    if (res != MP_OK) {
       return res;
+    }
   }
 
   return s_rat_reduce(c);
@@ -234,42 +252,51 @@ mp_result mp_rat_div(mp_rat a, mp_rat b, mp_rat c) {
     mpz_t tmp;
 
     if ((res = mp_int_init(&tmp)) != MP_OK) return res;
-    if ((res = mp_int_mul(MP_NUMER_P(a), MP_DENOM_P(b), &tmp)) != MP_OK)
+    if ((res = mp_int_mul(MP_NUMER_P(a), MP_DENOM_P(b), &tmp)) != MP_OK) {
       goto CLEANUP;
+    }
     if ((res = mp_int_mul(MP_DENOM_P(a), MP_NUMER_P(b), MP_DENOM_P(c))) !=
-        MP_OK)
+        MP_OK) {
       goto CLEANUP;
+    }
     res = mp_int_copy(&tmp, MP_NUMER_P(c));
 
   CLEANUP:
     mp_int_clear(&tmp);
   } else {
     if ((res = mp_int_mul(MP_NUMER_P(a), MP_DENOM_P(b), MP_NUMER_P(c))) !=
-        MP_OK)
+        MP_OK) {
       return res;
+    }
     if ((res = mp_int_mul(MP_DENOM_P(a), MP_NUMER_P(b), MP_DENOM_P(c))) !=
-        MP_OK)
+        MP_OK) {
       return res;
+    }
   }
 
-  if (res != MP_OK)
+  if (res != MP_OK) {
     return res;
-  else
+  } else {
     return s_rat_reduce(c);
+  }
 }
 
 mp_result mp_rat_add_int(mp_rat a, mp_int b, mp_rat c) {
   mpz_t tmp;
   mp_result res;
 
-  if ((res = mp_int_init_copy(&tmp, b)) != MP_OK) return res;
-
-  if ((res = mp_int_mul(&tmp, MP_DENOM_P(a), &tmp)) != MP_OK) goto CLEANUP;
-
-  if ((res = mp_rat_copy(a, c)) != MP_OK) goto CLEANUP;
-
-  if ((res = mp_int_add(MP_NUMER_P(c), &tmp, MP_NUMER_P(c))) != MP_OK)
+  if ((res = mp_int_init_copy(&tmp, b)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_mul(&tmp, MP_DENOM_P(a), &tmp)) != MP_OK) {
     goto CLEANUP;
+  }
+  if ((res = mp_rat_copy(a, c)) != MP_OK) {
+    goto CLEANUP;
+  }
+  if ((res = mp_int_add(MP_NUMER_P(c), &tmp, MP_NUMER_P(c))) != MP_OK) {
+    goto CLEANUP;
+  }
 
   res = s_rat_reduce(c);
 
@@ -282,14 +309,18 @@ mp_result mp_rat_sub_int(mp_rat a, mp_int b, mp_rat c) {
   mpz_t tmp;
   mp_result res;
 
-  if ((res = mp_int_init_copy(&tmp, b)) != MP_OK) return res;
-
-  if ((res = mp_int_mul(&tmp, MP_DENOM_P(a), &tmp)) != MP_OK) goto CLEANUP;
-
-  if ((res = mp_rat_copy(a, c)) != MP_OK) goto CLEANUP;
-
-  if ((res = mp_int_sub(MP_NUMER_P(c), &tmp, MP_NUMER_P(c))) != MP_OK)
+  if ((res = mp_int_init_copy(&tmp, b)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_mul(&tmp, MP_DENOM_P(a), &tmp)) != MP_OK) {
     goto CLEANUP;
+  }
+  if ((res = mp_rat_copy(a, c)) != MP_OK) {
+    goto CLEANUP;
+  }
+  if ((res = mp_int_sub(MP_NUMER_P(c), &tmp, MP_NUMER_P(c))) != MP_OK) {
+    goto CLEANUP;
+  }
 
   res = s_rat_reduce(c);
 
@@ -301,9 +332,12 @@ CLEANUP:
 mp_result mp_rat_mul_int(mp_rat a, mp_int b, mp_rat c) {
   mp_result res;
 
-  if ((res = mp_rat_copy(a, c)) != MP_OK) return res;
-
-  if ((res = mp_int_mul(MP_NUMER_P(c), b, MP_NUMER_P(c))) != MP_OK) return res;
+  if ((res = mp_rat_copy(a, c)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_mul(MP_NUMER_P(c), b, MP_NUMER_P(c))) != MP_OK) {
+    return res;
+  }
 
   return s_rat_reduce(c);
 }
@@ -311,11 +345,15 @@ mp_result mp_rat_mul_int(mp_rat a, mp_int b, mp_rat c) {
 mp_result mp_rat_div_int(mp_rat a, mp_int b, mp_rat c) {
   mp_result res;
 
-  if (mp_int_compare_zero(b) == 0) return MP_UNDEF;
-
-  if ((res = mp_rat_copy(a, c)) != MP_OK) return res;
-
-  if ((res = mp_int_mul(MP_DENOM_P(c), b, MP_DENOM_P(c))) != MP_OK) return res;
+  if (mp_int_compare_zero(b) == 0) {
+    return MP_UNDEF;
+  }
+  if ((res = mp_rat_copy(a, c)) != MP_OK) {
+    return res;
+  }
+  if ((res = mp_int_mul(MP_DENOM_P(c), b, MP_DENOM_P(c))) != MP_OK) {
+    return res;
+  }
 
   return s_rat_reduce(c);
 }
@@ -324,14 +362,17 @@ mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c) {
   mp_result res;
 
   /* Special cases for easy powers. */
-  if (b == 0)
+  if (b == 0) {
     return mp_rat_set_value(c, 1, 1);
-  else if (b == 1)
+  } else if (b == 1) {
     return mp_rat_copy(a, c);
+  }
 
   /* Since rationals are always stored in lowest terms, it is not necessary to
      reduce again when raising to an integer power. */
-  if ((res = mp_int_expt(MP_NUMER_P(a), b, MP_NUMER_P(c))) != MP_OK) return res;
+  if ((res = mp_int_expt(MP_NUMER_P(a), b, MP_NUMER_P(c))) != MP_OK) {
+    return res;
+  }
 
   return mp_int_expt(MP_DENOM_P(a), b, MP_DENOM_P(c));
 }
@@ -340,27 +381,30 @@ int mp_rat_compare(mp_rat a, mp_rat b) {
   /* Quick check for opposite signs.  Works because the sign of the numerator
      is always definitive. */
   if (MP_SIGN(MP_NUMER_P(a)) != MP_SIGN(MP_NUMER_P(b))) {
-    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS)
+    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS) {
       return 1;
-    else
+    } else {
       return -1;
+    }
   } else {
     /* Compare absolute magnitudes; if both are positive, the answer stands,
        otherwise it needs to be reflected about zero. */
     int cmp = mp_rat_compare_unsigned(a, b);
 
-    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS)
+    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS) {
       return cmp;
-    else
+    } else {
       return -cmp;
+    }
   }
 }
 
 int mp_rat_compare_unsigned(mp_rat a, mp_rat b) {
   /* If the denominators are equal, we can quickly compare numerators without
      multiplying.  Otherwise, we actually have to do some work. */
-  if (mp_int_compare_unsigned(MP_DENOM_P(a), MP_DENOM_P(b)) == 0)
+  if (mp_int_compare_unsigned(MP_DENOM_P(a), MP_DENOM_P(b)) == 0) {
     return mp_int_compare_unsigned(MP_NUMER_P(a), MP_NUMER_P(b));
+  }
 
   else {
     mpz_t temp[2];
@@ -372,13 +416,16 @@ int mp_rat_compare_unsigned(mp_rat a, mp_rat b) {
     SETUP(mp_int_init_copy(TEMP(last), MP_NUMER_P(b)), last);
 
     if ((res = mp_int_mul(TEMP(0), MP_DENOM_P(b), TEMP(0))) != MP_OK ||
-        (res = mp_int_mul(TEMP(1), MP_DENOM_P(a), TEMP(1))) != MP_OK)
+        (res = mp_int_mul(TEMP(1), MP_DENOM_P(a), TEMP(1))) != MP_OK) {
       goto CLEANUP;
+    }
 
     cmp = mp_int_compare_unsigned(TEMP(0), TEMP(1));
 
   CLEANUP:
-    while (--last >= 0) mp_int_clear(TEMP(last));
+    while (--last >= 0) {
+      mp_int_clear(TEMP(last));
+    }
 
     return cmp;
   }
@@ -391,8 +438,12 @@ int mp_rat_compare_value(mp_rat r, mp_small n, mp_small d) {
   mp_result res;
   int out = INT_MAX;
 
-  if ((res = mp_rat_init(&tmp)) != MP_OK) return out;
-  if ((res = mp_rat_set_value(&tmp, n, d)) != MP_OK) goto CLEANUP;
+  if ((res = mp_rat_init(&tmp)) != MP_OK) {
+    return out;
+  }
+  if ((res = mp_rat_set_value(&tmp, n, d)) != MP_OK) {
+    goto CLEANUP;
+  }
 
   out = mp_rat_compare(r, &tmp);
 
@@ -408,7 +459,9 @@ int mp_rat_is_integer(mp_rat r) {
 mp_result mp_rat_to_ints(mp_rat r, mp_small *num, mp_small *den) {
   mp_result res;
 
-  if ((res = mp_int_to_int(MP_NUMER_P(r), num)) != MP_OK) return res;
+  if ((res = mp_int_to_int(MP_NUMER_P(r), num)) != MP_OK) {
+    return res;
+  }
 
   res = mp_int_to_int(MP_DENOM_P(r), den);
   return res;
@@ -421,11 +474,14 @@ mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit) {
 
   /* Write the numerator.  The sign of the rational number is written by the
      underlying integer implementation. */
-  if ((res = mp_int_to_string(MP_NUMER_P(r), radix, str, limit)) != MP_OK)
+  if ((res = mp_int_to_string(MP_NUMER_P(r), radix, str, limit)) != MP_OK) {
     return res;
+  }
 
   /* If the value is zero, don't bother writing any denominator */
-  if (mp_int_compare_zero(MP_NUMER_P(r)) == 0) return MP_OK;
+  if (mp_int_compare_zero(MP_NUMER_P(r)) == 0) {
+    return MP_OK;
+  }
 
   /* Locate the end of the numerator, and make sure we are not going to exceed
      the limit by writing a slash. */
@@ -437,8 +493,7 @@ mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit) {
   *start++ = '/';
   limit -= 1;
 
-  res = mp_int_to_string(MP_DENOM_P(r), radix, start, limit);
-  return res;
+  return mp_int_to_string(MP_DENOM_P(r), radix, start, limit);
 }
 
 mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
@@ -455,8 +510,9 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
   /* Get the unsigned integer part by dividing denominator into the absolute
      value of the numerator. */
   mp_int_abs(TEMP(0), TEMP(0));
-  if ((res = mp_int_div(TEMP(0), MP_DENOM_P(r), TEMP(0), TEMP(1))) != MP_OK)
+  if ((res = mp_int_div(TEMP(0), MP_DENOM_P(r), TEMP(0), TEMP(1))) != MP_OK) {
     goto CLEANUP;
+  }
 
   /* Now:  T0 = integer portion, unsigned;
            T1 = remainder, from which fractional part is computed. */
@@ -464,19 +520,24 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
   /* Count up leading zeroes after the radix point. */
   for (lead_0 = 0; lead_0 < prec && mp_int_compare(TEMP(1), MP_DENOM_P(r)) < 0;
        ++lead_0) {
-    if ((res = mp_int_mul_value(TEMP(1), radix, TEMP(1))) != MP_OK)
+    if ((res = mp_int_mul_value(TEMP(1), radix, TEMP(1))) != MP_OK) {
       goto CLEANUP;
+    }
   }
 
   /* Multiply remainder by a power of the radix sufficient to get the right
      number of significant figures. */
   if (prec > lead_0) {
-    if ((res = mp_int_expt_value(radix, prec - lead_0, TEMP(2))) != MP_OK)
+    if ((res = mp_int_expt_value(radix, prec - lead_0, TEMP(2))) != MP_OK) {
       goto CLEANUP;
-    if ((res = mp_int_mul(TEMP(1), TEMP(2), TEMP(1))) != MP_OK) goto CLEANUP;
+    }
+    if ((res = mp_int_mul(TEMP(1), TEMP(2), TEMP(1))) != MP_OK) {
+      goto CLEANUP;
+    }
   }
-  if ((res = mp_int_div(TEMP(1), MP_DENOM_P(r), TEMP(1), TEMP(2))) != MP_OK)
+  if ((res = mp_int_div(TEMP(1), MP_DENOM_P(r), TEMP(1), TEMP(2))) != MP_OK) {
     goto CLEANUP;
+  }
 
   /* Now:  T1 = significant digits of fractional part;
            T2 = leftovers, to use for rounding.
@@ -489,26 +550,30 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
 
     case MP_ROUND_UP:
       if (mp_int_compare_zero(TEMP(2)) != 0) {
-        if (prec == 0)
+        if (prec == 0) {
           res = mp_int_add_value(TEMP(0), 1, TEMP(0));
-        else
+        } else {
           res = mp_int_add_value(TEMP(1), 1, TEMP(1));
+        }
       }
       break;
 
     case MP_ROUND_HALF_UP:
     case MP_ROUND_HALF_DOWN:
-      if ((res = mp_int_mul_pow2(TEMP(2), 1, TEMP(2))) != MP_OK) goto CLEANUP;
+      if ((res = mp_int_mul_pow2(TEMP(2), 1, TEMP(2))) != MP_OK) {
+        goto CLEANUP;
+      }
 
       cmp = mp_int_compare(TEMP(2), MP_DENOM_P(r));
 
       if (round == MP_ROUND_HALF_UP) cmp += 1;
 
       if (cmp > 0) {
-        if (prec == 0)
+        if (prec == 0) {
           res = mp_int_add_value(TEMP(0), 1, TEMP(0));
-        else
+        } else {
           res = mp_int_add_value(TEMP(1), 1, TEMP(1));
+        }
       }
       break;
 
@@ -528,8 +593,9 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
     left -= 1;
   }
 
-  if ((res = mp_int_to_string(TEMP(0), radix, start, left)) != MP_OK)
+  if ((res = mp_int_to_string(TEMP(0), radix, start, left)) != MP_OK) {
     goto CLEANUP;
+  }
 
   len = strlen(start);
   start += len;
@@ -562,8 +628,9 @@ mp_result mp_rat_string_len(mp_rat r, mp_size radix) {
 
   n_len = mp_int_string_len(MP_NUMER_P(r), radix);
 
-  if (mp_int_compare_zero(MP_NUMER_P(r)) != 0)
+  if (mp_int_compare_zero(MP_NUMER_P(r)) != 0) {
     d_len = mp_int_string_len(MP_DENOM_P(r), radix);
+  }
 
   /* Though simplistic, this formula is correct.  Space for the sign flag is
      included in n_len, and the space for the NUL that is counted in n_len
@@ -578,10 +645,11 @@ mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec) {
 
   z_len = mp_int_string_len(MP_NUMER_P(r), radix);
 
-  if (prec == 0)
+  if (prec == 0) {
     f_len = 1; /* terminator only */
-  else
+  } else {
     f_len = 1 + prec + 1; /* decimal point, digits, terminator */
+  }
 
   return z_len + f_len;
 }
@@ -596,11 +664,14 @@ mp_result mp_rat_read_cstring(mp_rat r, mp_size radix, const char *str,
   char *endp;
 
   if ((res = mp_int_read_cstring(MP_NUMER_P(r), radix, str, &endp)) != MP_OK &&
-      (res != MP_TRUNC))
+      (res != MP_TRUNC)) {
     return res;
+  }
 
   /* Skip whitespace between numerator and (possible) separator */
-  while (isspace((unsigned char)*endp)) ++endp;
+  while (isspace((unsigned char)*endp)) {
+    ++endp;
+  }
 
   /* If there is no separator, we will stop reading at this point. */
   if (*endp != '/') {
@@ -610,11 +681,14 @@ mp_result mp_rat_read_cstring(mp_rat r, mp_size radix, const char *str,
   }
 
   ++endp; /* skip separator */
-  if ((res = mp_int_read_cstring(MP_DENOM_P(r), radix, endp, end)) != MP_OK)
+  if ((res = mp_int_read_cstring(MP_DENOM_P(r), radix, endp, end)) != MP_OK) {
     return res;
+  }
 
   /* Make sure the value is well-defined */
-  if (mp_int_compare_zero(MP_DENOM_P(r)) == 0) return MP_UNDEF;
+  if (mp_int_compare_zero(MP_DENOM_P(r)) == 0) {
+    return MP_UNDEF;
+  }
 
   /* Reduce to lowest terms */
   return s_rat_reduce(r);
@@ -665,8 +739,9 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
   }
 
   if ((res = mp_int_read_cstring(MP_NUMER_P(r), radix, str, &endp)) != MP_OK &&
-      (res != MP_TRUNC))
+      (res != MP_TRUNC)) {
     return res;
+  }
 
   /* This needs to be here. */
   (void)mp_int_set_value(MP_DENOM_P(r), 1);
@@ -698,11 +773,14 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
     int num_lz = 0;
 
     /* Make a temporary to hold the part after the decimal point. */
-    if ((res = mp_int_init(&frac)) != MP_OK) return res;
+    if ((res = mp_int_init(&frac)) != MP_OK) {
+      return res;
+    }
 
     if ((res = mp_int_read_cstring(&frac, radix, endp, &endp)) != MP_OK &&
-        (res != MP_TRUNC))
+        (res != MP_TRUNC)) {
       goto CLEANUP;
+    }
 
     /* Save this response for later. */
     save_res = res;
@@ -710,12 +788,16 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
     if (mp_int_compare_zero(&frac) == 0) goto FINISHED;
 
     /* Discard trailing zeroes (somewhat inefficiently) */
-    while (mp_int_divisible_value(&frac, radix))
-      if ((res = mp_int_div_value(&frac, radix, &frac, NULL)) != MP_OK)
+    while (mp_int_divisible_value(&frac, radix)) {
+      if ((res = mp_int_div_value(&frac, radix, &frac, NULL)) != MP_OK) {
         goto CLEANUP;
+      }
+    }
 
     /* Count leading zeros after the decimal point */
-    while (save[num_lz] == '0') ++num_lz;
+    while (save[num_lz] == '0') {
+      ++num_lz;
+    }
 
     /* Find the least power of the radix that is at least as large as the
        significant value of the fractional part, ignoring leading zeroes.  */
@@ -723,15 +805,17 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
 
     while (mp_int_compare(MP_DENOM_P(r), &frac) < 0) {
       if ((res = mp_int_mul_value(MP_DENOM_P(r), radix, MP_DENOM_P(r))) !=
-          MP_OK)
+          MP_OK) {
         goto CLEANUP;
+      }
     }
 
     /* Also shift by enough to account for leading zeroes */
     while (num_lz > 0) {
       if ((res = mp_int_mul_value(MP_DENOM_P(r), radix, MP_DENOM_P(r))) !=
-          MP_OK)
+          MP_OK) {
         goto CLEANUP;
+      }
 
       --num_lz;
     }
@@ -740,13 +824,15 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
        and add the nonzero significant digits of the fractional part to get the
        result. */
     if ((res = mp_int_mul(MP_NUMER_P(r), MP_DENOM_P(r), MP_NUMER_P(r))) !=
-        MP_OK)
+        MP_OK) {
       goto CLEANUP;
+    }
 
     { /* This addition needs to be unsigned. */
       MP_SIGN(MP_NUMER_P(r)) = MP_ZPOS;
-      if ((res = mp_int_add(MP_NUMER_P(r), &frac, MP_NUMER_P(r))) != MP_OK)
+      if ((res = mp_int_add(MP_NUMER_P(r), &frac, MP_NUMER_P(r))) != MP_OK) {
         goto CLEANUP;
+      }
 
       MP_SIGN(MP_NUMER_P(r)) = osign;
     }
@@ -782,20 +868,23 @@ static mp_result s_rat_reduce(mp_rat r) {
      than 1, divide it out. */
   if ((res = mp_int_init(&gcd)) != MP_OK) return res;
 
-  if ((res = mp_int_gcd(MP_NUMER_P(r), MP_DENOM_P(r), &gcd)) != MP_OK)
+  if ((res = mp_int_gcd(MP_NUMER_P(r), MP_DENOM_P(r), &gcd)) != MP_OK) {
     goto CLEANUP;
+  }
 
   if (mp_int_compare_value(&gcd, 1) != 0) {
-    if ((res = mp_int_div(MP_NUMER_P(r), &gcd, MP_NUMER_P(r), NULL)) != MP_OK)
+    if ((res = mp_int_div(MP_NUMER_P(r), &gcd, MP_NUMER_P(r), NULL)) != MP_OK) {
       goto CLEANUP;
-    if ((res = mp_int_div(MP_DENOM_P(r), &gcd, MP_DENOM_P(r), NULL)) != MP_OK)
+    }
+    if ((res = mp_int_div(MP_DENOM_P(r), &gcd, MP_DENOM_P(r), NULL)) != MP_OK) {
       goto CLEANUP;
+    }
   }
 
   /* Fix up the signs of numerator and denominator */
-  if (MP_SIGN(MP_NUMER_P(r)) == MP_SIGN(MP_DENOM_P(r)))
+  if (MP_SIGN(MP_NUMER_P(r)) == MP_SIGN(MP_DENOM_P(r))) {
     MP_SIGN(MP_NUMER_P(r)) = MP_SIGN(MP_DENOM_P(r)) = MP_ZPOS;
-  else {
+  } else {
     MP_SIGN(MP_NUMER_P(r)) = MP_NEG;
     MP_SIGN(MP_DENOM_P(r)) = MP_ZPOS;
   }
@@ -812,9 +901,13 @@ static mp_result s_rat_combine(mp_rat a, mp_rat b, mp_rat c,
 
   /* Shortcut when denominators are already common */
   if (mp_int_compare(MP_DENOM_P(a), MP_DENOM_P(b)) == 0) {
-    if ((res = (comb_f)(MP_NUMER_P(a), MP_NUMER_P(b), MP_NUMER_P(c))) != MP_OK)
+    if ((res = (comb_f)(MP_NUMER_P(a), MP_NUMER_P(b), MP_NUMER_P(c))) !=
+        MP_OK) {
       return res;
-    if ((res = mp_int_copy(MP_DENOM_P(a), MP_DENOM_P(c))) != MP_OK) return res;
+    }
+    if ((res = mp_int_copy(MP_DENOM_P(a), MP_DENOM_P(c))) != MP_OK) {
+      return res;
+    }
 
     return s_rat_reduce(c);
   } else {
@@ -824,22 +917,28 @@ static mp_result s_rat_combine(mp_rat a, mp_rat b, mp_rat c,
     SETUP(mp_int_init_copy(TEMP(last), MP_NUMER_P(a)), last);
     SETUP(mp_int_init_copy(TEMP(last), MP_NUMER_P(b)), last);
 
-    if ((res = mp_int_mul(TEMP(0), MP_DENOM_P(b), TEMP(0))) != MP_OK)
+    if ((res = mp_int_mul(TEMP(0), MP_DENOM_P(b), TEMP(0))) != MP_OK) {
       goto CLEANUP;
-    if ((res = mp_int_mul(TEMP(1), MP_DENOM_P(a), TEMP(1))) != MP_OK)
+    }
+    if ((res = mp_int_mul(TEMP(1), MP_DENOM_P(a), TEMP(1))) != MP_OK) {
       goto CLEANUP;
-    if ((res = (comb_f)(TEMP(0), TEMP(1), MP_NUMER_P(c))) != MP_OK)
+    }
+    if ((res = (comb_f)(TEMP(0), TEMP(1), MP_NUMER_P(c))) != MP_OK) {
       goto CLEANUP;
+    }
 
     res = mp_int_mul(MP_DENOM_P(a), MP_DENOM_P(b), MP_DENOM_P(c));
 
   CLEANUP:
-    while (--last >= 0) mp_int_clear(TEMP(last));
+    while (--last >= 0) {
+      mp_int_clear(TEMP(last));
+    }
 
-    if (res == MP_OK)
+    if (res == MP_OK) {
       return s_rat_reduce(c);
-    else
+    } else {
       return res;
+    }
   }
 }
 

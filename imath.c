@@ -365,12 +365,13 @@ mp_int mp_int_alloc(void) {
 mp_result mp_int_init_size(mp_int z, mp_size prec) {
   CHECK(z != NULL);
 
-  if (prec == 0)
+  if (prec == 0) {
     prec = default_precision;
-  else if (prec == 1)
+  } else if (prec == 1) {
     return mp_int_init(z);
-  else
+  } else {
     prec = (mp_size)ROUND_PREC(prec);
+  }
 
   if ((MP_DIGITS(z) = s_alloc(prec)) == NULL) return MP_MEMORY;
 
@@ -723,10 +724,11 @@ mp_result mp_int_mul_pow2(mp_int a, mp_small p2, mp_int c) {
 
   if ((res = mp_int_copy(a, c)) != MP_OK) return res;
 
-  if (s_qmul(c, (mp_size)p2))
+  if (s_qmul(c, (mp_size)p2)) {
     return MP_OK;
-  else
+  } else {
     return MP_MEMORY;
+  }
 }
 
 mp_result mp_int_sqr(mp_int a, mp_int c) {
@@ -776,9 +778,9 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
 
   CHECK(a != NULL && b != NULL && q != r);
 
-  if (CMPZ(b) == 0)
+  if (CMPZ(b) == 0) {
     return MP_UNDEF;
-  else if ((cmp = s_ucmp(a, b)) < 0) {
+  } else if ((cmp = s_ucmp(a, b)) < 0) {
     /* If |a| < |b|, no division is required:
        q = 0, r = a
      */
@@ -809,20 +811,22 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
    */
   if ((lg = s_isp2(b)) < 0) {
     if (q && b != q) {
-      if ((res = mp_int_copy(a, q)) != MP_OK)
+      if ((res = mp_int_copy(a, q)) != MP_OK) {
         goto CLEANUP;
-      else
+      } else {
         qout = q;
+      }
     } else {
       qout = LAST_TEMP();
       SETUP(mp_int_init_copy(LAST_TEMP(), a));
     }
 
     if (r && a != r) {
-      if ((res = mp_int_copy(b, r)) != MP_OK)
+      if ((res = mp_int_copy(b, r)) != MP_OK) {
         goto CLEANUP;
-      else
+      } else {
         rout = r;
+      }
     } else {
       rout = LAST_TEMP();
       SETUP(mp_int_init_copy(LAST_TEMP(), b));
@@ -870,10 +874,11 @@ mp_result mp_int_mod(mp_int a, mp_int m, mp_int c) {
 
   if ((res = mp_int_div(a, m, NULL, out)) != MP_OK) goto CLEANUP;
 
-  if (CMPZ(out) < 0)
+  if (CMPZ(out) < 0) {
     res = mp_int_add(out, m, c);
-  else
+  } else {
     res = mp_int_copy(out, c);
+  }
 
 CLEANUP:
   if (out != c) mp_int_clear(&tmp);
@@ -903,10 +908,13 @@ mp_result mp_int_div_pow2(mp_int a, mp_small p2, mp_int q, mp_int r) {
 
   CHECK(a != NULL && p2 >= 0 && q != r);
 
-  if (q != NULL && (res = mp_int_copy(a, q)) == MP_OK) s_qdiv(q, (mp_size)p2);
+  if (q != NULL && (res = mp_int_copy(a, q)) == MP_OK) {
+    s_qdiv(q, (mp_size)p2);
+  }
 
-  if (res == MP_OK && r != NULL && (res = mp_int_copy(a, r)) == MP_OK)
+  if (res == MP_OK && r != NULL && (res = mp_int_copy(a, r)) == MP_OK) {
     s_qmod(r, (mp_size)p2);
+  }
 
   return res;
 }
@@ -1006,16 +1014,15 @@ int mp_int_compare(mp_int a, mp_int b) {
 
     /* If they're both zero or positive, the normal comparison applies; if both
        negative, the sense is reversed. */
-    if (sa == MP_ZPOS)
+    if (sa == MP_ZPOS) {
       return cmp;
-    else
+    } else {
       return -cmp;
-
+    }
+  } else if (sa == MP_ZPOS) {
+    return 1;
   } else {
-    if (sa == MP_ZPOS)
-      return 1;
-    else
-      return -1;
+    return -1;
   }
 }
 
@@ -1028,12 +1035,13 @@ int mp_int_compare_unsigned(mp_int a, mp_int b) {
 int mp_int_compare_zero(mp_int z) {
   NRCHECK(z != NULL);
 
-  if (MP_USED(z) == 1 && z->digits[0] == 0)
+  if (MP_USED(z) == 1 && z->digits[0] == 0) {
     return 0;
-  else if (MP_SIGN(z) == MP_ZPOS)
+  } else if (MP_SIGN(z) == MP_ZPOS) {
     return 1;
-  else
+  } else {
     return -1;
+  }
 }
 
 int mp_int_compare_value(mp_int z, mp_small value) {
@@ -1054,10 +1062,11 @@ int mp_int_compare_value(mp_int z, mp_small value) {
 int mp_int_compare_uvalue(mp_int z, mp_usmall uv) {
   CHECK(z != NULL);
 
-  if (MP_SIGN(z) == MP_NEG)
+  if (MP_SIGN(z) == MP_NEG) {
     return -1;
-  else
+  } else {
     return s_uvcmp(z, uv);
+  }
 }
 
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c) {
@@ -1163,9 +1172,13 @@ mp_result mp_int_invmod(mp_int a, mp_int m, mp_int c) {
 
   sa = MP_SIGN(a); /* need this for the result later */
 
-  for (last__ = 0; last__ < 2; ++last__) mp_int_init(LAST_TEMP());
+  for (last__ = 0; last__ < 2; ++last__) {
+    mp_int_init(LAST_TEMP());
+  }
 
-  if ((res = mp_int_egcd(a, m, TEMP(0), TEMP(1), NULL)) != MP_OK) goto CLEANUP;
+  if ((res = mp_int_egcd(a, m, TEMP(0), TEMP(1), NULL)) != MP_OK) {
+    goto CLEANUP;
+  }
 
   if (mp_int_compare_value(TEMP(0), 1) != 0) {
     res = MP_UNDEF;
@@ -1180,10 +1193,11 @@ mp_result mp_int_invmod(mp_int a, mp_int m, mp_int c) {
      have to subtract from the modulus.  Otherwise, the value is okay as it
      stands.
    */
-  if (sa == MP_NEG)
+  if (sa == MP_NEG) {
     res = mp_int_sub(m, TEMP(1), c);
-  else
+  } else {
     res = mp_int_copy(TEMP(1), c);
+  }
 
   CLEANUP_TEMP();
   return res;
@@ -1199,12 +1213,13 @@ mp_result mp_int_gcd(mp_int a, mp_int b, mp_int c) {
 
   ca = CMPZ(a);
   cb = CMPZ(b);
-  if (ca == 0 && cb == 0)
+  if (ca == 0 && cb == 0) {
     return MP_UNDEF;
-  else if (ca == 0)
+  } else if (ca == 0) {
     return mp_int_abs(b, c);
-  else if (cb == 0)
+  } else if (cb == 0) {
     return mp_int_abs(a, c);
+  }
 
   mp_int_init(&t);
   if ((res = mp_int_init_copy(&u, a)) != MP_OK) goto U;
@@ -1267,9 +1282,9 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
 
   ca = CMPZ(a);
   cb = CMPZ(b);
-  if (ca == 0 && cb == 0)
+  if (ca == 0 && cb == 0) {
     return MP_UNDEF;
-  else if (ca == 0) {
+  } else if (ca == 0) {
     if ((res = mp_int_abs(b, c)) != MP_OK) return res;
     mp_int_zero(x);
     (void)mp_int_set_value(y, 1);
@@ -1418,10 +1433,11 @@ mp_result mp_int_root(mp_int a, mp_small b, mp_int c) {
     return mp_int_copy(a, c);
   }
   if (MP_SIGN(a) == MP_NEG) {
-    if (b % 2 == 0)
+    if (b % 2 == 0) {
       return MP_UNDEF; /* root does not exist for negative a with even b */
-    else
+    } else {
       flips = 1;
+    }
   }
 
   SETUP(mp_int_init_copy(LAST_TEMP(), a));
@@ -1471,8 +1487,9 @@ mp_result mp_int_to_int(mp_int z, mp_small *out) {
   /* Make sure the value is representable as a small integer */
   sz = MP_SIGN(z);
   if ((sz == MP_ZPOS && mp_int_compare_value(z, MP_SMALL_MAX) > 0) ||
-      mp_int_compare_value(z, MP_SMALL_MIN) < 0)
+      mp_int_compare_value(z, MP_SMALL_MIN) < 0) {
     return MP_RANGE;
+  }
 
   uz = MP_USED(z);
   dz = MP_DIGITS(z) + uz - 1;
@@ -1498,8 +1515,9 @@ mp_result mp_int_to_uint(mp_int z, mp_usmall *out) {
 
   /* Make sure the value is representable as an unsigned small integer */
   sz = MP_SIGN(z);
-  if (sz == MP_NEG || mp_int_compare_uvalue(z, MP_USMALL_MAX) > 0)
+  if (sz == MP_NEG || mp_int_compare_uvalue(z, MP_USMALL_MAX) > 0) {
     return MP_RANGE;
+  }
 
   uz = MP_USED(z);
   dz = MP_DIGITS(z) + uz - 1;
@@ -1559,10 +1577,11 @@ mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit) {
   }
 
   *str = '\0';
-  if (cmp == 0)
+  if (cmp == 0) {
     return MP_OK;
-  else
+  } else {
     return MP_TRUNC;
+  }
 }
 
 mp_result mp_int_string_len(mp_int z, mp_size radix) {
@@ -1633,10 +1652,11 @@ mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str,
 
   /* Return a truncation error if the string has unprocessed characters
      remaining, so the caller can tell if the whole string was done */
-  if (*str != '\0')
+  if (*str != '\0') {
     return MP_TRUNC;
-  else
+  } else {
     return MP_OK;
+  }
 }
 
 mp_result mp_int_count_bits(mp_int z) {
@@ -1770,10 +1790,11 @@ const char *mp_error_string(mp_result res) {
   for (ix = 0; ix < res && s_error_msg[ix] != NULL; ++ix)
     ;
 
-  if (s_error_msg[ix] != NULL)
+  if (s_error_msg[ix] != NULL) {
     return s_error_msg[ix];
-  else
+  } else {
     return s_unknown_err;
+  }
 }
 
 /*------------------------------------------------------------------------*/
@@ -1852,10 +1873,11 @@ STATIC int s_cdig(mp_digit *da, mp_digit *db, mp_size len) {
   mp_digit *dat = da + len - 1, *dbt = db + len - 1;
 
   for (/* */; len != 0; --len, --dat, --dbt) {
-    if (*dat > *dbt)
+    if (*dat > *dbt) {
       return 1;
-    else if (*dat < *dbt)
+    } else if (*dat < *dbt) {
       return -1;
+    }
   }
 
   return 0;
@@ -1880,12 +1902,13 @@ STATIC int s_uvpack(mp_usmall uv, mp_digit t[]) {
 STATIC int s_ucmp(mp_int a, mp_int b) {
   mp_size ua = MP_USED(a), ub = MP_USED(b);
 
-  if (ua > ub)
+  if (ua > ub) {
     return 1;
-  else if (ub > ua)
+  } else if (ub > ua) {
     return -1;
-  else
+  } else {
     return s_cdig(MP_DIGITS(a), MP_DIGITS(b), ua);
+  }
 }
 
 STATIC int s_vcmp(mp_int a, mp_small v) {
@@ -2257,7 +2280,9 @@ STATIC void s_qdiv(mp_int z, mp_size p2) {
     to = MP_DIGITS(z);
     from = to + ndig;
 
-    for (mark = ndig; mark < uz; ++mark) *to++ = *from++;
+    for (mark = ndig; mark < uz; ++mark) {
+      *to++ = *from++;
+    }
 
     MP_USED(z) = uz - ndig;
   }
@@ -2495,7 +2520,9 @@ STATIC int s_reduce(mp_int x, mp_int m, mp_int mu, mp_int q1, mp_int q2) {
      required at most twice.  */
   if (mp_int_compare(x, m) >= 0) {
     (void)mp_int_sub(x, m, x);
-    if (mp_int_compare(x, m) >= 0) (void)mp_int_sub(x, m, x);
+    if (mp_int_compare(x, m) >= 0) {
+      (void)mp_int_sub(x, m, x);
+    }
   }
 
   /* At this point, x has been properly reduced. */
@@ -2814,15 +2841,16 @@ STATIC int s_ch2val(char c, int r) {
 STATIC char s_val2ch(int v, int caps) {
   assert(v >= 0);
 
-  if (v < 10)
+  if (v < 10) {
     return v + '0';
-  else {
+  } else {
     char out = (v - 10) + 'a';
 
-    if (caps)
+    if (caps) {
       return toupper((unsigned char)out);
-    else
+    } else {
       return out;
+    }
   }
 }
 
@@ -2869,10 +2897,11 @@ STATIC mp_result s_tobin(mp_int z, unsigned char *buf, int *limpos, int pad) {
   }
 
   if (pad != 0 && (buf[pos - 1] >> (CHAR_BIT - 1))) {
-    if (pos < limit)
+    if (pos < limit) {
       buf[pos++] = 0;
-    else
+    } else {
       uz = 1;
+    }
   }
 
   /* Digits are in reverse order, fix that */
@@ -2890,8 +2919,9 @@ void s_print(char *tag, mp_int z) {
 
   fprintf(stderr, "%s: %c ", tag, (MP_SIGN(z) == MP_NEG) ? '-' : '+');
 
-  for (i = MP_USED(z) - 1; i >= 0; --i)
+  for (i = MP_USED(z) - 1; i >= 0; --i) {
     fprintf(stderr, "%0*X", (int)(MP_DIGIT_BIT / 4), z->digits[i]);
+  }
 
   fputc('\n', stderr);
 }
@@ -2901,8 +2931,9 @@ void s_print_buf(char *tag, mp_digit *buf, mp_size num) {
 
   fprintf(stderr, "%s: ", tag);
 
-  for (i = num - 1; i >= 0; --i)
+  for (i = num - 1; i >= 0; --i) {
     fprintf(stderr, "%0*X", (int)(MP_DIGIT_BIT / 4), buf[i]);
+  }
 
   fputc('\n', stderr);
 }
