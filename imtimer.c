@@ -199,13 +199,15 @@ double get_exptmod_time(int nt, int prec) {
 void mp_int_random(mp_int z, int prec) {
   int i;
 
-  if (prec > MP_ALLOC(z)) prec = MP_ALLOC(z);
+  if (prec > (int)MP_ALLOC(z)) prec = (int)MP_ALLOC(z);
 
   for (i = 0; i < prec; ++i) {
     mp_digit d = 0;
     int j;
 
-    for (j = 0; j < sizeof(d); ++j) d = (d << CHAR_BIT) | (rand() & UCHAR_MAX);
+    for (j = 0; j < (int)sizeof(d); ++j) {
+      d = (d << CHAR_BIT) | (rand() & UCHAR_MAX);
+    }
 
     z->digits[i] = d;
   }
