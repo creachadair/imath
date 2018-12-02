@@ -1729,11 +1729,9 @@ mp_result mp_int_read_binary(mp_int z, unsigned char *buf, int len) {
 
 mp_result mp_int_binary_len(mp_int z) {
   mp_result res = mp_int_count_bits(z);
-  int bytes = mp_int_unsigned_len(z);
 
   if (res <= 0) return res;
-
-  bytes = (res + (CHAR_BIT - 1)) / CHAR_BIT;
+  int bytes = mp_int_unsigned_len(z);
 
   /* If the highest-order bit falls exactly on a byte boundary, we need to pad
      with an extra byte so that the sign will be read correctly when reading it
