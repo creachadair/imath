@@ -204,17 +204,17 @@ int main(int argc, char *argv[]) {
 int process_file(FILE *ifp, FILE *ofp) {
   int res, line_num, test_num = 0, num_failed = 0, num_bogus = 0;
   clock_t start, finish;
-  testspec_t t;
 
   start = clock();
   while ((line_num = read_line(ifp, g_line, LINE_MAX)) != 0) {
+    testspec_t t;
+    t.line = line_num;
     if (parse_line(g_line, &t)) {
-      t.line = line_num;
-      if ((res = run_test(++test_num, &t, ofp)) < 0)
+      if ((res = run_test(++test_num, &t, ofp)) < 0) {
         ++num_bogus;
-      else if (!res)
+      } else if (!res) {
         ++num_failed;
-
+      }
       free_test(&t);
     } else {
       fprintf(stderr, "Line %d: Incorrect input syntax.\n", line_num);
@@ -282,9 +282,11 @@ int parse_line(char *line, testspec_t *t) {
 
   num_fields = count_fields(code_brk + 1, ',');
   t->num_inputs = num_fields;
+  t->input = NULL;
 
   num_fields = count_fields(in_brk + 1, ',');
   t->num_outputs = num_fields;
+  t->output = NULL;
 
   if (t->num_inputs > 0) {
     t->input = calloc(t->num_inputs, sizeof(char *));
