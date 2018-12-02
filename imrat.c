@@ -702,20 +702,16 @@ mp_result mp_rat_read_cstring(mp_rat r, mp_size radix, const char *str,
  */
 mp_result mp_rat_read_ustring(mp_rat r, mp_size radix, const char *str,
                               char **end) {
-  char *endp;
+  char *endp = "";
   mp_result res;
 
   if (radix == 0) radix = 10; /* default to decimal input */
 
-  if ((res = mp_rat_read_cstring(r, radix, str, &endp)) != MP_OK) {
-    if (res == MP_TRUNC) {
-      if (*endp == '.') res = mp_rat_read_cdecimal(r, radix, str, &endp);
-    } else
-      return res;
+  res = mp_rat_read_cstring(r, radix, str, &endp);
+  if (res == MP_TRUNC && *endp == '.') {
+    res = mp_rat_read_cdecimal(r, radix, str, &endp);
   }
-
   if (end != NULL) *end = endp;
-
   return res;
 }
 
