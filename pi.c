@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   if ((ndigits = abs(atoi(argv[1]))) == 0) {
     fprintf(stderr, "%s: you must request at least 1 digit\n", argv[0]);
     return 1;
-  } else if ((mp_digit)ndigits > MP_DIGIT_MAX) {
+  } else if ((mp_word)ndigits > MP_DIGIT_MAX) {
     fprintf(stderr, "%s: you may request at most %u digits\n", argv[0],
             (unsigned int)MP_DIGIT_MAX);
     return 1;
