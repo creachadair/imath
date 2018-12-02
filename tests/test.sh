@@ -12,7 +12,7 @@ if [ ! -f ../imtest ] ; then
 fi
 
 echo "-- Running all available unit tests"
-../imtest *.t | grep -v OK
+../imtest *.tc | grep -v OK
 
 echo ""
 echo "-- Running test to compute 1024 decimal digits of pi"
