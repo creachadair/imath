@@ -9,18 +9,13 @@ M. J. Fromberger <michael.j.fromberger+imath@gmail.com>
 
 ## Installation
 
-1. Edit Makefile to select compiler and options.  The default uses gcc.  If you
-   are building under MacOS 10.1.x, you will need to change CC to `cc` instead
-   of `gcc`, but otherwise you can use the default GCC settings.
- 
-   By default, the Makefile assumes you can use the "long long" integer type,
-   even though it is not standard in ANSI C90.  You can control this by setting
-   the USELLONG variable in your make command line.  Setting USELLONG=Y enables
-   "long long"; USELLONG=N disables it.  The default is Y.
+1. Edit Makefile to select compiler and options.  The default uses gcc.
+   You may want to change CC to `clang` instead of `gcc`, but you should be
+   able to use the default GCC settings either way.
 
-   If the built-in types do not work for your particular platform, you can try
-   to find suitable integer type sizes by running the Python program
-   `findsizes.py`.  This requires a Python interpreter, version 2.4.x or later.
+   By default, the Makefile assumes you can use 64-bit integer types, even
+   though they were not standard in ANSI C90. If not, add `-DUSE_32BIT_WORDS`
+   to the compiler options.
 
 2. Type `make` or `make test` to build the test driver and run the unit tests.
    None of these should fail.  If they do, see below for how you can report
@@ -83,7 +78,7 @@ entries is:
 return_type function_name(parameters ...)
             English description.
 ```
-			
+
 Unless otherwise noted, any API function that returns `mp_result` may be
 expected to return `MP_OK`, `MP_BADARG`, or `MP_MEMORY`.  Other return values
 should be documented in the description.  Please let me know if you discover
@@ -176,7 +171,7 @@ void      mp_int_zero(mp_int z);
           Sets z to zero.
 
 mp_result mp_int_abs(mp_int a, mp_int c);
-          Sets c to the absolute value of a. 
+          Sets c to the absolute value of a.
           If a < 0, c = -a, else c = a.
 
 mp_result mp_int_neg(mp_int a, mp_int c);
@@ -306,7 +301,7 @@ mp_result mp_int_exptmod_bvalue(mp_small v, mp_int b, mp_int m, mp_int c);
           algorithm has the restriction that a and m must be coprime, so I have
           not implemented it here.
 
-mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu, 
+mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu,
                                mp_int c);
           Efficiently computes c = a^b (mod m), given a precomputed reduction
           constant mu, as defined for Barrett's modular reduction algorithm.
@@ -371,7 +366,7 @@ mp_result mp_int_string_len(mp_int z, mp_size radix);
           Returns MP_RANGE if radix < MP_MIN_RADIX or radix > MP_MAX_RADIX.
 
 mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
-mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, 
+mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str,
                               char **end);
           Read a string of ASCII digits in the specified radix from the
           zero-terminated string provided, and assign z to the corresponding
@@ -592,7 +587,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
           supported:
 
           MP_ROUND_DOWN
-            Truncates the value toward zero.  
+            Truncates the value toward zero.
             Example:  12.009 to 2dp becomes 12.00
 
           MP_ROUND_UP
@@ -715,7 +710,7 @@ structure like this:
   mp_result res;              /* used for checking results      */
   ...
 
-  /* Initialization phase */ 
+  /* Initialization phase */
   SETUP(mp_int_init(TEMP(0)), last);
   SETUP(mp_int_init_copy(TEMP(1), x), last);
   ...
