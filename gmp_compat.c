@@ -648,8 +648,8 @@ unsigned long GMPZAPI(fdiv_q_ui)(mp_int q, mp_int n, unsigned long d) {
 /* gmp: mpz_export */
 void *GMPZAPI(export)(void *rop, size_t *countp, int order, size_t size,
                       int endian, size_t nails, mp_int op) {
-  int i, j;
-  int num_used_bytes;
+  size_t i, j;
+  size_t num_used_bytes;
   size_t num_words, num_missing_bytes;
   ssize_t word_offset;
   unsigned char *dst;
@@ -735,7 +735,7 @@ void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size,
   const unsigned char *src;
   mp_digit *dst;
   int dst_bits;
-  int i, j;
+  size_t i, j;
   if (count == 0 || op == NULL) return;
 
   /* We do not have a complete implementation. Assert to ensure our
