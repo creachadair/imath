@@ -584,6 +584,9 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
     default:
       return MP_BADARG; /* Invalid rounding specifier */
   }
+  if (res != MP_OK) {
+    goto CLEANUP;
+  }
 
   /* The sign of the output should be the sign of the numerator, but if all the
      displayed digits will be zero due to the precision, a negative shouldn't
