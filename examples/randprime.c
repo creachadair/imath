@@ -207,7 +207,7 @@ mp_result find_prime(mp_int seed, FILE *fb) {
 }
 
 mp_result find_strong_prime(mp_int seed, FILE *fb) {
-  mp_result res;
+  mp_result res = MP_OK;
   mpz_t t;
 
   mp_int_init(&t);
