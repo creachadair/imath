@@ -417,3 +417,20 @@
 	15ba02a Fix warnings for signed/unsigned comparisons.
 	3556984 Style cleanup: Insert missing brackets.
 
+1.25
+	This version fixes several issues found by clang static analysis.
+	It also includes some additional follow-on cleanup tasks from the
+	previous release.
+
+	b5a73c4 Cleanup: Use .tc for test files instead of .t.
+	dc307ae Cleanup: Remove dead author URLs, SVN markers.
+	389a1be bug: Fix a memory leak in test_meta.
+	8fb98f7 bug: Fix a use of an uninitalized pointer.
+	fe0757a bug: Fix reads of uninitalized fields in free_test.
+	08fe765 bug: Fix a reachable null pointer indirection.
+	7b10453 bug: Remove a redundant initialization.
+	cebce44 bug: Fix various dead assignments.
+	ef36352 Remove the findsizes.py script.
+	eebfb85 Fix some more comparison-sign mismatches.
+	9abcf66 Cleanup: Update a stale reference to doc.txt in the README.
+	8ec696f Cleanup: Consolidate the USE_32BIT_WORDS macro sections.
