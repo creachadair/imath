@@ -434,3 +434,18 @@
 	eebfb85 Fix some more comparison-sign mismatches.
 	9abcf66 Cleanup: Update a stale reference to doc.txt in the README.
 	8ec696f Cleanup: Consolidate the USE_32BIT_WORDS macro sections.
+
+1.26
+	Another round of fixes. Notably the gmp-compat-test again works on
+	macOS, fixing https://github.com/creachadair/imath/issues/26.
+	Also, this release cleans up some more warnings and fixes some
+	missing #include paths.
+
+	2ea0fff gmp_compat: Fix warnings for mixed-sign comparisons.
+	2a41bae Fix DLL loading.
+	56c40f4 Make gmp-compat-test work again on macOS.
+	f163906 Comment out a vacuously true assertion.
+	667d90e gmp_compat: Ensure a definition of ssize_t is available.
+	6c6fdd8 Fix a vacuously meaningless comparison.
+	4dac16f Silence a warning about an uninitalized variable.
+	c6119c4 Include strings.h for strcasecmp.
