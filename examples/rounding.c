@@ -1,7 +1,7 @@
 /*
   Name:     rounding.c
   Purpose:  Demonstrates rounding modes.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Bugs:  The rounding mode can only be specified by value, not name.
 

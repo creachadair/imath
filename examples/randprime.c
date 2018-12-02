@@ -1,7 +1,7 @@
 /*
   Name:     randprime.c
   Purpose:  Generate a probable prime at random.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Usage:  randprime [-s] <bits> [<outfile>]
 

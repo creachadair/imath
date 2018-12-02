@@ -1,7 +1,7 @@
 /*
   Name:     imcalc.c
   Purpose:  Simple RPN calculator based on IMath library.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   This is a very simplistic RPN calculator that will let you test the features
   of the IMath built-in functions.

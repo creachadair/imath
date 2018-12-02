@@ -2,8 +2,7 @@
 ##
 ## Name:     findthreshold.py
 ## Purpose:  Find a good threshold for recursive multiplication.
-## Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
-## Info:     $Id: findthreshold.py 456 2006-08-16 14:24:06Z sting $
+## Author:   M. J. Fromberger
 ##
 ## This tool computes some timing statistics to help you select a suitable
 ## recursive multiplication breakpoint.  It uses the imtimer tool to run a

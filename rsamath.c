@@ -1,7 +1,7 @@
 /*
   Name:     rsamath.c
   Purpose:  Implements part of PKCS#1, v. 2.1, June 14, 2002 (RSA Labs)
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Copyright (C) 2002-2008 Michael J. Fromberger, All Rights Reserved.
 

@@ -1,7 +1,7 @@
 ##
 ## Name:     imath.py
 ## Purpose:  CTypes wrapper for IMath library.
-## Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+## Author:   M. J. Fromberger
 ## 
 
 import ctypes, ctypes.util, functools

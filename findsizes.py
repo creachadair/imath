@@ -2,7 +2,7 @@
 ##
 ## Name:     findsizes.py
 ## Purpose:  Find acceptable digit and word types for IMath.
-## Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+## Author:   M. J. Fromberger
 ##
 ##  Copyright (C) 2002-2008 Michael J. Fromberger, All Rights Reserved.
 ##

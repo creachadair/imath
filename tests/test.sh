@@ -2,7 +2,7 @@
 ## 
 ## Name:     test.sh
 ## Purpose:  Run test suites for IMath library.
-## Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+## Author:   M. J. Fromberger
 ##
 
 if [ ! -f ../imtest ] ; then

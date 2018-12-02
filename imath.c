@@ -1,7 +1,7 @@
 /*
   Name:     imath.c
   Purpose:  Arbitrary precision integer arithmetic routines.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Copyright (C) 2002-2007 Michael J. Fromberger, All Rights Reserved.
 

@@ -1,8 +1,7 @@
 /*
   Name:     basecvt.c
   Purpose:  Convert integers and rationals from one base to another.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
-  Info:     $Id: basecvt.c 635 2008-01-08 18:19:40Z sting $
+  Author:   M. J. Fromberger
 
   Copyright (C) 2004-2008 Michael J. Fromberger, All Rights Reserved.
 

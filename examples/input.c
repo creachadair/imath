@@ -1,10 +1,11 @@
 /*
-  input.c
+  Name:    input.c
+  Purpose: Basic I/O demo for IMath.
+  Author:  Michael J. Fromberger
 
-  Demonstrates basic input and output of arbitrary precision integers using
-  IMath.
+  This program demonstrates how to read and write arbitrary precision integers
+  using IMath.
 
-  by Michael J. Fromberger <http://spinning-yarns.org/michael/>
   Copyright (C) 2003-2008 Michael J. Fromberger, All Rights Reserved.
 
   Permission is hereby granted, free of charge, to any person obtaining a copy

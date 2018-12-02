@@ -1,7 +1,7 @@
 /*
   Name:     rsakey.c
   Purpose:  Generate keys for the RSA cryptosystem.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Usage:  rsakey [-e <expt>] <modbits> [<outfile>]
 

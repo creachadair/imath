@@ -1,7 +1,7 @@
 /*
   Name:     bintest.c
   Purpose:  Test driver for binary input/output formats from IMath.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Copyright (C) 2002-2008 Michael J. Fromberger, All Rights Reserved.
 

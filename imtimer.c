@@ -1,7 +1,7 @@
 /*
   Name:     imtimer.c
   Purpose:  Timing tests for the imath library.
-  Author:   M. J. Fromberger <http://spinning-yarns.org/michael/>
+  Author:   M. J. Fromberger
 
   Copyright (C) 2002-2008 Michael J. Fromberger, All Rights Reserved.
 
