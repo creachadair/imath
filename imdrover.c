@@ -1436,7 +1436,7 @@ int test_qtodec(testspec_t* t, FILE* ofp) {
 }
 
 int test_qrdec(testspec_t* t, FILE* ofp) {
-  mp_rat out[1], reg = g_qreg + 1;
+  mp_rat out[1] = {NULL}, reg = g_qreg + 1;
   long radix;
   mp_result expect;
 
