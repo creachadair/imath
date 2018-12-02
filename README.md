@@ -46,8 +46,9 @@ MIRACL, or the bignum library from OpenSSL.
 Programming with IMath
 ----------------------
 
-Detailed descriptions of the IMath API can be found in `doc.txt`.  However, the
-following is a brief synopsis of how to get started with some simple tasks.
+Detailed descriptions of the IMath API can be found in [doc.md](doc.md).
+However, the following is a brief synopsis of how to get started with some
+simple tasks.
 
 To do basic integer arithmetic, you must declare variables of type `mpz_t` in
 your program, and call the functions defined in `imath.h` to operate on them.
