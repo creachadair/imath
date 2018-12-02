@@ -1132,7 +1132,11 @@ int test_meta(testspec_t* t, FILE* ofp) {
     out = calloc(t->num_outputs, sizeof(mp_int));
   }
 
-  ACHECK(parse_int_values(t, in, out, &expect));
+  if (!parse_int_values(t, in, out, &expect)) {
+    if (in != NULL) free(in);
+    if (out != NULL) free(out);
+    FAIL(MP_BADARG);
+  }
 
   fprintf(ofp, "Test '%s' defined at line %d\n", t->code, t->line);
   fprintf(ofp, "Expected result: %d\n", expect);
@@ -1156,6 +1160,8 @@ int test_meta(testspec_t* t, FILE* ofp) {
 
     fprintf(ofp, " %2d.) %s\n", i + 1, g_output);
   }
+  if (in != NULL) free(in);
+  if (out != NULL) free(out);
   return 1;
 }
 
