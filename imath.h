@@ -45,9 +45,13 @@ typedef unsigned long      mp_usmall; /* must be an unsigned type */
 #ifdef USE_32BIT_WORDS
 typedef uint16_t           mp_digit;
 typedef uint32_t           mp_word;
+#  define MP_DIGIT_MAX   (UINT16_MAX * 1UL)
+#  define MP_WORD_MAX    (UINT32_MAX * 1UL)
 #else
 typedef uint32_t           mp_digit;
 typedef uint64_t           mp_word;
+#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
+#  define MP_WORD_MAX    (UINT64_MAX)
 #endif
 
 typedef struct mpz {
@@ -78,14 +82,6 @@ extern const mp_result MP_MINERR;
 #define MP_SMALL_MIN    LONG_MIN
 #define MP_SMALL_MAX    LONG_MAX
 #define MP_USMALL_MAX   ULONG_MAX
-
-#ifdef USE_32BIT_WORDS
-#  define MP_DIGIT_MAX   (UINT16_MAX * 1UL)
-#  define MP_WORD_MAX    (UINT32_MAX * 1UL)
-#else
-#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
-#  define MP_WORD_MAX    (UINT64_MAX)
-#endif
 
 #define MP_MIN_RADIX    2
 #define MP_MAX_RADIX    36
