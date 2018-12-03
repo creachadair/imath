@@ -45,7 +45,8 @@ TARGETS=imtest imtimer pi bintest $(REGRESSIONS)
 HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
 SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
-OTHER=LICENSE ChangeLog Makefile doc.md findthreshold.py imath.py
+OTHER=LICENSE ChangeLog Makefile doc.md \
+	findthreshold.py imath.py .dockerignore
 VPATH += examples
 EXAMPLES=basecvt findprime randprime imcalc input rounding rsakey
 
