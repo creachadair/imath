@@ -163,7 +163,7 @@ class mpz (mpz_t):
         check_ok(_lib.mp_int_neg(self, t))
         return t
 
-    def __sbs__(self):
+    def __abs__(self):
         t = mpz(self)
         check_ok(_lib.mp_int_abs(self, t))
         return t
