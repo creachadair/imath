@@ -100,9 +100,20 @@ rtest: rtest.o imath.o rsamath.o
 bintest: imath.o bintest.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-format:
+# Requires clang-format: https://clang.llvm.org/docs/ClangFormat.html
+format-c:
+	@ echo "Formatting C source files and headers ..."
 	find . -type f -name '*.h' -o -name '*.c' -print0 | \
-		 xargs -0 clang-format --style=Google -i
+		xargs -0 clang-format --style=Google -i
+
+# Requires yapf: pip install yapf
+format-py:
+	@ echo "Formatting Python source files ..."
+	find . -type f -name '*.py' -print0 | \
+		xargs -0 yapf --style=pep8 -i
+
+# Format source files.
+format: format-c format-py
 
 clean:
 	rm -f *.o *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
