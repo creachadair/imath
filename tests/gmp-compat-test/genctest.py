@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import sys
 import gmpapi
 from gmpapi import void
@@ -11,7 +11,7 @@ from gmpapi import charp
 from gmpapi import mpq_t
 
 
-class APITest:
+class APITest(object):
     def __init__(self, gmpapi):
         self.api = gmpapi
 
@@ -204,7 +204,7 @@ class APITest:
 
 class GMPTest(APITest):
     def __init__(self, gmpapi):
-        super().__init__(gmpapi)
+        super(GMPTest, self).__init__(gmpapi)
 
     def api_call_prefix(self, kind):
         if kind == mpz_t:
@@ -223,7 +223,7 @@ class GMPTest(APITest):
 
 class ImathTest(APITest):
     def __init__(self, gmpapi):
-        super().__init__(gmpapi)
+        super(ImathTest, self).__init__(gmpapi)
 
     def api_call_prefix(self, kind):
         if kind == mpz_t:

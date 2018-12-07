@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 
@@ -12,14 +12,11 @@ class CType:
 
 
 class GMPAPI:
-    def __init__(self,
-                 ret_ty,
-                 name,
-                 *params,
-                 out=[0],
-                 inout=[],
-                 mixed=False,
-                 custom=False):
+    def __init__(self, ret_ty, name, *params, **kw):
+        out = kw.get('out', [0])
+        inout = kw.get('inout', [])
+        mixed = kw.get('mixed', False)
+        custom = kw.get('custom', False)
         self.name = name
         self.ret_ty = ret_ty
         self.params = params

@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
+from __future__ import print_function
 
 import ctypes
 import random
@@ -48,9 +50,9 @@ def run_tests(test_file, options):
         for i in range(len(api.params)):
             param = api.params[i]
             if param == mpz_t:
-                call_args.append(bytes(input_args[i], "utf-8"))
+                call_args.append(bytes(input_args[i]).encode("utf-8"))
             elif param == mpq_t:
-                call_args.append(bytes(input_args[i], "utf-8"))
+                call_args.append(bytes(input_args[i]).encode("utf-8"))
             elif param == ulong:
                 call_args.append(ctypes.c_ulong(int(input_args[i])))
             elif param == ilong:
@@ -66,7 +68,7 @@ def run_tests(test_file, options):
                 if input_args[i] == "NULL":
                     call_args.append(ctypes.c_void_p(None))
                 else:
-                    call_args.append(bytes(input_args[i], "utf-8"))
+                    call_args.append(bytes(input_args[i]).encode("utf-8"))
             else:
                 raise RuntimeError("Unknown param type: {}".format(param))
 
