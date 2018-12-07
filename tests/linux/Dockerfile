@@ -6,6 +6,6 @@
 FROM alpine:3.8
 
 RUN apk add --no-cache build-base gcc make
-WORKDIR /build
+WORKDIR /imath
 ADD . .
-RUN make distclean test
+RUN make distclean test examples
