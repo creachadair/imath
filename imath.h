@@ -27,8 +27,9 @@
 #ifndef IMATH_H_
 #define IMATH_H_
 
-#include <stdint.h>
 #include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -143,7 +144,7 @@ int       mp_int_compare_value(mp_int z, mp_small v);    /* a <=> v  */
 int       mp_int_compare_uvalue(mp_int z, mp_usmall uv); /* a <=> uv */
 
 /* Returns true if v|a, false otherwise (including errors) */
-int       mp_int_divisible_value(mp_int a, mp_small v);
+bool      mp_int_divisible_value(mp_int a, mp_small v);
 
 /* Returns k >= 0 such that z = 2^k, if one exists; otherwise < 0 */
 int       mp_int_is_pow2(mp_int z);

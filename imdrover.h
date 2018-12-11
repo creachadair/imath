@@ -27,6 +27,7 @@
 #ifndef IMDROVER_H_
 #define IMDROVER_H_
 
+#include <stdbool.h>
 #include <stdio.h>
 
 typedef struct {
@@ -38,69 +39,69 @@ typedef struct {
   char **output;
 } testspec_t;
 
-typedef int (*test_f)(testspec_t *, FILE *);
+typedef bool (*test_f)(testspec_t *, FILE *);
 
 /* Call this once at the outset to set up test registers */
 void init_testing(void);
 void reset_registers(void);
 
 /* Integer tests, and general */
-int test_init(testspec_t* t, FILE* ofp);
-int test_set(testspec_t* t, FILE* ofp);
-int test_neg(testspec_t* t, FILE* ofp);
-int test_abs(testspec_t* t, FILE* ofp);
-int test_add(testspec_t* t, FILE* ofp);
-int test_sub(testspec_t* t, FILE* ofp);
-int test_mul(testspec_t* t, FILE* ofp);
-int test_mulp2(testspec_t* t, FILE* ofp);
-int test_mulv(testspec_t* t, FILE* ofp);
-int test_sqr(testspec_t* t, FILE* ofp);
-int test_div(testspec_t* t, FILE* ofp);
-int test_divp2(testspec_t* t, FILE* ofp);
-int test_divv(testspec_t* t, FILE* ofp);
-int test_expt(testspec_t* t, FILE* ofp);
-int test_exptv(testspec_t* t, FILE* ofp);
-int test_exptf(testspec_t* t, FILE* ofp);
-int test_mod(testspec_t* t, FILE* ofp);
-int test_gcd(testspec_t* t, FILE* ofp);
-int test_egcd(testspec_t* t, FILE* ofp);
-int test_lcm(testspec_t* t, FILE* ofp);
-int test_sqrt(testspec_t* t, FILE* ofp);
-int test_root(testspec_t* t, FILE* ofp);
-int test_invmod(testspec_t* t, FILE* ofp);
-int test_exptmod(testspec_t* t, FILE* ofp);
-int test_exptmod_ev(testspec_t* t, FILE* ofp);
-int test_exptmod_bv(testspec_t* t, FILE* ofp);
-int test_comp(testspec_t* t, FILE* ofp);
-int test_ucomp(testspec_t* t, FILE* ofp);
-int test_zcomp(testspec_t* t, FILE* ofp);
-int test_vcomp(testspec_t* t, FILE* ofp);
-int test_uvcomp(testspec_t* t, FILE* ofp);
-int test_tostr(testspec_t* t, FILE* ofp);
-int test_tobin(testspec_t* t, FILE* ofp);
-int test_to_int(testspec_t* t, FILE* ofp);
-int test_to_uint(testspec_t* t, FILE* ofp);
-int test_read_binary(testspec_t* t, FILE* ofp);
-int test_to_uns(testspec_t* t, FILE* ofp);
-int test_read_uns(testspec_t* t, FILE* ofp);
-int test_meta(testspec_t* t, FILE* ofp);
+bool test_init(testspec_t* t, FILE* ofp);
+bool test_set(testspec_t* t, FILE* ofp);
+bool test_neg(testspec_t* t, FILE* ofp);
+bool test_abs(testspec_t* t, FILE* ofp);
+bool test_add(testspec_t* t, FILE* ofp);
+bool test_sub(testspec_t* t, FILE* ofp);
+bool test_mul(testspec_t* t, FILE* ofp);
+bool test_mulp2(testspec_t* t, FILE* ofp);
+bool test_mulv(testspec_t* t, FILE* ofp);
+bool test_sqr(testspec_t* t, FILE* ofp);
+bool test_div(testspec_t* t, FILE* ofp);
+bool test_divp2(testspec_t* t, FILE* ofp);
+bool test_divv(testspec_t* t, FILE* ofp);
+bool test_expt(testspec_t* t, FILE* ofp);
+bool test_exptv(testspec_t* t, FILE* ofp);
+bool test_exptf(testspec_t* t, FILE* ofp);
+bool test_mod(testspec_t* t, FILE* ofp);
+bool test_gcd(testspec_t* t, FILE* ofp);
+bool test_egcd(testspec_t* t, FILE* ofp);
+bool test_lcm(testspec_t* t, FILE* ofp);
+bool test_sqrt(testspec_t* t, FILE* ofp);
+bool test_root(testspec_t* t, FILE* ofp);
+bool test_invmod(testspec_t* t, FILE* ofp);
+bool test_exptmod(testspec_t* t, FILE* ofp);
+bool test_exptmod_ev(testspec_t* t, FILE* ofp);
+bool test_exptmod_bv(testspec_t* t, FILE* ofp);
+bool test_comp(testspec_t* t, FILE* ofp);
+bool test_ucomp(testspec_t* t, FILE* ofp);
+bool test_zcomp(testspec_t* t, FILE* ofp);
+bool test_vcomp(testspec_t* t, FILE* ofp);
+bool test_uvcomp(testspec_t* t, FILE* ofp);
+bool test_tostr(testspec_t* t, FILE* ofp);
+bool test_tobin(testspec_t* t, FILE* ofp);
+bool test_to_int(testspec_t* t, FILE* ofp);
+bool test_to_uint(testspec_t* t, FILE* ofp);
+bool test_read_binary(testspec_t* t, FILE* ofp);
+bool test_to_uns(testspec_t* t, FILE* ofp);
+bool test_read_uns(testspec_t* t, FILE* ofp);
+bool test_meta(testspec_t* t, FILE* ofp);
 
 /* Rational tests */
-int test_qneg(testspec_t* t, FILE* ofp);
-int test_qrecip(testspec_t* t, FILE* ofp);
-int test_qabs(testspec_t* t, FILE* ofp);
-int test_qadd(testspec_t* t, FILE* ofp);
-int test_qsub(testspec_t* t, FILE* ofp);
-int test_qmul(testspec_t* t, FILE* ofp);
-int test_qdiv(testspec_t* t, FILE* ofp);
-int test_qdiv(testspec_t* t, FILE* ofp);
-int test_qaddz(testspec_t* t, FILE* ofp);
-int test_qsubz(testspec_t* t, FILE* ofp);
-int test_qmulz(testspec_t* t, FILE* ofp);
-int test_qdivz(testspec_t* t, FILE* ofp);
-int test_qexpt(testspec_t* t, FILE* ofp);
-int test_qtostr(testspec_t* t, FILE* ofp);
-int test_qtodec(testspec_t* t, FILE* ofp);
-int test_qrdec(testspec_t* t, FILE* ofp);
+bool test_qneg(testspec_t* t, FILE* ofp);
+bool test_qrecip(testspec_t* t, FILE* ofp);
+bool test_qabs(testspec_t* t, FILE* ofp);
+bool test_qadd(testspec_t* t, FILE* ofp);
+bool test_qsub(testspec_t* t, FILE* ofp);
+bool test_qmul(testspec_t* t, FILE* ofp);
+bool test_qdiv(testspec_t* t, FILE* ofp);
+bool test_qdiv(testspec_t* t, FILE* ofp);
+bool test_qaddz(testspec_t* t, FILE* ofp);
+bool test_qsubz(testspec_t* t, FILE* ofp);
+bool test_qmulz(testspec_t* t, FILE* ofp);
+bool test_qdivz(testspec_t* t, FILE* ofp);
+bool test_qexpt(testspec_t* t, FILE* ofp);
+bool test_qtostr(testspec_t* t, FILE* ofp);
+bool test_qtodec(testspec_t* t, FILE* ofp);
+bool test_qrdec(testspec_t* t, FILE* ofp);
 
 #endif /* IMDROVER_H_ */
