@@ -98,45 +98,42 @@ STATIC const double s_log2[] = {
 #define ROUND_PREC(P) ((mp_size)(2 * (((P) + 1) / 2)))
 
 /* Set array P of S digits to zero */
-#define ZERO(P, S)                        \
-  do {                                    \
-    mp_size i__ = (S) * sizeof(mp_digit); \
-    mp_digit *p__ = (P);                  \
-    memset(p__, 0, i__);                  \
-  } while (0)
+static inline void ZERO(mp_digit *P, mp_size S) {
+  mp_size i__ = S * sizeof(mp_digit);
+  mp_digit *p__ = P;
+  memset(p__, 0, i__);
+}
 
 /* Copy S digits from array P to array Q */
-#define COPY(P, Q, S)                     \
-  do {                                    \
-    mp_size i__ = (S) * sizeof(mp_digit); \
-    mp_digit *p__ = (P), *q__ = (Q);      \
-    memcpy(q__, p__, i__);                \
-  } while (0)
+static inline void COPY(mp_digit *P, mp_digit *Q, mp_size S) {
+  mp_size i__ = S * sizeof(mp_digit);
+  mp_digit *p__ = P;
+  mp_digit *q__ = Q;
+  memcpy(q__, p__, i__);
+}
 
-/* Reverse N elements of type T in array A */
-#define REV(T, A, N)               \
-  do {                             \
-    T *u_ = (A), *v_ = u_ + (N)-1; \
-    while (u_ < v_) {              \
-      T xch = *u_;                 \
-      *u_++ = *v_;                 \
-      *v_-- = xch;                 \
-    }                              \
-  } while (0)
+/* Reverse N elements of unsigned char in A. */
+static inline void REV(unsigned char *A, int N) {
+  unsigned char *u_ = A;
+  unsigned char *v_ = u_ + N - 1;
+  while (u_ < v_) {
+    unsigned char xch = *u_;
+    *u_++ = *v_;
+    *v_-- = xch;
+  }
+}
 
-#define CLAMP(Z)                             \
-  do {                                       \
-    mp_int z_ = (Z);                         \
-    mp_size uz_ = MP_USED(z_);               \
-    mp_digit *dz_ = MP_DIGITS(z_) + uz_ - 1; \
-    while (uz_ > 1 && (*dz_-- == 0)) --uz_;  \
-    MP_USED(z_) = uz_;                       \
-  } while (0)
+/* Strip leading zeroes from z_ in-place. */
+static inline void CLAMP(mp_int z_) {
+  mp_size uz_ = MP_USED(z_);
+  mp_digit *dz_ = MP_DIGITS(z_) + uz_ - 1;
+  while (uz_ > 1 && (*dz_-- == 0)) --uz_;
+  MP_USED(z_) = uz_;
+}
 
-/* Select min/max.  Do not provide expressions for which multiple
-   evaluation would be problematic, e.g. x++ */
-#define MIN(A, B) ((B) < (A) ? (B) : (A))
-#define MAX(A, B) ((B) > (A) ? (B) : (A))
+/* Select min/max. */
+static inline int MIN(int A, int B) { return (B < A ? B : A); }
+static inline mp_size MAX(mp_size A, mp_size B) { return (B > A ? B : A); }
 
 /* Exchange lvalues A and B of type T, e.g.
    SWAP(int, x, y) where x and y are variables of type int. */
@@ -163,36 +160,23 @@ STATIC const double s_log2[] = {
   } while (0)
 
 /* Compare value to zero. */
-#define CMPZ(Z) \
-  (((Z)->used == 1 && (Z)->digits[0] == 0) ? 0 : ((Z)->sign == MP_NEG) ? -1 : 1)
+static inline int CMPZ(mp_int Z) {
+  if (Z->used == 1 && Z->digits[0] == 0) return 0;
+  return (Z->sign == MP_NEG) ? -1 : 1;
+}
 
-/* Multiply X by Y into Z, ignoring signs.  Requires that Z have
-   enough storage preallocated to hold the result. */
-#define UMUL(X, Y, Z)                                                 \
-  do {                                                                \
-    mp_size ua_ = MP_USED(X), ub_ = MP_USED(Y);                       \
-    mp_size o_ = ua_ + ub_;                                           \
-    ZERO(MP_DIGITS(Z), o_);                                           \
-    (void)s_kmul(MP_DIGITS(X), MP_DIGITS(Y), MP_DIGITS(Z), ua_, ub_); \
-    MP_USED(Z) = o_;                                                  \
-    CLAMP(Z);                                                         \
-  } while (0)
+static inline mp_word UPPER_HALF(mp_word W) { return (W >> MP_DIGIT_BIT); }
+static inline mp_digit LOWER_HALF(mp_word W) { return (mp_digit)(W); }
 
-/* Square X into Z.  Requires that Z have enough storage to hold the
-   result. */
-#define USQR(X, Z)                                 \
-  do {                                             \
-    mp_size ua_ = MP_USED(X), o_ = ua_ + ua_;      \
-    ZERO(MP_DIGITS(Z), o_);                        \
-    (void)s_ksqr(MP_DIGITS(X), MP_DIGITS(Z), ua_); \
-    MP_USED(Z) = o_;                               \
-    CLAMP(Z);                                      \
-  } while (0)
+/* Report whether the highest-order bit of W is 1. */
+static inline bool HIGH_BIT_SET(mp_word W) {
+  return (W >> (MP_WORD_BIT - 1)) != 0;
+}
 
-#define UPPER_HALF(W) ((mp_word)((W) >> MP_DIGIT_BIT))
-#define LOWER_HALF(W) ((mp_digit)(W))
-#define HIGH_BIT_SET(W) ((W) >> (MP_WORD_BIT - 1))
-#define ADD_WILL_OVERFLOW(W, V) ((MP_WORD_MAX - (V)) < (W))
+/* Report whether adding W + V will carry out. */
+static inline bool ADD_WILL_OVERFLOW(mp_word W, mp_word V) {
+  return ((MP_WORD_MAX - V) < W);
+}
 
 /* Default number of digits allocated to a new mp_int */
 #if IMATH_TEST
@@ -335,6 +319,28 @@ STATIC void s_2comp(unsigned char *buf, int len);
    how many bytes should be written to buf; on output, *limpos is set to the
    number of bytes actually written. */
 STATIC mp_result s_tobin(mp_int z, unsigned char *buf, int *limpos, int pad);
+
+/* Multiply X by Y into Z, ignoring signs.  Requires that Z have enough storage
+   preallocated to hold the result. */
+static inline void UMUL(mp_int X, mp_int Y, mp_int Z) {
+  mp_size ua_ = MP_USED(X);
+  mp_size ub_ = MP_USED(Y);
+  mp_size o_ = ua_ + ub_;
+  ZERO(MP_DIGITS(Z), o_);
+  (void)s_kmul(MP_DIGITS(X), MP_DIGITS(Y), MP_DIGITS(Z), ua_, ub_);
+  MP_USED(Z) = o_;
+  CLAMP(Z);
+}
+
+/* Square X into Z.  Requires that Z have enough storage to hold the result. */
+static inline void USQR(mp_int X, mp_int Z) {
+  mp_size ua_ = MP_USED(X);
+  mp_size o_ = ua_ + ua_;
+  ZERO(MP_DIGITS(Z), o_);
+  (void)s_ksqr(MP_DIGITS(X), MP_DIGITS(Z), ua_);
+  MP_USED(Z) = o_;
+  CLAMP(Z);
+}
 
 #if DEBUG
 /* Dump a representation of the mp_int to standard output */
@@ -2901,7 +2907,7 @@ STATIC mp_result s_tobin(mp_int z, unsigned char *buf, int *limpos, int pad) {
   }
 
   /* Digits are in reverse order, fix that */
-  REV(unsigned char, buf, pos);
+  REV(buf, pos);
 
   /* Return the number of bytes actually written */
   *limpos = pos;
