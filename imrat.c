@@ -452,7 +452,7 @@ CLEANUP:
   return out;
 }
 
-int mp_rat_is_integer(mp_rat r) {
+bool mp_rat_is_integer(mp_rat r) {
   return (mp_int_compare_value(MP_DENOM_P(r), 1) == 0);
 }
 

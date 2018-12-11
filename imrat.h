@@ -27,6 +27,8 @@
 #ifndef IMRAT_H_
 #define IMRAT_H_
 
+#include <stdbool.h>
+
 #include "imath.h"
 
 #ifdef __cplusplus
@@ -84,7 +86,7 @@ int       mp_rat_compare(mp_rat a, mp_rat b);           /* a <=> b     */
 int       mp_rat_compare_unsigned(mp_rat a, mp_rat b);  /* |a| <=> |b| */
 int       mp_rat_compare_zero(mp_rat r);                /* r <=> 0     */
 int       mp_rat_compare_value(mp_rat r, mp_small n, mp_small d); /* r <=> n/d */
-int       mp_rat_is_integer(mp_rat r);
+bool      mp_rat_is_integer(mp_rat r);
 
 /* Convert to integers, if representable (returns MP_RANGE if not). */
 mp_result mp_rat_to_ints(mp_rat r, mp_small *num, mp_small *den);

@@ -38,7 +38,7 @@ mp_result imath_errno;
 char* imath_errmsg;
 
 /* Set imath_errno and return failure from a test. */
-#define FAIL(E) return (imath_errno = (E), 0)
+#define FAIL(E) return (imath_errno = (E), false)
 
 /* Check that an expression X yields the expected mp_result value V. */
 #define VCHECK(X, V)           \
@@ -74,23 +74,22 @@ static mp_result read_int_value(mp_int z, char* str);
 static mp_result read_rat_value(mp_rat q, char* str);
 
 /* Read in a string with radix tags, as a long (not an mp_int) */
-static int read_long(long* z, char* str);
+static bool read_long(long* z, char* str);
 
 /* Parse the input and output values and fill in pointers to the
    registers containing them.  Returns true if all is well, false
    in case of error.  Caller allocates in/out to correct sizes. */
-static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
-                            mp_result* rval);
-static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
-                            mp_result* rval);
+static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
+                             mp_result* rval);
+static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
+                             mp_result* rval);
 
-/* Parse a result code name and return the corresponding result
-   code */
-static int parse_result_code(char* str, mp_result* code);
+/* Parse a result code name and return the corresponding result code */
+static bool parse_result_code(char* str, mp_result* code);
 
-/* Read in a dot-delimited binary sequence to the given buffer, and
-   return the number of bytes read.  Returns < 0 in case of a syntax
-   error.  Records no more than limit bytes. */
+/* Read in a dot-delimited binary sequence to the given buffer, and return the
+   number of bytes read.  Returns < 0 in case of a syntax error.  Records no
+   more than limit bytes. */
 static int parse_binary(char* str, unsigned char* buf, int limit);
 
 /* Clean up registers (called from atexit()) */
@@ -165,7 +164,7 @@ static mp_result read_rat_value(mp_rat q, char* str) {
     return mp_rat_read_string(q, radix, str);
 }
 
-static int read_long(long* z, char* str) {
+static bool read_long(long* z, char* str) {
   char* end;
   int radix = 10;
 
@@ -189,7 +188,7 @@ static int read_long(long* z, char* str) {
         radix = 2;
         break;
       default:
-        return 0;
+        return false;
     }
     ++str;
   }
@@ -198,8 +197,8 @@ static int read_long(long* z, char* str) {
   return (end != str && *end == '\0');
 }
 
-static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
-                            mp_result* rval) {
+static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
+                             mp_result* rval) {
   int i, pos = 0;
   char* str;
 
@@ -217,7 +216,7 @@ static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
         if (k < 0 || k >= i) {
           fprintf(stderr, "Line %d: Invalid input back-reference [%s]\n",
                   t->line, str);
-          return 0;
+          return false;
         }
 
         in[i] = in[k];
@@ -226,7 +225,7 @@ static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
         if (read_int_value(reg, str) != MP_OK) {
           fprintf(stderr, "Line %d: Invalid input value [%s]\n", t->line, str);
-          return 0;
+          return false;
         }
 
         in[i] = reg;
@@ -248,11 +247,11 @@ static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
       if (!parse_result_code(str, &code)) {
         fprintf(stderr, "Line %d: Invalid result code [%s]\n", t->line, str);
-        return 0;
+        return false;
       } else if (rval == NULL) {
         fprintf(stderr, "Line %d: Result code not permitted here [%s]\n",
                 t->line, str);
-        return 0;
+        return false;
       } else
         *rval = code;
 
@@ -260,17 +259,17 @@ static int parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
       mp_int_zero(reg);
     } else if (out != NULL && read_int_value(reg, str) != MP_OK) {
       fprintf(stderr, "Line %d: Invalid output value [%s]\n", t->line, str);
-      return 0;
+      return false;
     }
 
     if (out != NULL) out[i] = reg;
   }
 
-  return 1;
+  return true;
 }
 
-static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
-                            mp_result* rval) {
+static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
+                             mp_result* rval) {
   int i, pos = 0;
   char* str;
 
@@ -288,7 +287,7 @@ static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
         if (k < 0 || k >= i) {
           fprintf(stderr, "Line %d: Invalid input back-reference [%s]\n",
                   t->line, str);
-          return 0;
+          return false;
         }
 
         in[i] = in[k];
@@ -297,7 +296,7 @@ static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
 
         if (read_rat_value(reg, str) != MP_OK) {
           fprintf(stderr, "Line %d: Invalid input value [%s]\n", t->line, str);
-          return 0;
+          return false;
         }
 
         in[i] = reg;
@@ -319,11 +318,11 @@ static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
 
       if (!parse_result_code(str, &code)) {
         fprintf(stderr, "Line %d: Invalid result code [%s]\n", t->line, str);
-        return 0;
+        return false;
       } else if (rval == NULL) {
         fprintf(stderr, "Line %d: Result code not permitted here [%s]\n",
                 t->line, str);
-        return 0;
+        return false;
       } else
         *rval = code;
 
@@ -331,49 +330,50 @@ static int parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
       mp_rat_zero(reg);
     } else if (out != NULL && read_rat_value(reg, str) != MP_OK) {
       fprintf(stderr, "Line %d: Invalid output value [%s]\n", t->line, str);
-      return 0;
+      return false;
     }
 
     if (out != NULL) out[i] = reg;
   }
 
-  return 1;
+  return true;
 }
 
-static int parse_result_code(char* str, mp_result* code) {
+static bool parse_result_code(char* str, mp_result* code) {
   if (str[0] == '$') {
     if (str[1] == '#') {
       long v;
 
-      if (!read_long(&v, str + 2)) return 0;
+      if (!read_long(&v, str + 2)) return false;
 
       *code = (mp_result)v;
     } else if (strcmp(str + 1, "MP_OK") == 0 ||
-               strcmp(str + 1, "MP_FALSE") == 0)
+               strcmp(str + 1, "MP_FALSE") == 0) {
       *code = MP_OK;
-    else if (strcmp(str + 1, "MP_TRUE") == 0)
+    } else if (strcmp(str + 1, "MP_TRUE") == 0) {
       *code = MP_TRUE;
-    else if (strcmp(str + 1, "MP_MEMORY") == 0)
+    } else if (strcmp(str + 1, "MP_MEMORY") == 0) {
       *code = MP_MEMORY;
-    else if (strcmp(str + 1, "MP_RANGE") == 0)
+    } else if (strcmp(str + 1, "MP_RANGE") == 0) {
       *code = MP_RANGE;
-    else if (strcmp(str + 1, "MP_UNDEF") == 0)
+    } else if (strcmp(str + 1, "MP_UNDEF") == 0) {
       *code = MP_UNDEF;
-    else if (strcmp(str + 1, "MP_TRUNC") == 0)
+    } else if (strcmp(str + 1, "MP_TRUNC") == 0) {
       *code = MP_TRUNC;
-    else if (strcmp(str + 1, "MP_ROUND_UP") == 0)
+    } else if (strcmp(str + 1, "MP_ROUND_UP") == 0) {
       *code = MP_ROUND_UP;
-    else if (strcmp(str + 1, "MP_ROUND_DOWN") == 0)
+    } else if (strcmp(str + 1, "MP_ROUND_DOWN") == 0) {
       *code = MP_ROUND_DOWN;
-    else if (strcmp(str + 1, "MP_ROUND_HALF_UP") == 0)
+    } else if (strcmp(str + 1, "MP_ROUND_HALF_UP") == 0) {
       *code = MP_ROUND_HALF_UP;
-    else if (strcmp(str + 1, "MP_ROUND_HALF_DOWN") == 0)
+    } else if (strcmp(str + 1, "MP_ROUND_HALF_DOWN") == 0) {
       *code = MP_ROUND_HALF_DOWN;
-    else
-      return 0;
+    } else {
+      return false;
+    }
   }
 
-  return 1;
+  return true;
 }
 
 static int parse_binary(char* str, unsigned char* buf, int limit) {
@@ -433,7 +433,7 @@ void reset_registers(void) {
   }
 }
 
-int test_init(testspec_t* t, FILE* ofp) {
+bool test_init(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_small v;
   mp_usmall uv;
@@ -454,10 +454,10 @@ int test_init(testspec_t* t, FILE* ofp) {
     FAIL(OTHER_ERROR);
   }
 
-  return 1;
+  return true;
 }
 
-int test_set(testspec_t* t, FILE* ofp) {
+bool test_set(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_small v;
   mp_usmall uv;
@@ -478,10 +478,10 @@ int test_set(testspec_t* t, FILE* ofp) {
     FAIL(OTHER_ERROR);
   }
 
-  return 1;
+  return true;
 }
 
-int test_neg(testspec_t* t, FILE* ofp) {
+bool test_neg(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_result expect;
 
@@ -493,10 +493,10 @@ int test_neg(testspec_t* t, FILE* ofp) {
     FAIL(OTHER_ERROR);
   }
 
-  return 1;
+  return true;
 }
 
-int test_abs(testspec_t* t, FILE* ofp) {
+bool test_abs(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_result expect;
 
@@ -508,10 +508,10 @@ int test_abs(testspec_t* t, FILE* ofp) {
     FAIL(OTHER_ERROR);
   }
 
-  return 1;
+  return true;
 }
 
-int test_add(testspec_t* t, FILE* ofp) {
+bool test_add(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_small v;
   mp_result expect;
@@ -530,10 +530,10 @@ int test_add(testspec_t* t, FILE* ofp) {
     FAIL(OTHER_ERROR);
   }
 
-  return 1;
+  return true;
 }
 
-int test_sub(testspec_t* t, FILE* ofp) {
+bool test_sub(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_small v;
   mp_result expect;
@@ -551,10 +551,10 @@ int test_sub(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_mul(testspec_t* t, FILE* ofp) {
+bool test_mul(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -565,10 +565,10 @@ int test_mul(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_mulp2(testspec_t* t, FILE* ofp) {
+bool test_mulp2(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
   mp_small p2;
@@ -581,10 +581,10 @@ int test_mulp2(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_mulv(testspec_t* t, FILE* ofp) {
+bool test_mulv(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
   mp_small v;
@@ -597,10 +597,10 @@ int test_mulv(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_sqr(testspec_t* t, FILE* ofp) {
+bool test_sqr(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_result expect;
 
@@ -611,10 +611,10 @@ int test_sqr(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[1], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_div(testspec_t* t, FILE* ofp) {
+bool test_div(testspec_t* t, FILE* ofp) {
   mp_int in[4], out[2];
   mp_result expect;
 
@@ -632,10 +632,10 @@ int test_div(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[3], 10, str, OUTPUT_LIMIT - (len + 1));
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_divp2(testspec_t* t, FILE* ofp) {
+bool test_divp2(testspec_t* t, FILE* ofp) {
   mp_int in[4], out[2];
   mp_result expect;
   mp_small p2;
@@ -655,10 +655,10 @@ int test_divp2(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[3], 10, str, OUTPUT_LIMIT - (len + 1));
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_divv(testspec_t* t, FILE* ofp) {
+bool test_divv(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[2];
   mp_result expect;
   mp_small v, rem, orem;
@@ -678,10 +678,10 @@ int test_divv(testspec_t* t, FILE* ofp) {
     sprintf(str, "%ld", rem);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_expt(testspec_t* t, FILE* ofp) {
+bool test_expt(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
   mp_small pow;
@@ -694,10 +694,10 @@ int test_expt(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_exptv(testspec_t* t, FILE* ofp) {
+bool test_exptv(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
   mp_small a, b;
@@ -711,10 +711,10 @@ int test_exptv(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_exptf(testspec_t* t, FILE* ofp) {
+bool test_exptf(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -725,10 +725,10 @@ int test_exptf(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_mod(testspec_t* t, FILE* ofp) {
+bool test_mod(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -739,10 +739,10 @@ int test_mod(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_gcd(testspec_t* t, FILE* ofp) {
+bool test_gcd(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -753,10 +753,10 @@ int test_gcd(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_egcd(testspec_t* t, FILE* ofp) {
+bool test_egcd(testspec_t* t, FILE* ofp) {
   mp_int in[5], out[3], t1 = g_zreg + 8, t2 = g_zreg + 9;
   mp_result expect;
 
@@ -764,7 +764,7 @@ int test_egcd(testspec_t* t, FILE* ofp) {
   ECHECK(mp_int_egcd(in[0], in[1], in[2], in[3], in[4]));
 
   /* If we got an error we expected, return success immediately */
-  if (expect != MP_OK) return 1;
+  if (expect != MP_OK) return true;
 
   if ((mp_int_compare(in[2], out[0]) != 0) ||
       (mp_int_compare(in[3], out[1]) != 0) ||
@@ -778,7 +778,7 @@ int test_egcd(testspec_t* t, FILE* ofp) {
     mp_int_mul(in[3], in[0], t1);
     mp_int_mul(in[4], in[1], t2);
     mp_int_add(t1, t2, t2);
-    if (mp_int_compare(t2, in[2]) == 0) return 1;
+    if (mp_int_compare(t2, in[2]) == 0) return true;
 
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     str = g_output + (len = strlen(g_output));
@@ -789,10 +789,10 @@ int test_egcd(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[4], 10, str, OUTPUT_LIMIT - (len + len2 + 2));
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_lcm(testspec_t* t, FILE* ofp) {
+bool test_lcm(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -803,10 +803,10 @@ int test_lcm(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_sqrt(testspec_t* t, FILE* ofp) {
+bool test_sqrt(testspec_t* t, FILE* ofp) {
   mp_int in[2], out[1];
   mp_result expect;
 
@@ -817,10 +817,10 @@ int test_sqrt(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[1], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_root(testspec_t* t, FILE* ofp) {
+bool test_root(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_small v;
   mp_result expect;
@@ -833,10 +833,10 @@ int test_root(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_invmod(testspec_t* t, FILE* ofp) {
+bool test_invmod(testspec_t* t, FILE* ofp) {
   mp_int in[3], out[1];
   mp_result expect;
 
@@ -847,10 +847,10 @@ int test_invmod(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_exptmod(testspec_t* t, FILE* ofp) {
+bool test_exptmod(testspec_t* t, FILE* ofp) {
   mp_int in[4], out[1];
   mp_result expect;
 
@@ -861,10 +861,10 @@ int test_exptmod(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[3], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_exptmod_ev(testspec_t* t, FILE* ofp) {
+bool test_exptmod_ev(testspec_t* t, FILE* ofp) {
   mp_int in[4], out[1];
   mp_result expect;
   mp_small v;
@@ -877,10 +877,10 @@ int test_exptmod_ev(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[3], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_exptmod_bv(testspec_t* t, FILE* ofp) {
+bool test_exptmod_bv(testspec_t* t, FILE* ofp) {
   mp_int in[4], out[1];
   mp_result expect;
   mp_small v;
@@ -893,10 +893,10 @@ int test_exptmod_bv(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in[3], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_comp(testspec_t* t, FILE* ofp) {
+bool test_comp(testspec_t* t, FILE* ofp) {
   mp_int in[2];
   mp_result res, expect;
 
@@ -907,10 +907,10 @@ int test_comp(testspec_t* t, FILE* ofp) {
             res);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_ucomp(testspec_t* t, FILE* ofp) {
+bool test_ucomp(testspec_t* t, FILE* ofp) {
   mp_int in[2];
   mp_result res, expect;
 
@@ -921,10 +921,10 @@ int test_ucomp(testspec_t* t, FILE* ofp) {
             res);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_zcomp(testspec_t* t, FILE* ofp) {
+bool test_zcomp(testspec_t* t, FILE* ofp) {
   mp_int in[1];
   mp_result res, expect;
 
@@ -935,10 +935,10 @@ int test_zcomp(testspec_t* t, FILE* ofp) {
             res);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_vcomp(testspec_t* t, FILE* ofp) {
+bool test_vcomp(testspec_t* t, FILE* ofp) {
   mp_int in[2];
   mp_result res, expect;
   mp_small v;
@@ -951,10 +951,10 @@ int test_vcomp(testspec_t* t, FILE* ofp) {
             res);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_uvcomp(testspec_t* t, FILE* ofp) {
+bool test_uvcomp(testspec_t* t, FILE* ofp) {
   mp_int in[2];
   mp_result res, expect;
   mp_usmall v;
@@ -967,10 +967,10 @@ int test_uvcomp(testspec_t* t, FILE* ofp) {
             res);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_tostr(testspec_t* t, FILE* ofp) {
+bool test_tostr(testspec_t* t, FILE* ofp) {
   mp_int in[2];
   mp_small radix;
   mp_result len;
@@ -987,10 +987,10 @@ int test_tostr(testspec_t* t, FILE* ofp) {
 
   if (strcmp(t->output[0], g_output) != 0) FAIL(OTHER_ERROR);
 
-  return 1;
+  return true;
 }
 
-int test_tobin(testspec_t* t, FILE* ofp) {
+bool test_tobin(testspec_t* t, FILE* ofp) {
   mp_int in[1];
   int test_len, out_len;
 
@@ -1017,10 +1017,10 @@ int test_tobin(testspec_t* t, FILE* ofp) {
     sprintf(g_output + pos, "%d", g_bin2[i]);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_to_int(testspec_t* t, FILE* ofp) {
+bool test_to_int(testspec_t* t, FILE* ofp) {
   mp_int in[1], out[1];
   mp_small v;
   mp_result expect;
@@ -1032,10 +1032,10 @@ int test_to_int(testspec_t* t, FILE* ofp) {
     sprintf(g_output, "Incorrect value (got %ld)", v);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_to_uint(testspec_t* t, FILE* ofp) {
+bool test_to_uint(testspec_t* t, FILE* ofp) {
   mp_int in[1], out[1];
   mp_usmall v;
   mp_result expect;
@@ -1047,10 +1047,10 @@ int test_to_uint(testspec_t* t, FILE* ofp) {
     sprintf(g_output, "Incorrect value (got %lu)", v);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_read_binary(testspec_t* t, FILE* ofp) {
+bool test_read_binary(testspec_t* t, FILE* ofp) {
   mp_int out[1], in = g_zreg + 1;
   int in_len;
   mp_result expect;
@@ -1067,10 +1067,10 @@ int test_read_binary(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in, 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_to_uns(testspec_t* t, FILE* ofp) {
+bool test_to_uns(testspec_t* t, FILE* ofp) {
   mp_int in[1];
   int test_len, out_len;
 
@@ -1097,10 +1097,10 @@ int test_to_uns(testspec_t* t, FILE* ofp) {
     sprintf(g_output + pos, "%d", g_bin2[i]);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_read_uns(testspec_t* t, FILE* ofp) {
+bool test_read_uns(testspec_t* t, FILE* ofp) {
   mp_int out[1], in = g_zreg + 1;
   int in_len;
   mp_result expect;
@@ -1117,10 +1117,10 @@ int test_read_uns(testspec_t* t, FILE* ofp) {
     mp_int_to_string(in, 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_meta(testspec_t* t, FILE* ofp) {
+bool test_meta(testspec_t* t, FILE* ofp) {
   mp_int *in = NULL, *out = NULL;
   int i, j;
   mp_result expect;
@@ -1162,10 +1162,10 @@ int test_meta(testspec_t* t, FILE* ofp) {
   }
   if (in != NULL) free(in);
   if (out != NULL) free(out);
-  return 1;
+  return true;
 }
 
-int test_qneg(testspec_t* t, FILE* ofp) {
+bool test_qneg(testspec_t* t, FILE* ofp) {
   mp_rat in[2], out[1];
   mp_result expect;
 
@@ -1176,10 +1176,10 @@ int test_qneg(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[1], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qrecip(testspec_t* t, FILE* ofp) {
+bool test_qrecip(testspec_t* t, FILE* ofp) {
   mp_rat in[2], out[1];
   mp_result expect;
 
@@ -1190,10 +1190,10 @@ int test_qrecip(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[1], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qabs(testspec_t* t, FILE* ofp) {
+bool test_qabs(testspec_t* t, FILE* ofp) {
   mp_rat in[2], out[1];
   mp_result expect;
 
@@ -1204,10 +1204,10 @@ int test_qabs(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[1], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qadd(testspec_t* t, FILE* ofp) {
+bool test_qadd(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1218,10 +1218,10 @@ int test_qadd(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qsub(testspec_t* t, FILE* ofp) {
+bool test_qsub(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1232,10 +1232,10 @@ int test_qsub(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qmul(testspec_t* t, FILE* ofp) {
+bool test_qmul(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1246,10 +1246,10 @@ int test_qmul(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qdiv(testspec_t* t, FILE* ofp) {
+bool test_qdiv(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1260,10 +1260,10 @@ int test_qdiv(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qaddz(testspec_t* t, FILE* ofp) {
+bool test_qaddz(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1282,10 +1282,10 @@ int test_qaddz(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qsubz(testspec_t* t, FILE* ofp) {
+bool test_qsubz(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1304,10 +1304,10 @@ int test_qsubz(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qmulz(testspec_t* t, FILE* ofp) {
+bool test_qmulz(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1326,10 +1326,10 @@ int test_qmulz(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qdivz(testspec_t* t, FILE* ofp) {
+bool test_qdivz(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
 
@@ -1348,10 +1348,10 @@ int test_qdivz(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qexpt(testspec_t* t, FILE* ofp) {
+bool test_qexpt(testspec_t* t, FILE* ofp) {
   mp_rat in[3], out[1];
   mp_result expect;
   mp_small power;
@@ -1372,10 +1372,10 @@ int test_qexpt(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(in[2], 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
-int test_qtostr(testspec_t* t, FILE* ofp) {
+bool test_qtostr(testspec_t* t, FILE* ofp) {
   mp_rat in[2];
   long radix;
   mp_result len;
@@ -1396,10 +1396,10 @@ int test_qtostr(testspec_t* t, FILE* ofp) {
 
   if (strcmp(t->output[0], g_output) != 0) FAIL(OTHER_ERROR);
 
-  return 1;
+  return true;
 }
 
-int test_qtodec(testspec_t* t, FILE* ofp) {
+bool test_qtodec(testspec_t* t, FILE* ofp) {
   mp_rat in[4];
   long radix, prec, m;
   mp_round_mode rmode;
@@ -1432,10 +1432,10 @@ int test_qtodec(testspec_t* t, FILE* ofp) {
 
   if (res == MP_OK && strcmp(t->output[0], g_output) != 0) FAIL(OTHER_ERROR);
 
-  return 1;
+  return true;
 }
 
-int test_qrdec(testspec_t* t, FILE* ofp) {
+bool test_qrdec(testspec_t* t, FILE* ofp) {
   mp_rat out[1] = {NULL}, reg = g_qreg + 1;
   long radix;
   mp_result expect;
@@ -1449,7 +1449,7 @@ int test_qrdec(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(reg, 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
-  return 1;
+  return true;
 }
 
 /* Here there be dragons */

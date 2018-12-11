@@ -1402,10 +1402,10 @@ CLEANUP:
   return res;
 }
 
-int mp_int_divisible_value(mp_int a, mp_small v) {
+bool mp_int_divisible_value(mp_int a, mp_small v) {
   mp_small rem = 0;
 
-  if (mp_int_div_value(a, v, NULL, &rem) != MP_OK) return 0;
+  if (mp_int_div_value(a, v, NULL, &rem) != MP_OK) return false;
 
   return rem == 0;
 }
