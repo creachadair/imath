@@ -63,10 +63,10 @@ typedef struct mpz {
   mp_sign     sign;
 } mpz_t, *mp_int;
 
-#define MP_DIGITS(Z) ((Z)->digits)
-#define MP_ALLOC(Z)  ((Z)->alloc)
-#define MP_USED(Z)   ((Z)->used)
-#define MP_SIGN(Z)   ((Z)->sign)
+static inline mp_digit* MP_DIGITS(mp_int Z) { return Z->digits; }
+static inline mp_size   MP_ALLOC(mp_int Z)  { return Z->alloc; }
+static inline mp_size   MP_USED(mp_int Z)   { return Z->used; }
+static inline mp_sign   MP_SIGN(mp_int Z)   { return Z->sign; }
 
 extern const mp_result MP_OK;
 extern const mp_result MP_FALSE;

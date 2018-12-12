@@ -42,6 +42,14 @@
 #define STATIC static
 #endif
 
+/* N.B. These macros override the corresponding functions defined in
+   imath.h. This is not ideal, but avoids a breaking change in the public API
+   for the library. */
+#define MP_DIGITS(Z) ((Z)->digits)
+#define MP_ALLOC(Z) ((Z)->alloc)
+#define MP_USED(Z) ((Z)->used)
+#define MP_SIGN(Z) ((Z)->sign)
+
 const mp_result MP_OK = 0;      /* no error, all is well  */
 const mp_result MP_FALSE = 0;   /* boolean false          */
 const mp_result MP_TRUE = -1;   /* boolean true           */
