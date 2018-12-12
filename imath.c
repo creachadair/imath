@@ -98,7 +98,7 @@ STATIC const double s_log2[] = {
   ((sizeof(V) + (sizeof(mp_digit) - 1)) / sizeof(mp_digit))
 
 /* Round precision P to nearest word boundary */
-#define ROUND_PREC(P) ((mp_size)(2 * (((P) + 1) / 2)))
+static inline mp_size s_round_prec(mp_size P) { return 2 * ((P + 1) / 2); }
 
 /* Set array P of S digits to zero */
 static inline void ZERO(mp_digit *P, mp_size S) {
@@ -379,7 +379,7 @@ mp_result mp_int_init_size(mp_int z, mp_size prec) {
   } else if (prec == 1) {
     return mp_int_init(z);
   } else {
-    prec = (mp_size)ROUND_PREC(prec);
+    prec = s_round_prec(prec);
   }
 
   if ((MP_DIGITS(z) = s_alloc(prec)) == NULL) return MP_MEMORY;
@@ -687,7 +687,7 @@ mp_result mp_int_mul(mp_int a, mp_int b, mp_int c) {
   osize = 4 * ((osize + 1) / 2);
 
   if (c == a || c == b) {
-    p = ROUND_PREC(osize);
+    p = s_round_prec(osize);
     p = MAX(p, default_precision);
 
     if ((out = s_alloc(p)) == NULL) return MP_MEMORY;
@@ -747,7 +747,7 @@ mp_result mp_int_sqr(mp_int a, mp_int c) {
   /* Get a temporary buffer big enough to hold the result */
   osize = (mp_size)4 * ((MP_USED(a) + 1) / 2);
   if (a == c) {
-    p = ROUND_PREC(osize);
+    p = s_round_prec(osize);
     p = MAX(p, default_precision);
 
     if ((out = s_alloc(p)) == NULL) return MP_MEMORY;
@@ -1841,7 +1841,7 @@ STATIC void s_free(void *ptr) { free(ptr); }
 
 STATIC int s_pad(mp_int z, mp_size min) {
   if (MP_ALLOC(z) < min) {
-    mp_size nsize = ROUND_PREC(min);
+    mp_size nsize = s_round_prec(min);
     mp_digit *tmp;
 
     if ((void *)z->digits == (void *)z) {
