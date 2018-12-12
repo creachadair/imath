@@ -86,13 +86,11 @@ int rsa_max_message_len(mp_int mod) {
 
 mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
                               int tag, random_f filler) {
-  int pad_len, msg_start;
-
   /* Make sure there is enough space for the encoded output */
   if (msg_len > (buf_len - 11)) return MP_RANGE;
 
-  msg_start = buf_len - msg_len;
-  pad_len = msg_start - 3;
+  int msg_start = buf_len - msg_len;
+  int pad_len = msg_start - 3;
 
   /* Move message to top of buffer -- these might overlap, so we rely
      on the semantics of memmove() here */
@@ -115,18 +113,17 @@ mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
 
 mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len, int tag,
                               int *msg_len) {
-  int pad_len = 0, data_len, data_start, i;
-
   /* Make sure the buffer is syntactically valid */
   if (buf_len < 11 || buf[0] != 0x00 || buf[1] != (unsigned char)tag)
     return MP_UNDEF;
 
   /* Figure out how many bytes of random padding there are */
-  i = 2;
+  int i = 2;
+  int pad_len = 0;
   while (buf[i++] != '\0') ++pad_len;
 
-  data_start = i;
-  data_len = buf_len - data_start;
+  int data_start = i;
+  int data_len = buf_len - data_start;
 
   /* Shift the message to the front of the buffer */
   memmove(buf, buf + data_start, data_len);

@@ -199,13 +199,13 @@ static bool read_long(long* z, char* str) {
 
 static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
                              mp_result* rval) {
-  int i, pos = 0;
+  int pos = 0;
   char* str;
 
   if (rval != NULL) *rval = MP_OK; /* default */
 
   if (in != NULL) {
-    for (i = 0; i < t->num_inputs; ++i) {
+    for (int i = 0; i < t->num_inputs; ++i) {
       str = t->input[i];
 
       trim_line(str);
@@ -233,7 +233,7 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
     }
   }
 
-  for (i = 0; i < t->num_outputs; ++i) {
+  for (int i = 0; i < t->num_outputs; ++i) {
     mp_int reg = g_zreg + pos++;
 
     str = t->output[i];
@@ -270,13 +270,13 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
 static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
                              mp_result* rval) {
-  int i, pos = 0;
+  int pos = 0;
   char* str;
 
   if (rval != NULL) *rval = MP_OK; /* default */
 
   if (in != NULL) {
-    for (i = 0; i < t->num_inputs; ++i) {
+    for (int i = 0; i < t->num_inputs; ++i) {
       str = t->input[i];
 
       trim_line(str);
@@ -304,7 +304,7 @@ static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
     }
   }
 
-  for (i = 0; i < t->num_outputs; ++i) {
+  for (int i = 0; i < t->num_outputs; ++i) {
     mp_rat reg = g_qreg + pos++;
 
     str = t->output[i];
@@ -409,11 +409,10 @@ static void done_testing(void) {
 
 void init_testing(void) {
   static int is_done = 0;
-  int i;
 
   if (is_done) return;
 
-  for (i = 0; i < NUM_REGS; ++i) {
+  for (int i = 0; i < NUM_REGS; ++i) {
     assert(mp_int_init(g_zreg + i) == MP_OK);
     assert(mp_rat_init(g_qreg + i) == MP_OK);
   }
@@ -425,9 +424,7 @@ void init_testing(void) {
 }
 
 void reset_registers(void) {
-  int i;
-
-  for (i = 0; i < NUM_REGS; ++i) {
+  for (int i = 0; i < NUM_REGS; ++i) {
     mp_int_zero(g_zreg + i);
     mp_rat_zero(g_qreg + i);
   }

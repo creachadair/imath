@@ -466,12 +466,9 @@ mp_result mp_rat_to_ints(mp_rat r, mp_small *num, mp_small *den) {
 }
 
 mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit) {
-  char *start;
-  int len;
-  mp_result res;
-
   /* Write the numerator.  The sign of the rational number is written by the
      underlying integer implementation. */
+  mp_result res;
   if ((res = mp_int_to_string(MP_NUMER_P(r), radix, str, limit)) != MP_OK) {
     return res;
   }
@@ -483,8 +480,8 @@ mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit) {
 
   /* Locate the end of the numerator, and make sure we are not going to exceed
      the limit by writing a slash. */
-  len = strlen(str);
-  start = str + len;
+  int len = strlen(str);
+  char *start = str + len;
   limit -= len;
   if (limit == 0) return MP_TRUNC;
 
@@ -498,8 +495,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
                             mp_round_mode round, char *str, int limit) {
   mpz_t temp[3];
   mp_result res;
-  char *start = str;
-  int len, lead_0, left = limit, last = 0;
+  int last = 0;
 
   SETUP(mp_int_init_copy(TEMP(last), MP_NUMER_P(r)), last);
   SETUP(mp_int_init(TEMP(last)), last);
@@ -517,6 +513,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
 
   /* Count up leading zeroes after the radix point. */
   int zprec = (int)prec;
+  int lead_0;
   for (lead_0 = 0; lead_0 < zprec && mp_int_compare(TEMP(1), MP_DENOM_P(r)) < 0;
        ++lead_0) {
     if ((res = mp_int_mul_value(TEMP(1), radix, TEMP(1))) != MP_OK) {
@@ -589,6 +586,8 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
   /* The sign of the output should be the sign of the numerator, but if all the
      displayed digits will be zero due to the precision, a negative shouldn't
      be shown. */
+  char *start = str;
+  int left = limit;
   if (MP_NUMER_SIGN(r) == MP_NEG && (mp_int_compare_zero(TEMP(0)) != 0 ||
                                      mp_int_compare_zero(TEMP(1)) != 0)) {
     *start++ = '-';
@@ -599,7 +598,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
     goto CLEANUP;
   }
 
-  len = strlen(start);
+  int len = strlen(start);
   start += len;
   left -= len;
 
@@ -626,9 +625,8 @@ CLEANUP:
 }
 
 mp_result mp_rat_string_len(mp_rat r, mp_size radix) {
-  mp_result n_len, d_len = 0;
-
-  n_len = mp_int_string_len(MP_NUMER_P(r), radix);
+  mp_result d_len = 0;
+  mp_result n_len = mp_int_string_len(MP_NUMER_P(r), radix);
 
   if (mp_int_compare_zero(MP_NUMER_P(r)) != 0) {
     d_len = mp_int_string_len(MP_DENOM_P(r), radix);
@@ -643,9 +641,8 @@ mp_result mp_rat_string_len(mp_rat r, mp_size radix) {
 }
 
 mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec) {
-  int z_len, f_len;
-
-  z_len = mp_int_string_len(MP_NUMER_P(r), radix);
+  int f_len;
+  int z_len = mp_int_string_len(MP_NUMER_P(r), radix);
 
   if (prec == 0) {
     f_len = 1; /* terminator only */
