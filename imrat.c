@@ -40,11 +40,6 @@
     ++(C);                                  \
   } while (0)
 
-/* Argument checking:
-   Use CHECK() where a return value is required; NRCHECK() elsewhere */
-#define CHECK(TEST) assert(TEST)
-#define NRCHECK(TEST) assert(TEST)
-
 /* Reduce the given rational, in place, to lowest terms and canonical form.
    Zero is represented as 0/1, one as 1/1.  Signs are adjusted so that the sign
    of the numerator is definitive. */
@@ -143,7 +138,7 @@ void mp_rat_clear(mp_rat r) {
 }
 
 void mp_rat_free(mp_rat r) {
-  NRCHECK(r != NULL);
+  assert(r != NULL);
 
   if (r->num.digits != NULL) mp_rat_clear(r);
 
