@@ -779,14 +779,14 @@ void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size,
     src += word_offset;
   }
 
-  MP_USED(tmp) = num_digits;
+  tmp->used = num_digits;
 
   /* Remove leading zeros from number */
   {
-    mp_size uz_ = MP_USED(tmp);
+    mp_size uz_ = tmp->used;
     mp_digit *dz_ = MP_DIGITS(tmp) + uz_ - 1;
     while (uz_ > 1 && (*dz_-- == 0)) --uz_;
-    MP_USED(tmp) = uz_;
+    tmp->used = uz_;
   }
 
   /* Copy to destination */
