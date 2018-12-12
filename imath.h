@@ -98,8 +98,8 @@ extern const mp_result MP_MINERR;
 extern const mp_sign   MP_NEG;
 extern const mp_sign   MP_ZPOS;
 
-#define mp_int_is_odd(Z)  ((Z)->digits[0] & 1)
-#define mp_int_is_even(Z) !((Z)->digits[0] & 1)
+static inline bool mp_int_is_odd(mp_int Z) { return (Z->digits[0] & 1) != 0; }
+static inline bool mp_int_is_even(mp_int Z) { return (Z->digits[0] & 1) == 0; }
 
 mp_result mp_int_init(mp_int z);
 mp_int    mp_int_alloc(void);
@@ -132,10 +132,14 @@ mp_result mp_int_div_value(mp_int a, mp_small value, /* q = a / value */
 mp_result mp_int_div_pow2(mp_int a, mp_small p2,     /* q = a / 2^p2  */
 			  mp_int q, mp_int r);       /* r = q % 2^p2  */
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c);  /* c = a % m */
-#define   mp_int_mod_value(A, V, R) mp_int_div_value((A), (V), 0, (R))
 mp_result mp_int_expt(mp_int a, mp_small b, mp_int c);         /* c = a^b */
 mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c); /* c = a^b */
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);      /* c = a^b */
+
+static inline /* r = a % value */
+mp_result mp_int_mod_value(mp_int a, mp_small value, mp_small* r) {
+  return mp_int_div_value(a, value, 0, r);
+}
 
 int       mp_int_compare(mp_int a, mp_int b);          /* a <=> b     */
 int       mp_int_compare_unsigned(mp_int a, mp_int b); /* |a| <=> |b| */
@@ -170,7 +174,8 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c,    /* c = gcd(a, b)   */
 mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c);    /* c = lcm(a, b)   */
 
 mp_result mp_int_root(mp_int a, mp_small b, mp_int c); /* c = floor(a^{1/b}) */
-#define   mp_int_sqrt(a, c) mp_int_root(a, 2, c)       /* c = floor(sqrt(a)) */
+static inline /* c = floor(sqrt(a)) */
+mp_result  mp_int_sqrt(mp_int a, mp_int c) { return mp_int_root(a, 2, c); }
 
 /* Convert to a small int, if representable; else MP_RANGE */
 mp_result mp_int_to_int(mp_int z, mp_small *out);
