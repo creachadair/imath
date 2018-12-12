@@ -30,6 +30,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MP_NUMER_SIGN(Q) (MP_NUMER_P(Q)->sign)
+#define MP_DENOM_SIGN(Q) (MP_DENOM_P(Q)->sign)
+
 #define TEMP(K) (temp + (K))
 #define SETUP(E, C)                         \
   do {                                      \
@@ -159,7 +162,7 @@ mp_result mp_rat_denom(mp_rat r, mp_int z) {
 
 mp_int mp_rat_denom_ref(mp_rat r) { return MP_DENOM_P(r); }
 
-mp_sign mp_rat_sign(mp_rat r) { return MP_SIGN(MP_NUMER_P(r)); }
+mp_sign mp_rat_sign(mp_rat r) { return MP_NUMER_SIGN(r); }
 
 mp_result mp_rat_copy(mp_rat a, mp_rat c) {
   mp_result res;
@@ -210,10 +213,10 @@ mp_result mp_rat_recip(mp_rat a, mp_rat c) {
 
   /* Restore the signs of the swapped elements */
   {
-    mp_sign tmp = MP_SIGN(MP_NUMER_P(c));
+    mp_sign tmp = MP_NUMER_SIGN(c);
 
-    MP_SIGN(MP_NUMER_P(c)) = MP_SIGN(MP_DENOM_P(c));
-    MP_SIGN(MP_DENOM_P(c)) = tmp;
+    MP_NUMER_SIGN(c) = MP_DENOM_SIGN(c);
+    MP_DENOM_SIGN(c) = tmp;
   }
 
   return MP_OK;
@@ -380,8 +383,8 @@ mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c) {
 int mp_rat_compare(mp_rat a, mp_rat b) {
   /* Quick check for opposite signs.  Works because the sign of the numerator
      is always definitive. */
-  if (MP_SIGN(MP_NUMER_P(a)) != MP_SIGN(MP_NUMER_P(b))) {
-    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS) {
+  if (MP_NUMER_SIGN(a) != MP_NUMER_SIGN(b)) {
+    if (MP_NUMER_SIGN(a) == MP_ZPOS) {
       return 1;
     } else {
       return -1;
@@ -391,7 +394,7 @@ int mp_rat_compare(mp_rat a, mp_rat b) {
        otherwise it needs to be reflected about zero. */
     int cmp = mp_rat_compare_unsigned(a, b);
 
-    if (MP_SIGN(MP_NUMER_P(a)) == MP_ZPOS) {
+    if (MP_NUMER_SIGN(a) == MP_ZPOS) {
       return cmp;
     } else {
       return -cmp;
@@ -591,8 +594,8 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
   /* The sign of the output should be the sign of the numerator, but if all the
      displayed digits will be zero due to the precision, a negative shouldn't
      be shown. */
-  if (MP_SIGN(MP_NUMER_P(r)) == MP_NEG && (mp_int_compare_zero(TEMP(0)) != 0 ||
-                                           mp_int_compare_zero(TEMP(1)) != 0)) {
+  if (MP_NUMER_SIGN(r) == MP_NEG && (mp_int_compare_zero(TEMP(0)) != 0 ||
+                                     mp_int_compare_zero(TEMP(1)) != 0)) {
     *start++ = '-';
     left -= 1;
   }
@@ -829,12 +832,12 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
     }
 
     { /* This addition needs to be unsigned. */
-      MP_SIGN(MP_NUMER_P(r)) = MP_ZPOS;
+      MP_NUMER_SIGN(r) = MP_ZPOS;
       if ((res = mp_int_add(MP_NUMER_P(r), &frac, MP_NUMER_P(r))) != MP_OK) {
         goto CLEANUP;
       }
 
-      MP_SIGN(MP_NUMER_P(r)) = osign;
+      MP_NUMER_SIGN(r) = osign;
     }
     if ((res = s_rat_reduce(r)) != MP_OK) goto CLEANUP;
 
@@ -882,11 +885,11 @@ static mp_result s_rat_reduce(mp_rat r) {
   }
 
   /* Fix up the signs of numerator and denominator */
-  if (MP_SIGN(MP_NUMER_P(r)) == MP_SIGN(MP_DENOM_P(r))) {
-    MP_SIGN(MP_NUMER_P(r)) = MP_SIGN(MP_DENOM_P(r)) = MP_ZPOS;
+  if (MP_NUMER_SIGN(r) == MP_DENOM_SIGN(r)) {
+    MP_NUMER_SIGN(r) = MP_DENOM_SIGN(r) = MP_ZPOS;
   } else {
-    MP_SIGN(MP_NUMER_P(r)) = MP_NEG;
-    MP_SIGN(MP_DENOM_P(r)) = MP_ZPOS;
+    MP_NUMER_SIGN(r) = MP_NEG;
+    MP_DENOM_SIGN(r) = MP_ZPOS;
   }
 
 CLEANUP:

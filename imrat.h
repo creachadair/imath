@@ -40,8 +40,11 @@ typedef struct mpq {
   mpz_t   den;    /* Denominator, <> 0 */
 } mpq_t, *mp_rat;
 
-#define MP_NUMER_P(Q)  (&((Q)->num)) /* Pointer to numerator   */
-#define MP_DENOM_P(Q)  (&((Q)->den)) /* Pointer to denominator */
+/* Return a pointer to the numerator. */
+static inline mp_int MP_NUMER_P(mp_rat Q) { return &(Q->num); }
+
+/* Return a pointer to the denominator. */
+static inline mp_int MP_DENOM_P(mp_rat Q) { return &(Q->den); }
 
 /* Rounding constants */
 typedef enum {
