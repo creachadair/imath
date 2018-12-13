@@ -5,9 +5,9 @@
 #
 FROM alpine:3.8 AS base
 
-RUN apk add --no-cache build-base gcc make
+RUN apk add --no-cache build-base gcc gmp-dev make python2
 
 FROM base AS test
 WORKDIR /imath
 ADD . .
-RUN make distclean test examples
+RUN make distclean examples check
