@@ -36,6 +36,7 @@
 #include <string.h>
 #include <strings.h> /* for strcasecmp */
 
+#include <getopt.h>
 #include <unistd.h>
 
 #include "imath.h"
