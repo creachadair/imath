@@ -31,6 +31,7 @@
 CC=gcc
 CFLAGS+=-pedantic -Wall -Werror -Wextra -Wno-unused-parameter \
 	-I. -std=c99 $(DFLAGS$(DEBUG))
+CSFLAGS=$(CFLAGS) -fPIC
 #LIBS=
 
 DFLAGS=-O3 -funroll-loops -finline-functions
@@ -51,9 +52,13 @@ VPATH += examples
 EXAMPLES=basecvt findprime randprime imcalc input rounding rsakey
 
 .PHONY: all test clean distclean dist
+.SUFFIXES: .so
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
+
+.c.so:
+	$(CC) $(CSFLAGS) -o $@ -c $<
 
 all: objs examples test
 
@@ -82,8 +87,8 @@ $(REGRESSIONS):%: imath.o %.o
 
 examples: $(EXAMPLES)
 
-libimath.so: imath.o imrat.o gmp_compat.o
-	$(CC) $(CFLAGS) -dynamiclib -o $@ $^
+libimath.so: imath.so imrat.so gmp_compat.so
+	$(CC) $(CFLAGS) -shared -o $@ $^
 
 imtest: imtest.o imath.o imrat.o imdrover.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
@@ -116,13 +121,12 @@ format-py:
 format: format-c format-py
 
 clean:
-	rm -f *.o *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
+	rm -f *.o *.so *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
 	make -C tests/gmp-compat-test clean
 
 distclean: clean
 	rm -f $(TARGETS) imath-$(VERS).tar imath-$(VERS).tar.gz
 	rm -f $(EXAMPLES)
-	rm -f libimath.so
 
 dist: distclean
 	@ echo "Packing files for distribution"
