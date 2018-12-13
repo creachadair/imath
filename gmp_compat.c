@@ -397,12 +397,16 @@ static unsigned long get_long_bits(mp_int op) {
    * rest of the imath library) to accommodate architectures that don't deal
    * well with 32-bit shifts.
    */
-  mp_size num_digits_in_long = sizeof(unsigned long) / sizeof(mp_digit);
+  mp_size digits_to_copy =
+      (sizeof(unsigned long) + sizeof(mp_digit) - 1) / sizeof(mp_digit);
+  if (digits_to_copy > MP_USED(op)) {
+    digits_to_copy = MP_USED(op);
+  }
+
   mp_digit *digits = MP_DIGITS(op);
   unsigned long out = 0;
-  int i;
 
-  for (i = num_digits_in_long - 1; i >= 0; i--) {
+  for (int i = digits_to_copy - 1; i >= 0; i--) {
     out <<= (MP_DIGIT_BIT / 2);
     out <<= (MP_DIGIT_BIT / 2);
     out |= digits[i];
