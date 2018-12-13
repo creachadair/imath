@@ -40,21 +40,20 @@ static int s_ptab[] = {
     617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701,
     709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809,
     811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887,
-    907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997};
+    907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997,
+};
 
 /* Test whether z is likely to be prime:
    MP_TRUE  means it is probably prime
    MP_FALSE means it is definitely composite
  */
 mp_result mp_int_is_prime(mp_int z) {
-  int i;
-  mp_small rem;
-  mp_result res;
-
   /* First check for divisibility by small primes; this eliminates a large
      number of composite candidates quickly
    */
-  for (i = 0; i < s_ptab_size; ++i) {
+  for (int i = 0; i < s_ptab_size; ++i) {
+    mp_small rem;
+    mp_result res;
     if ((res = mp_int_div_value(z, s_ptab[i], NULL, &rem)) != MP_OK) return res;
 
     if (rem == 0) return MP_FALSE;
@@ -63,24 +62,21 @@ mp_result mp_int_is_prime(mp_int z) {
   /* Now try Fermat's test for several prime witnesses (since we now know from
      the above that z is not a multiple of any of them)
    */
-  {
-    mpz_t tmp;
+  mp_result res;
+  mpz_t tmp;
 
-    if ((res = mp_int_init(&tmp)) != MP_OK) return res;
+  if ((res = mp_int_init(&tmp)) != MP_OK) return res;
 
-    for (i = 0; i < 10 && i < s_ptab_size; ++i) {
-      if ((res = mp_int_exptmod_bvalue(s_ptab[i], z, z, &tmp)) != MP_OK)
-        return res;
+  for (int i = 0; i < 10 && i < s_ptab_size; ++i) {
+    if ((res = mp_int_exptmod_bvalue(s_ptab[i], z, z, &tmp)) != MP_OK)
+      return res;
 
-      if (mp_int_compare_value(&tmp, s_ptab[i]) != 0) {
-        mp_int_clear(&tmp);
-        return MP_FALSE;
-      }
+    if (mp_int_compare_value(&tmp, s_ptab[i]) != 0) {
+      mp_int_clear(&tmp);
+      return MP_FALSE;
     }
-
-    mp_int_clear(&tmp);
   }
-
+  mp_int_clear(&tmp);
   return MP_TRUE;
 }
 
