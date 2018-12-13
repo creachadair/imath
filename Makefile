@@ -34,6 +34,9 @@ CFLAGS+=-pedantic -Wall -Werror -Wextra -Wno-unused-parameter \
 CSFLAGS=$(CFLAGS) -fPIC
 #LIBS=
 
+# These are needed to build the GMP compatibility tests.
+export CC CFLAGS
+
 DFLAGS=-O3 -funroll-loops -finline-functions
 DFLAGSN=$(DFLAGS)
 DFLAGSY=-g -DDEBUG=1
