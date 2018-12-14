@@ -212,5 +212,5 @@ void mp_int_random(mp_int z, int prec) {
 
     z->digits[i] = d;
   }
-  MP_USED(z) = prec;
+  z->used = prec;
 }
