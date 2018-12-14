@@ -132,24 +132,24 @@ test_t g_tests[] = {
     {"to-int", 1, 1, test_to_int},       /* r1: value, o1: result */
     {"to-uint", 1, 1, test_to_uint},     /* r1: value, o1: result */
     {"meta", -1, -1, test_meta},
-    {"qneg", 2, 1, test_qneg},     /* r2 = -r1        */
-    {"qrecip", 2, 1, test_qrecip}, /* r2 = 1 / r1     */
-    {"qabs", 2, 1, test_qabs},     /* r2 = |r1|       */
-    {"qadd", 3, 1, test_qadd},     /* r3 = r1 + r2    */
-    {"qsub", 3, 1, test_qsub},     /* r3 = r1 - r2    */
-    {"qmul", 3, 1, test_qmul},     /* r3 = r1 * r2    */
-    {"qdiv", 3, 1, test_qdiv},     /* r3 = r1 / r2    */
-    {"qaddz", 3, 1, test_qaddz},   /* r3 = r1 + r2    */
-    {"qsubz", 3, 1, test_qsubz},   /* r3 = r1 - r2    */
-    {"qmulz", 3, 1, test_qmulz},   /* r3 = r1 * r2    */
-    {"qdivz", 3, 1, test_qdivz},   /* r3 = r1 / r2    */
-    {"qexpt", 3, 1, test_qexpt},   /* r3 = r1 ^ v(r2) */
-    {"qtostr", 2, 1, test_qtostr}, /* r1: value, r2: radix; o1: result */
-    {"qtodec", 4, 1, test_qtodec}, /* r1: val, r2: rdx, r3: prec,
-                                      r4: rounding mode; o1: res */
-    {"qrdec", 2, 1, test_qrdec},   /* r1: dec, r2: rdx; o1: result value  */
+    {"qneg", 2, 1, test_qneg},        /* r2 = -r1        */
+    {"qrecip", 2, 1, test_qrecip},    /* r2 = 1 / r1     */
+    {"qabs", 2, 1, test_qabs},        /* r2 = |r1|       */
+    {"qadd", 3, 1, test_qadd},        /* r3 = r1 + r2    */
+    {"qsub", 3, 1, test_qsub},        /* r3 = r1 - r2    */
+    {"qmul", 3, 1, test_qmul},        /* r3 = r1 * r2    */
+    {"qdiv", 3, 1, test_qdiv},        /* r3 = r1 / r2    */
+    {"qaddz", 3, 1, test_qaddz},      /* r3 = r1 + r2    */
+    {"qsubz", 3, 1, test_qsubz},      /* r3 = r1 - r2    */
+    {"qmulz", 3, 1, test_qmulz},      /* r3 = r1 * r2    */
+    {"qdivz", 3, 1, test_qdivz},      /* r3 = r1 / r2    */
+    {"qexpt", 3, 1, test_qexpt},      /* r3 = r1 ^ v(r2) */
+    {"qtostr", 2, 1, test_qtostr},    /* r1: value, r2: radix; o1: result */
+    {"qtodec", 4, 1, test_qtodec},    /* r1: val, r2: rdx, r3: prec,
+                                         r4: rounding mode; o1: res */
+    {"qrdec", 2, 1, test_qrdec},      /* r1: dec, r2: rdx; o1: result value  */
     {"isprime", 1, 1, test_is_prime}, /* rtn = prime(r1) ? MP_TRUE : MP_FALSE */
-    {NULL, 0, 0, NULL}             /* end of list marker */
+    {NULL, 0, 0, NULL}                /* end of list marker */
 };
 
 char g_line[LINE_MAX];

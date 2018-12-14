@@ -738,8 +738,8 @@ mp_result mp_int_sqr(mp_int a, mp_int c) {
     c->alloc = p;
   }
 
-  c->used = osize;  /* might not be true, but we'll fix it ... */
-  CLAMP(c);         /* ... right here */
+  c->used = osize; /* might not be true, but we'll fix it ... */
+  CLAMP(c);        /* ... right here */
   c->sign = MP_ZPOS;
 
   return MP_OK;
