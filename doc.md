@@ -161,11 +161,9 @@ for digits.  This storage is expanded automatically as needed.
 ```
 int       mp_int_is_odd(mp_int z);
           Returns true if z is an odd integer (z = 1 (mod 2))
-          [currently implemented as a macro]
 
 int       mp_int_is_even(mp_int z);
           Returns true if z is an even integer (z = 0 (mod 2))
-          [currently implemented as a macro]
 
 void      mp_int_zero(mp_int z);
           Sets z to zero.
@@ -209,7 +207,6 @@ mp_result mp_int_root(mp_int a, mp_small b, mp_int c);
 mp_result mp_int_sqrt(mp_int a, mp_int c);
           Computes c = floor(sqrt(a)) if a >= 0.  Returns MP_UNDEF if
           a < 0.
-          [currently implemented as a macro]
 
 mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r);
           Computes q, r such that a = bq + r and 0 <= r < b.
