@@ -219,11 +219,6 @@ mp_result mp_int_unsigned_len(mp_int z);
 /* Return a statically allocated string describing error code res */
 const char *mp_error_string(mp_result res);
 
-#if DEBUG
-void      s_print(char *tag, mp_int z);
-void      s_print_buf(char *tag, mp_digit *buf, mp_size num);
-#endif
-
 #ifdef __cplusplus
 }
 #endif

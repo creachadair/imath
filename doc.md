@@ -771,18 +771,9 @@ which includes the `FAILED` test line above, as well as the output of the above
 `tail` command (so I know what inputs caused the failure).
 
 If you build with the preprocessor symbol `DEBUG` defined as a positive
-integer, you will have access to several things:
-
- 1. The static functions defined in imath.c are made globally visible so that
-    you can call them from a test driver.
-
- 2. The `s_print()` and `s_print_buf()` routines are defined; these make it
-    easier to dump the contents of an `mpz_t` to text.
-
- 3. If `DEBUG > 1`, the digit allocators (`s_alloc`, `s_realloc`) fill all new
-    buffers with the value `0xDEADBEEF`, or as much of it as will fit in a
-    digit, so that you can more easily catch uninitialized reads in the
-    debugger.
+integer, the digit allocators (`s_alloc`, `s_realloc`) fill all new buffers
+with the value `0xdeadbeefabad1dea`, or as much of it as will fit in a digit,
+so that you can more easily catch uninitialized reads in the debugger.
 
 ## Notes
 
