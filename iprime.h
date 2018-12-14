@@ -33,10 +33,10 @@
 extern "C" {
 #endif
 
-/* Test whether z is likely to be prime
-   MP_YES means it is probably prime
-   MP_NO  means it is definitely composite
- */
+/* Reports whether z is likely to be prime, meaning z >= 2 and has no positive
+   divisors 1 < d < z. It returns MP_YES if z is probably prime, or MP_NO if z
+   is definitely not prime.
+*/
 mp_result mp_int_is_prime(mp_int z);
 
 /* Find the first apparent prime in ascending order from z */

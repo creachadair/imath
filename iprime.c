@@ -42,19 +42,19 @@ static int s_ptab[] = {
     983, 991, 997, 0, /* sentinel */
 };
 
-/* Test whether z is likely to be prime:
-   MP_TRUE  means it is probably prime
-   MP_FALSE means it is definitely composite
- */
 mp_result mp_int_is_prime(mp_int z) {
+  /* Reject values less than 2 immediately. */
+  if (mp_int_compare_value(z, 2) < 0) {
+    return MP_FALSE;
+  }
   /* First check for divisibility by small primes; this eliminates a large
      number of composite candidates quickly
    */
   for (int i = 0; s_ptab[i] != 0; i++) {
     mp_small rem;
     mp_result res;
+    if (mp_int_compare_value(z, s_ptab[i]) == 0) return MP_TRUE;
     if ((res = mp_int_div_value(z, s_ptab[i], NULL, &rem)) != MP_OK) return res;
-
     if (rem == 0) return MP_FALSE;
   }
 
@@ -67,9 +67,9 @@ mp_result mp_int_is_prime(mp_int z) {
   if ((res = mp_int_init(&tmp)) != MP_OK) return res;
 
   for (int i = 0; i < 10 && s_ptab[i] != 0; i++) {
-    if ((res = mp_int_exptmod_bvalue(s_ptab[i], z, z, &tmp)) != MP_OK)
+    if ((res = mp_int_exptmod_bvalue(s_ptab[i], z, z, &tmp)) != MP_OK) {
       return res;
-
+    }
     if (mp_int_compare_value(&tmp, s_ptab[i]) != 0) {
       mp_int_clear(&tmp);
       return MP_FALSE;

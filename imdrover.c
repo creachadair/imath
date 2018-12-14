@@ -32,6 +32,7 @@
 #include "imath.h"
 #include "imdrover.h"
 #include "imrat.h"
+#include "iprime.h"
 
 /* Globals visible from outside this file */
 mp_result imath_errno;
@@ -1446,6 +1447,15 @@ bool test_qrdec(testspec_t* t, FILE* ofp) {
     mp_rat_to_string(reg, 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
   }
+  return true;
+}
+
+bool test_is_prime(testspec_t* t, FILE* OFP) {
+  mp_int in[1];
+  mp_result expect;
+
+  ACHECK(parse_int_values(t, in, NULL, &expect));
+  ECHECK(mp_int_is_prime(in[0]));
   return true;
 }
 

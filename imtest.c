@@ -148,6 +148,7 @@ test_t g_tests[] = {
     {"qtodec", 4, 1, test_qtodec}, /* r1: val, r2: rdx, r3: prec,
                                       r4: rounding mode; o1: res */
     {"qrdec", 2, 1, test_qrdec},   /* r1: dec, r2: rdx; o1: result value  */
+    {"isprime", 1, 1, test_is_prime}, /* rtn = prime(r1) ? MP_TRUE : MP_FALSE */
     {NULL, 0, 0, NULL}             /* end of list marker */
 };
 

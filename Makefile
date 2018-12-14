@@ -93,7 +93,7 @@ examples: $(EXAMPLES)
 libimath.so: imath.so imrat.so gmp_compat.so
 	$(CC) $(CFLAGS) -shared -o $@ $^
 
-imtest: imtest.o imath.o imrat.o imdrover.o
+imtest: imtest.o imath.o imrat.o imdrover.o iprime.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 imtimer: imath.c imtimer.c

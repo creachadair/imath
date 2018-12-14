@@ -104,4 +104,7 @@ bool test_qtostr(testspec_t* t, FILE* ofp);
 bool test_qtodec(testspec_t* t, FILE* ofp);
 bool test_qrdec(testspec_t* t, FILE* ofp);
 
+/* Primality testing tests */
+bool test_is_prime(testspec_t* t, FILE *ofp);
+
 #endif /* IMDROVER_H_ */
