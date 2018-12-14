@@ -449,3 +449,45 @@
 	6c6fdd8 Fix a vacuously meaningless comparison.
 	4dac16f Silence a warning about an uninitalized variable.
 	c6119c4 Include strings.h for strcasecmp.
+
+1.27
+	Another round of cleanup and bug fixes. This release includes a
+	Dockerfile to support basic Linux testing, which I found useful as
+	I do most of my work on macOS.
+
+	This release also addresses most of issue #29 (Switching from C90
+	to C99). Part of that change removes most function-like macros
+	from the API headers, replacing them with static functions. Code
+	that used the macros as lvalues will no longer work, but can and
+	should be easily updated to access the members of mpz_t directly.
+
+	Fixed: #34.
+
+	899e202 Add a docker config for basic Linux testing.
+	40e8887 Move imath-test.scm to the tests directory.
+	6f01c9f Add .dockerignore to the release tarball.
+	1dab081 Fix the spelling of __abs__ in imath.py.
+	8f0a00c Enable source formatting for Python.
+	99e27c8 Format all Python source with yapf.
+	bf289f0 gmp-compat-test: Remove dependency on Python 3.
+	9269d57 Clean up the Linux test image.
+	61ca691 Include stdbool.h and use the bool type where appropriate.
+	d4760ee Replace macros with static inline functions.
+	8241977 linux test: Layer the image for better caching.
+	46bb578 imath: Replace accessor macros with inline functions.
+	50c6cc8 imrat: Replace accessor macros with static functions.
+	0c5cec9 gmp_compat: Fix lvalue uses of MP_USED.
+	89c72f2 Remove CHECK and NRCHECK macros.
+	dbe9f50 imath: Replace macros with static functions.
+	0006998 imath: Replace ROUND_PREC macro with a function.
+	b628a0c Move local variable declarations closer to first use.
+	54d51da Remove obsolete division spec.
+	796776f iprime: Move and scope variables closer to first use.
+	8fd5236 iprime: Use a sentinel instead of a length.
+	ce89180 Include getopt.h explicitly where it is required.
+	e6fc170 Make libimath.so build correctly under GCC.
+	b54d8c9 Use Bourne in preference to Bash.
+	8f88c01 Makefile: Export CC and CFLAGS for submakes.
+	58f4392 Use the inherited settings in the gmp-compat-tests.
+	8a181cd Make the Linux docker test run "make check".
+	28617f2 gmp_compat: Fix overflow in the uint conversion adapter.
