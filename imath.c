@@ -139,19 +139,49 @@ static inline mp_size MAX(mp_size A, mp_size B) { return (B > A ? B : A); }
     B = t_;           \
   } while (0)
 
-/* Used to set up and access simple temp stacks within functions. */
-#define DECLARE_TEMP(N) \
-  mpz_t temp[(N)];      \
-  int last__ = 0
-#define CLEANUP_TEMP() \
-  CLEANUP:             \
-  while (--last__ >= 0) mp_int_clear(TEMP(last__))
-#define TEMP(K) (temp + (K))
-#define LAST_TEMP() TEMP(last__)
-#define SETUP(E)                            \
-  do {                                      \
-    if ((res = (E)) != MP_OK) goto CLEANUP; \
-    ++(last__);                             \
+/* Declare a block of N temporary mpz_t values.
+   These values are initialized to zero.
+   You must add CLEANUP_TEMP() at the end of the function.
+   Use TEMP(i) to access a pointer to the ith value.
+ */
+#define DECLARE_TEMP(N)                   \
+  struct {                                \
+    mpz_t value[(N)];                     \
+    int len;                              \
+    mp_result err;                        \
+  } temp_ = {                             \
+      .len = (N),                         \
+      .err = MP_OK,                       \
+  };                                      \
+  do {                                    \
+    for (int i = 0; i < temp_.len; i++) { \
+      mp_int_init(TEMP(i));               \
+    }                                     \
+  } while (0)
+
+/* Clear all allocated temp values. */
+#define CLEANUP_TEMP()                    \
+  CLEANUP:                                \
+  do {                                    \
+    for (int i = 0; i < temp_.len; i++) { \
+      mp_int_clear(TEMP(i));              \
+    }                                     \
+    if (temp_.err != MP_OK) {             \
+      return temp_.err;                   \
+    }                                     \
+  } while (0)
+
+/* A pointer to the kth temp value. */
+#define TEMP(K) (temp_.value + (K))
+
+/* Evaluate E, an expression of type mp_result expected to return MP_OK.  If
+   the value is not MP_OK, the error is cached and control resumes at the
+   cleanup handler, which returns it.
+*/
+#define REQUIRE(E)                        \
+  do {                                    \
+    temp_.err = (E);                      \
+    if (temp_.err != MP_OK) goto CLEANUP; \
   } while (0)
 
 /* Compare value to zero. */
@@ -196,7 +226,12 @@ STATIC void s_free(void *ptr);
 
 /* Insure that z has at least min digits allocated, resizing if
    necessary.  Returns true if successful, false if out of memory. */
-STATIC int s_pad(mp_int z, mp_size min);
+STATIC bool s_pad(mp_int z, mp_size min);
+
+/* Ensure Z has at least N digits allocated. */
+static inline mp_result GROW(mp_int Z, mp_size N) {
+  return s_pad(Z, N) ? MP_OK : MP_MEMORY;
+}
 
 /* Fill in a "fake" mp_int on the stack with a given value */
 STATIC void s_fake(mp_int z, mp_small value, mp_digit vbuf[]);
@@ -746,8 +781,6 @@ mp_result mp_int_sqr(mp_int a, mp_int c) {
 }
 
 mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
-  DECLARE_TEMP(2);
-
   assert(a != NULL && b != NULL && q != r);
 
   int cmp;
@@ -786,34 +819,29 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
      quotient and remainder, but q and r are allowed to be NULL or to overlap
      with the inputs.
    */
+  DECLARE_TEMP(2);
   int lg;
   if ((lg = s_isp2(b)) < 0) {
     if (q && b != q) {
-      if ((res = mp_int_copy(a, q)) != MP_OK) {
-        goto CLEANUP;
-      } else {
-        qout = q;
-      }
+      REQUIRE(mp_int_copy(a, q));
+      qout = q;
     } else {
-      qout = LAST_TEMP();
-      SETUP(mp_int_init_copy(LAST_TEMP(), a));
+      REQUIRE(mp_int_copy(a, TEMP(0)));
+      qout = TEMP(0);
     }
 
     if (r && a != r) {
-      if ((res = mp_int_copy(b, r)) != MP_OK) {
-        goto CLEANUP;
-      } else {
-        rout = r;
-      }
+      REQUIRE(mp_int_copy(b, r));
+      rout = r;
     } else {
-      rout = LAST_TEMP();
-      SETUP(mp_int_init_copy(LAST_TEMP(), b));
+      REQUIRE(mp_int_copy(b, TEMP(1)));
+      rout = TEMP(1);
     }
 
-    if ((res = s_udiv_knuth(qout, rout)) != MP_OK) goto CLEANUP;
+    REQUIRE(s_udiv_knuth(qout, rout));
   } else {
-    if (q && (res = mp_int_copy(a, q)) != MP_OK) goto CLEANUP;
-    if (r && (res = mp_int_copy(a, r)) != MP_OK) goto CLEANUP;
+    if (q) REQUIRE(mp_int_copy(a, q));
+    if (r) REQUIRE(mp_int_copy(a, r));
 
     if (q) s_qdiv(q, (mp_size)lg);
     qout = q;
@@ -831,53 +859,37 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
     if (CMPZ(qout) == 0) qout->sign = MP_ZPOS;
   }
 
-  if (q && (res = mp_int_copy(qout, q)) != MP_OK) goto CLEANUP;
-  if (r && (res = mp_int_copy(rout, r)) != MP_OK) goto CLEANUP;
-
+  if (q) REQUIRE(mp_int_copy(qout, q));
+  if (r) REQUIRE(mp_int_copy(rout, r));
   CLEANUP_TEMP();
   return res;
 }
 
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c) {
-  mpz_t tmp;
-  mp_int out;
-
-  if (m == c) {
-    mp_int_init(&tmp);
-    out = &tmp;
-  } else {
-    out = c;
-  }
-  mp_result res = mp_int_div(a, m, NULL, out);
-  if (res != MP_OK) goto CLEANUP;
-
+  DECLARE_TEMP(1);
+  mp_int out = (m == c) ? TEMP(0) : c;
+  REQUIRE(mp_int_div(a, m, NULL, out));
   if (CMPZ(out) < 0) {
-    res = mp_int_add(out, m, c);
+    REQUIRE(mp_int_add(out, m, c));
   } else {
-    res = mp_int_copy(out, c);
+    REQUIRE(mp_int_copy(out, c));
   }
-
-CLEANUP:
-  if (out != c) mp_int_clear(&tmp);
-
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 mp_result mp_int_div_value(mp_int a, mp_small value, mp_int q, mp_small *r) {
-  mpz_t vtmp, rtmp;
+  mpz_t vtmp;
   mp_digit vbuf[MP_VALUE_DIGITS(value)];
-
-  mp_int_init(&rtmp);
   s_fake(&vtmp, value, vbuf);
 
-  mp_result res = mp_int_div(a, &vtmp, q, &rtmp);
-  if (res != MP_OK) goto CLEANUP;
+  DECLARE_TEMP(1);
+  REQUIRE(mp_int_div(a, &vtmp, q, TEMP(0)));
 
-  if (r) (void)mp_int_to_int(&rtmp, r); /* can't fail */
+  if (r) (void)mp_int_to_int(TEMP(0), r); /* can't fail */
 
-CLEANUP:
-  mp_int_clear(&rtmp);
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 mp_result mp_int_div_pow2(mp_int a, mp_small p2, mp_int q, mp_int r) {
@@ -899,61 +911,56 @@ mp_result mp_int_expt(mp_int a, mp_small b, mp_int c) {
   assert(c != NULL);
   if (b < 0) return MP_RANGE;
 
-  mpz_t t;
-  mp_result res = mp_int_init_copy(&t, a);
-  if (res != MP_OK) return res;
+  DECLARE_TEMP(1);
+  REQUIRE(mp_int_copy(a, TEMP(0)));
 
   (void)mp_int_set_value(c, 1);
   unsigned int v = labs(b);
   while (v != 0) {
     if (v & 1) {
-      if ((res = mp_int_mul(c, &t, c)) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_mul(c, TEMP(0), c));
     }
 
     v >>= 1;
     if (v == 0) break;
 
-    if ((res = mp_int_sqr(&t, &t)) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_sqr(TEMP(0), TEMP(0)));
   }
 
-CLEANUP:
-  mp_int_clear(&t);
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c) {
   assert(c != NULL);
   if (b < 0) return MP_RANGE;
 
-  mpz_t t;
-  mp_result res = mp_int_init_value(&t, a);
-  if (res != MP_OK) return res;
+  DECLARE_TEMP(1);
+  REQUIRE(mp_int_set_value(TEMP(0), a));
 
   (void)mp_int_set_value(c, 1);
   unsigned int v = labs(b);
   while (v != 0) {
     if (v & 1) {
-      if ((res = mp_int_mul(c, &t, c)) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_mul(c, TEMP(0), c));
     }
 
     v >>= 1;
     if (v == 0) break;
 
-    if ((res = mp_int_sqr(&t, &t)) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_sqr(TEMP(0), TEMP(0)));
   }
 
-CLEANUP:
-  mp_int_clear(&t);
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c) {
   assert(a != NULL && b != NULL && c != NULL);
   if (MP_SIGN(b) == MP_NEG) return MP_RANGE;
 
-  mpz_t t;
-  mp_result res = mp_int_init_copy(&t, a);
-  if (res != MP_OK) return res;
+  DECLARE_TEMP(1);
+  REQUIRE(mp_int_copy(a, TEMP(0)));
 
   (void)mp_int_set_value(c, 1);
   for (unsigned ix = 0; ix < MP_USED(b); ++ix) {
@@ -961,18 +968,17 @@ mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c) {
 
     for (unsigned jx = 0; jx < MP_DIGIT_BIT; ++jx) {
       if (d & 1) {
-        if ((res = mp_int_mul(c, &t, c)) != MP_OK) goto CLEANUP;
+        REQUIRE(mp_int_mul(c, TEMP(0), c));
       }
 
       d >>= 1;
       if (d == 0 && ix + 1 == MP_USED(b)) break;
-      if ((res = mp_int_sqr(&t, &t)) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_sqr(TEMP(0), TEMP(0)));
     }
   }
 
-CLEANUP:
-  mp_int_clear(&t);
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 int mp_int_compare(mp_int a, mp_int b) {
@@ -1044,29 +1050,26 @@ mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c) {
   if (CMPZ(m) == 0) return MP_UNDEF;
   if (CMPZ(b) < 0) return MP_RANGE;
 
-  DECLARE_TEMP(3);
-  mp_result res;
-
   mp_size um = MP_USED(m);
-  SETUP(mp_int_init_size(TEMP(0), 2 * um));
-  SETUP(mp_int_init_size(TEMP(1), 2 * um));
+  DECLARE_TEMP(3);
+  REQUIRE(GROW(TEMP(0), 2 * um));
+  REQUIRE(GROW(TEMP(1), 2 * um));
 
   mp_int s;
   if (c == b || c == m) {
-    SETUP(mp_int_init_size(TEMP(2), 2 * um));
+    REQUIRE(GROW(TEMP(2), 2 * um));
     s = TEMP(2);
   } else {
     s = c;
   }
 
-  if ((res = mp_int_mod(a, m, TEMP(0))) != MP_OK) goto CLEANUP;
-  if ((res = s_brmu(TEMP(1), m)) != MP_OK) goto CLEANUP;
-  if ((res = s_embar(TEMP(0), b, m, TEMP(1), s)) != MP_OK) goto CLEANUP;
-
-  res = mp_int_copy(s, c);
+  REQUIRE(mp_int_mod(a, m, TEMP(0)));
+  REQUIRE(s_brmu(TEMP(1), m));
+  REQUIRE(s_embar(TEMP(0), b, m, TEMP(1), s));
+  REQUIRE(mp_int_copy(s, c));
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 mp_result mp_int_exptmod_evalue(mp_int a, mp_small value, mp_int m, mp_int c) {
@@ -1096,27 +1099,23 @@ mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu,
   if (CMPZ(b) < 0) return MP_RANGE;
 
   DECLARE_TEMP(2);
-  mp_result res;
-
   mp_size um = MP_USED(m);
-  SETUP(mp_int_init_size(TEMP(0), 2 * um));
+  REQUIRE(GROW(TEMP(0), 2 * um));
 
   mp_int s;
   if (c == b || c == m) {
-    SETUP(mp_int_init_size(TEMP(1), 2 * um));
+    REQUIRE(GROW(TEMP(1), 2 * um));
     s = TEMP(1);
   } else {
     s = c;
   }
 
-  if ((res = mp_int_mod(a, m, TEMP(0))) != MP_OK) goto CLEANUP;
-
-  if ((res = s_embar(TEMP(0), b, m, mu, s)) != MP_OK) goto CLEANUP;
-
-  res = mp_int_copy(s, c);
+  REQUIRE(mp_int_mod(a, m, TEMP(0)));
+  REQUIRE(s_embar(TEMP(0), b, m, mu, s));
+  REQUIRE(mp_int_copy(s, c));
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 mp_result mp_int_redux_const(mp_int m, mp_int c) {
@@ -1131,38 +1130,29 @@ mp_result mp_int_invmod(mp_int a, mp_int m, mp_int c) {
   if (CMPZ(a) == 0 || CMPZ(m) <= 0) return MP_RANGE;
 
   DECLARE_TEMP(2);
-  mp_result res;
 
-  for (last__ = 0; last__ < 2; ++last__) {
-    mp_int_init(LAST_TEMP());
-  }
-
-  if ((res = mp_int_egcd(a, m, TEMP(0), TEMP(1), NULL)) != MP_OK) {
-    goto CLEANUP;
-  }
+  REQUIRE(mp_int_egcd(a, m, TEMP(0), TEMP(1), NULL));
 
   if (mp_int_compare_value(TEMP(0), 1) != 0) {
-    res = MP_UNDEF;
-    goto CLEANUP;
+    REQUIRE(MP_UNDEF);
   }
 
   /* It is first necessary to constrain the value to the proper range */
-  if ((res = mp_int_mod(TEMP(1), m, TEMP(1))) != MP_OK) goto CLEANUP;
+  REQUIRE(mp_int_mod(TEMP(1), m, TEMP(1)));
 
   /* Now, if 'a' was originally negative, the value we have is actually the
      magnitude of the negative representative; to get the positive value we
      have to subtract from the modulus.  Otherwise, the value is okay as it
      stands.
    */
-  mp_sign sa = MP_SIGN(a);
-  if (sa == MP_NEG) {
-    res = mp_int_sub(m, TEMP(1), c);
+  if (MP_SIGN(a) == MP_NEG) {
+    REQUIRE(mp_int_sub(m, TEMP(1), c));
   } else {
-    res = mp_int_copy(TEMP(1), c);
+    REQUIRE(mp_int_copy(TEMP(1), c));
   }
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 /* Binary GCD algorithm due to Josef Stein, 1961 */
@@ -1179,55 +1169,48 @@ mp_result mp_int_gcd(mp_int a, mp_int b, mp_int c) {
     return mp_int_abs(a, c);
   }
 
-  mp_result res;
-  mpz_t u, v, t;
-  mp_int_init(&t);
-  if ((res = mp_int_init_copy(&u, a)) != MP_OK) goto U;
-  if ((res = mp_int_init_copy(&v, b)) != MP_OK) goto V;
+  DECLARE_TEMP(3);
+  REQUIRE(mp_int_copy(a, TEMP(0)));
+  REQUIRE(mp_int_copy(b, TEMP(1)));
 
-  u.sign = MP_ZPOS;
-  v.sign = MP_ZPOS;
+  TEMP(0)->sign = MP_ZPOS;
+  TEMP(1)->sign = MP_ZPOS;
 
   int k = 0;
   { /* Divide out common factors of 2 from u and v */
-    int div2_u = s_dp2k(&u), div2_v = s_dp2k(&v);
+    int div2_u = s_dp2k(TEMP(0));
+    int div2_v = s_dp2k(TEMP(1));
 
     k = MIN(div2_u, div2_v);
-    s_qdiv(&u, (mp_size)k);
-    s_qdiv(&v, (mp_size)k);
+    s_qdiv(TEMP(0), (mp_size)k);
+    s_qdiv(TEMP(1), (mp_size)k);
   }
 
-  if (mp_int_is_odd(&u)) {
-    if ((res = mp_int_neg(&v, &t)) != MP_OK) goto CLEANUP;
+  if (mp_int_is_odd(TEMP(0))) {
+    REQUIRE(mp_int_neg(TEMP(1), TEMP(2)));
   } else {
-    if ((res = mp_int_copy(&u, &t)) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_copy(TEMP(0), TEMP(2)));
   }
 
   for (;;) {
-    s_qdiv(&t, s_dp2k(&t));
+    s_qdiv(TEMP(2), s_dp2k(TEMP(2)));
 
-    if (CMPZ(&t) > 0) {
-      if ((res = mp_int_copy(&t, &u)) != MP_OK) goto CLEANUP;
+    if (CMPZ(TEMP(2)) > 0) {
+      REQUIRE(mp_int_copy(TEMP(2), TEMP(0)));
     } else {
-      if ((res = mp_int_neg(&t, &v)) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_neg(TEMP(2), TEMP(1)));
     }
 
-    if ((res = mp_int_sub(&u, &v, &t)) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_sub(TEMP(0), TEMP(1), TEMP(2)));
 
-    if (CMPZ(&t) == 0) break;
+    if (CMPZ(TEMP(2)) == 0) break;
   }
 
-  if ((res = mp_int_abs(&u, c)) != MP_OK) goto CLEANUP;
-  if (!s_qmul(c, (mp_size)k)) res = MP_MEMORY;
+  REQUIRE(mp_int_abs(TEMP(0), c));
+  if (!s_qmul(c, (mp_size)k)) REQUIRE(MP_MEMORY);
 
-CLEANUP:
-  mp_int_clear(&v);
-V:
-  mp_int_clear(&u);
-U:
-  mp_int_clear(&t);
-
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 /* This is the binary GCD algorithm again, but this time we keep track of the
@@ -1237,9 +1220,7 @@ U:
 mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
   assert(a != NULL && b != NULL && c != NULL && (x != NULL || y != NULL));
 
-  DECLARE_TEMP(8);
-  mp_result res;
-
+  mp_result res = MP_OK;
   int ca = CMPZ(a);
   int cb = CMPZ(b);
   if (ca == 0 && cb == 0) {
@@ -1258,12 +1239,11 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
 
   /* Initialize temporaries:
      A:0, B:1, C:2, D:3, u:4, v:5, ou:6, ov:7 */
-  for (last__ = 0; last__ < 4; ++last__) mp_int_init(LAST_TEMP());
-  TEMP(0)->digits[0] = 1;
-  TEMP(3)->digits[0] = 1;
-
-  SETUP(mp_int_init_copy(TEMP(4), a));
-  SETUP(mp_int_init_copy(TEMP(5), b));
+  DECLARE_TEMP(8);
+  REQUIRE(mp_int_set_value(TEMP(0), 1));
+  REQUIRE(mp_int_set_value(TEMP(3), 1));
+  REQUIRE(mp_int_copy(a, TEMP(4)));
+  REQUIRE(mp_int_copy(b, TEMP(5)));
 
   /* We will work with absolute values here */
   TEMP(4)->sign = MP_ZPOS;
@@ -1278,18 +1258,16 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
     s_qdiv(TEMP(5), k);
   }
 
-  SETUP(mp_int_init_copy(TEMP(6), TEMP(4)));
-  SETUP(mp_int_init_copy(TEMP(7), TEMP(5)));
+  REQUIRE(mp_int_copy(TEMP(4), TEMP(6)));
+  REQUIRE(mp_int_copy(TEMP(5), TEMP(7)));
 
   for (;;) {
     while (mp_int_is_even(TEMP(4))) {
       s_qdiv(TEMP(4), 1);
 
       if (mp_int_is_odd(TEMP(0)) || mp_int_is_odd(TEMP(1))) {
-        if ((res = mp_int_add(TEMP(0), TEMP(7), TEMP(0))) != MP_OK)
-          goto CLEANUP;
-        if ((res = mp_int_sub(TEMP(1), TEMP(6), TEMP(1))) != MP_OK)
-          goto CLEANUP;
+        REQUIRE(mp_int_add(TEMP(0), TEMP(7), TEMP(0)));
+        REQUIRE(mp_int_sub(TEMP(1), TEMP(6), TEMP(1)));
       }
 
       s_qdiv(TEMP(0), 1);
@@ -1300,10 +1278,8 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
       s_qdiv(TEMP(5), 1);
 
       if (mp_int_is_odd(TEMP(2)) || mp_int_is_odd(TEMP(3))) {
-        if ((res = mp_int_add(TEMP(2), TEMP(7), TEMP(2))) != MP_OK)
-          goto CLEANUP;
-        if ((res = mp_int_sub(TEMP(3), TEMP(6), TEMP(3))) != MP_OK)
-          goto CLEANUP;
+        REQUIRE(mp_int_add(TEMP(2), TEMP(7), TEMP(2)));
+        REQUIRE(mp_int_sub(TEMP(3), TEMP(6), TEMP(3)));
       }
 
       s_qdiv(TEMP(2), 1);
@@ -1311,25 +1287,23 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
     }
 
     if (mp_int_compare(TEMP(4), TEMP(5)) >= 0) {
-      if ((res = mp_int_sub(TEMP(4), TEMP(5), TEMP(4))) != MP_OK) goto CLEANUP;
-      if ((res = mp_int_sub(TEMP(0), TEMP(2), TEMP(0))) != MP_OK) goto CLEANUP;
-      if ((res = mp_int_sub(TEMP(1), TEMP(3), TEMP(1))) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_sub(TEMP(4), TEMP(5), TEMP(4)));
+      REQUIRE(mp_int_sub(TEMP(0), TEMP(2), TEMP(0)));
+      REQUIRE(mp_int_sub(TEMP(1), TEMP(3), TEMP(1)));
     } else {
-      if ((res = mp_int_sub(TEMP(5), TEMP(4), TEMP(5))) != MP_OK) goto CLEANUP;
-      if ((res = mp_int_sub(TEMP(2), TEMP(0), TEMP(2))) != MP_OK) goto CLEANUP;
-      if ((res = mp_int_sub(TEMP(3), TEMP(1), TEMP(3))) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_sub(TEMP(5), TEMP(4), TEMP(5)));
+      REQUIRE(mp_int_sub(TEMP(2), TEMP(0), TEMP(2)));
+      REQUIRE(mp_int_sub(TEMP(3), TEMP(1), TEMP(3)));
     }
 
     if (CMPZ(TEMP(4)) == 0) {
-      if (x && (res = mp_int_copy(TEMP(2), x)) != MP_OK) goto CLEANUP;
-      if (y && (res = mp_int_copy(TEMP(3), y)) != MP_OK) goto CLEANUP;
+      if (x) REQUIRE(mp_int_copy(TEMP(2), x));
+      if (y) REQUIRE(mp_int_copy(TEMP(3), y));
       if (c) {
         if (!s_qmul(TEMP(5), k)) {
-          res = MP_MEMORY;
-          goto CLEANUP;
+          REQUIRE(MP_MEMORY);
         }
-
-        res = mp_int_copy(TEMP(5), c);
+        REQUIRE(mp_int_copy(TEMP(5), c));
       }
 
       break;
@@ -1337,7 +1311,7 @@ mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y) {
   }
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c) {
@@ -1349,26 +1323,22 @@ mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c) {
      This formulation insures everything works even if the input
      variables share space.
    */
-  mp_result res;
-  mpz_t lcm;
-  if ((res = mp_int_init(&lcm)) != MP_OK) return res;
-  if ((res = mp_int_gcd(a, b, &lcm)) != MP_OK) goto CLEANUP;
-  if ((res = mp_int_div(a, &lcm, &lcm, NULL)) != MP_OK) goto CLEANUP;
-  if ((res = mp_int_mul(&lcm, b, &lcm)) != MP_OK) goto CLEANUP;
+  DECLARE_TEMP(1);
+  REQUIRE(mp_int_gcd(a, b, TEMP(0)));
+  REQUIRE(mp_int_div(a, TEMP(0), TEMP(0), NULL));
+  REQUIRE(mp_int_mul(TEMP(0), b, TEMP(0)));
+  REQUIRE(mp_int_copy(TEMP(0), c));
 
-  res = mp_int_copy(&lcm, c);
-
-CLEANUP:
-  mp_int_clear(&lcm);
-
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 bool mp_int_divisible_value(mp_int a, mp_small v) {
   mp_small rem = 0;
 
-  if (mp_int_div_value(a, v, NULL, &rem) != MP_OK) return false;
-
+  if (mp_int_div_value(a, v, NULL, &rem) != MP_OK) {
+    return false;
+  }
   return rem == 0;
 }
 
@@ -1385,9 +1355,6 @@ int mp_int_is_pow2(mp_int z) {
 mp_result mp_int_root(mp_int a, mp_small b, mp_int c) {
   assert(a != NULL && c != NULL && b > 0);
 
-  DECLARE_TEMP(5);
-  mp_result res = MP_OK;
-
   if (b == 1) {
     return mp_int_copy(a, c);
   }
@@ -1400,40 +1367,36 @@ mp_result mp_int_root(mp_int a, mp_small b, mp_int c) {
     }
   }
 
-  SETUP(mp_int_init_copy(LAST_TEMP(), a));
-  SETUP(mp_int_init_copy(LAST_TEMP(), a));
-  SETUP(mp_int_init(LAST_TEMP()));
-  SETUP(mp_int_init(LAST_TEMP()));
-  SETUP(mp_int_init(LAST_TEMP()));
-
-  (void)mp_int_abs(TEMP(0), TEMP(0));
-  (void)mp_int_abs(TEMP(1), TEMP(1));
+  DECLARE_TEMP(5);
+  REQUIRE(mp_int_copy(a, TEMP(0)));
+  REQUIRE(mp_int_copy(a, TEMP(1)));
+  TEMP(0)->sign = MP_ZPOS;
+  TEMP(1)->sign = MP_ZPOS;
 
   for (;;) {
-    if ((res = mp_int_expt(TEMP(1), b, TEMP(2))) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_expt(TEMP(1), b, TEMP(2)));
 
     if (mp_int_compare_unsigned(TEMP(2), TEMP(0)) <= 0) break;
 
-    if ((res = mp_int_sub(TEMP(2), TEMP(0), TEMP(2))) != MP_OK) goto CLEANUP;
-    if ((res = mp_int_expt(TEMP(1), b - 1, TEMP(3))) != MP_OK) goto CLEANUP;
-    if ((res = mp_int_mul_value(TEMP(3), b, TEMP(3))) != MP_OK) goto CLEANUP;
-    if ((res = mp_int_div(TEMP(2), TEMP(3), TEMP(4), NULL)) != MP_OK)
-      goto CLEANUP;
-    if ((res = mp_int_sub(TEMP(1), TEMP(4), TEMP(4))) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_sub(TEMP(2), TEMP(0), TEMP(2)));
+    REQUIRE(mp_int_expt(TEMP(1), b - 1, TEMP(3)));
+    REQUIRE(mp_int_mul_value(TEMP(3), b, TEMP(3)));
+    REQUIRE(mp_int_div(TEMP(2), TEMP(3), TEMP(4), NULL));
+    REQUIRE(mp_int_sub(TEMP(1), TEMP(4), TEMP(4)));
 
     if (mp_int_compare_unsigned(TEMP(1), TEMP(4)) == 0) {
-      if ((res = mp_int_sub_value(TEMP(4), 1, TEMP(4))) != MP_OK) goto CLEANUP;
+      REQUIRE(mp_int_sub_value(TEMP(4), 1, TEMP(4)));
     }
-    if ((res = mp_int_copy(TEMP(4), TEMP(1))) != MP_OK) goto CLEANUP;
+    REQUIRE(mp_int_copy(TEMP(4), TEMP(1)));
   }
 
-  if ((res = mp_int_copy(TEMP(1), c)) != MP_OK) goto CLEANUP;
+  REQUIRE(mp_int_copy(TEMP(1), c));
 
   /* If the original value of a was negative, flip the output sign. */
   if (flips) (void)mp_int_neg(c, c); /* cannot fail */
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 mp_result mp_int_to_int(mp_int z, mp_small *out) {
@@ -1766,23 +1729,23 @@ STATIC mp_digit *s_realloc(mp_digit *old, mp_size osize, mp_size nsize) {
 
 STATIC void s_free(void *ptr) { free(ptr); }
 
-STATIC int s_pad(mp_int z, mp_size min) {
+STATIC bool s_pad(mp_int z, mp_size min) {
   if (MP_ALLOC(z) < min) {
     mp_size nsize = s_round_prec(min);
     mp_digit *tmp;
 
-    if ((void *)z->digits == (void *)z) {
-      if ((tmp = s_alloc(nsize)) == NULL) return 0;
-
-      COPY(MP_DIGITS(z), tmp, MP_USED(z));
-    } else if ((tmp = s_realloc(MP_DIGITS(z), MP_ALLOC(z), nsize)) == NULL)
-      return 0;
+    if (z->digits == &(z->single)) {
+      if ((tmp = s_alloc(nsize)) == NULL) return false;
+      tmp[0] = z->single;
+    } else if ((tmp = s_realloc(MP_DIGITS(z), MP_ALLOC(z), nsize)) == NULL) {
+      return false;
+    }
 
     z->digits = tmp;
     z->alloc = nsize;
   }
 
-  return 1;
+  return true;
 }
 
 /* Note: This will not work correctly when value == MP_SMALL_MIN */
@@ -2464,32 +2427,30 @@ STATIC int s_reduce(mp_int x, mp_int m, mp_int mu, mp_int q1, mp_int q2) {
 /* Perform modular exponentiation using Barrett's method, where mu is the
    reduction constant for m.  Assumes a < m, b > 0. */
 STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
-  mp_digit *db, *dbt, umu, d;
-  mp_result res;
+  mp_digit umu = MP_USED(mu);
+  mp_digit *db = MP_DIGITS(b);
+  mp_digit *dbt = db + MP_USED(b) - 1;
+
   DECLARE_TEMP(3);
-
-  umu = MP_USED(mu);
-  db = MP_DIGITS(b);
-  dbt = db + MP_USED(b) - 1;
-
-  while (last__ < 3) {
-    SETUP(mp_int_init_size(LAST_TEMP(), 4 * umu));
-    ZERO(MP_DIGITS(TEMP(last__ - 1)), MP_ALLOC(TEMP(last__ - 1)));
-  }
+  REQUIRE(GROW(TEMP(0), 4 * umu));
+  REQUIRE(GROW(TEMP(1), 4 * umu));
+  REQUIRE(GROW(TEMP(2), 4 * umu));
+  ZERO(TEMP(0)->digits, TEMP(0)->alloc);
+  ZERO(TEMP(1)->digits, TEMP(1)->alloc);
+  ZERO(TEMP(2)->digits, TEMP(2)->alloc);
 
   (void)mp_int_set_value(c, 1);
 
   /* Take care of low-order digits */
   while (db < dbt) {
-    int i;
+    mp_digit d = *db;
 
-    for (d = *db, i = MP_DIGIT_BIT; i > 0; --i, d >>= 1) {
+    for (int i = MP_DIGIT_BIT; i > 0; --i, d >>= 1) {
       if (d & 1) {
         /* The use of a second temporary avoids allocation */
         UMUL(c, a, TEMP(0));
         if (!s_reduce(TEMP(0), m, mu, TEMP(1), TEMP(2))) {
-          res = MP_MEMORY;
-          goto CLEANUP;
+          REQUIRE(MP_MEMORY);
         }
         mp_int_copy(TEMP(0), c);
       }
@@ -2497,8 +2458,7 @@ STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
       USQR(a, TEMP(0));
       assert(MP_SIGN(TEMP(0)) == MP_ZPOS);
       if (!s_reduce(TEMP(0), m, mu, TEMP(1), TEMP(2))) {
-        res = MP_MEMORY;
-        goto CLEANUP;
+        REQUIRE(MP_MEMORY);
       }
       assert(MP_SIGN(TEMP(0)) == MP_ZPOS);
       mp_int_copy(TEMP(0), a);
@@ -2508,13 +2468,12 @@ STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
   }
 
   /* Take care of highest-order digit */
-  d = *dbt;
+  mp_digit d = *dbt;
   for (;;) {
     if (d & 1) {
       UMUL(c, a, TEMP(0));
       if (!s_reduce(TEMP(0), m, mu, TEMP(1), TEMP(2))) {
-        res = MP_MEMORY;
-        goto CLEANUP;
+        REQUIRE(MP_MEMORY);
       }
       mp_int_copy(TEMP(0), c);
     }
@@ -2524,14 +2483,13 @@ STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
 
     USQR(a, TEMP(0));
     if (!s_reduce(TEMP(0), m, mu, TEMP(1), TEMP(2))) {
-      res = MP_MEMORY;
-      goto CLEANUP;
+      REQUIRE(MP_MEMORY);
     }
     (void)mp_int_copy(TEMP(0), a);
   }
 
   CLEANUP_TEMP();
-  return res;
+  return MP_OK;
 }
 
 /* Division of nonnegative integers
@@ -2621,10 +2579,9 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
      q allocates space for m+1 digits to store the quotient digits
      t allocates space for n+1 digits to hold the result of q_j*v
    */
-  mp_result res = MP_OK;
-  mpz_t q, t;
-  if ((res = mp_int_init_size(&q, m + 1)) != MP_OK) return res;
-  if ((res = mp_int_init_size(&t, n + 1)) != MP_OK) goto CLEANUP;
+  DECLARE_TEMP(2);
+  REQUIRE(GROW(TEMP(0), m + 1));
+  REQUIRE(GROW(TEMP(1), n + 1));
 
   /* D2: Initialize j */
   int j = m;
@@ -2633,7 +2590,7 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
   r.used = n + 1;
   r.sign = MP_ZPOS;
   r.alloc = MP_ALLOC(u);
-  ZERO(t.digits, t.alloc);
+  ZERO(TEMP(1)->digits, TEMP(1)->alloc);
 
   /* Calculate the m+1 digits of the quotient result */
   for (; j >= 0; j--) {
@@ -2665,25 +2622,25 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
        we do not need to worry about underflow this way.
      */
     /* t = qhat * v */
-    s_dbmul(MP_DIGITS(v), (mp_digit)qhat, t.digits, n + 1);
-    t.used = n + 1;
-    CLAMP(&t);
+    s_dbmul(MP_DIGITS(v), (mp_digit)qhat, TEMP(1)->digits, n + 1);
+    TEMP(1)->used = n + 1;
+    CLAMP(TEMP(1));
 
     /* Clamp r for the comparison. Comparisons do not like leading zeros. */
     CLAMP(&r);
-    if (s_ucmp(&t, &r) > 0) { /* would the remainder be negative? */
+    if (s_ucmp(TEMP(1), &r) > 0) { /* would the remainder be negative? */
       qhat -= 1;              /* try a smaller q */
-      s_dbmul(MP_DIGITS(v), (mp_digit)qhat, t.digits, n + 1);
-      t.used = n + 1;
-      CLAMP(&t);
-      if (s_ucmp(&t, &r) > 0) { /* would the remainder be negative? */
+      s_dbmul(MP_DIGITS(v), (mp_digit)qhat, TEMP(1)->digits, n + 1);
+      TEMP(1)->used = n + 1;
+      CLAMP(TEMP(1));
+      if (s_ucmp(TEMP(1), &r) > 0) { /* would the remainder be negative? */
         assert(qhat > 0);
         qhat -= 1; /* try a smaller q */
-        s_dbmul(MP_DIGITS(v), (mp_digit)qhat, t.digits, n + 1);
-        t.used = n + 1;
-        CLAMP(&t);
+        s_dbmul(MP_DIGITS(v), (mp_digit)qhat, TEMP(1)->digits, n + 1);
+        TEMP(1)->used = n + 1;
+        CLAMP(TEMP(1));
       }
-      assert(s_ucmp(&t, &r) <= 0 && "The mathematics failed us.");
+      assert(s_ucmp(TEMP(1), &r) <= 0 && "The mathematics failed us.");
     }
     /* Unclamp r. The D algorithm expects r = u_{j+n}..u_j to always be n+1
        digits long. */
@@ -2693,7 +2650,7 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
 
        Note: The multiply was completed above so we only need to subtract here.
      */
-    s_usub(r.digits, t.digits, r.digits, r.used, t.used);
+    s_usub(r.digits, TEMP(1)->digits, r.digits, r.used, TEMP(1)->used);
 
     /* D5: Test remainder
 
@@ -2701,7 +2658,7 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
              before performing the subtract.  Value cast to mp_digit to prevent
              warning, qhat has been clamped to MP_DIGIT_MAX
      */
-    q.digits[j] = (mp_digit)qhat;
+    TEMP(0)->digits[j] = (mp_digit)qhat;
 
     /* D6: Add back
        Note: Not needed because we always check that qhat is the correct value
@@ -2710,24 +2667,22 @@ STATIC mp_result s_udiv_knuth(mp_int u, mp_int v) {
 
     /* D7: Loop on j */
     r.digits--;
-    ZERO(t.digits, t.alloc);
+    ZERO(TEMP(1)->digits, TEMP(1)->alloc);
   }
 
   /* Get rid of leading zeros in q */
-  q.used = m + 1;
-  CLAMP(&q);
+  TEMP(0)->used = m + 1;
+  CLAMP(TEMP(0));
 
   /* Denormalize the remainder */
   CLAMP(u); /* use u here because the r.digits pointer is off-by-one */
   if (k != 0) s_qdiv(u, k);
 
   mp_int_copy(u, v);  /* ok:  0 <= r < v */
-  mp_int_copy(&q, u); /* ok:  q <= u     */
+  mp_int_copy(TEMP(0), u); /* ok:  q <= u     */
 
-  mp_int_clear(&t);
-CLEANUP:
-  mp_int_clear(&q);
-  return res;
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 
 STATIC int s_outlen(mp_int z, mp_size r) {

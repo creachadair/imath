@@ -1451,7 +1451,7 @@ bool test_qrdec(testspec_t* t, FILE* ofp) {
 }
 
 bool test_is_prime(testspec_t* t, FILE* OFP) {
-  mp_int in[1];
+  mp_int in[1] = {NULL};
   mp_result expect;
 
   ACHECK(parse_int_values(t, in, NULL, &expect));
