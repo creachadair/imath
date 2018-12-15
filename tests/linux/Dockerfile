@@ -3,7 +3,7 @@
 # Usage (from the imath root):
 #   docker build -f tests/linux/Dockerfile .
 #
-FROM alpine:3.8 AS base
+FROM alpine:latest AS base
 
 RUN apk add --no-cache build-base gcc gmp-dev make python2
 
