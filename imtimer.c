@@ -35,9 +35,6 @@
 
 #include "imath.h"
 
-extern mp_size multiply_threshold; /* global in imath.c */
-extern mp_size default_precision;  /* global in imath.c */
-
 double clocks_to_seconds(clock_t start, clock_t end);
 double get_multiply_time(int nt, int prec);
 double get_exptmod_time(int nt, int prec);
@@ -50,7 +47,8 @@ const int g_mul_factor = 1000;
 
 int main(int argc, char *argv[]) {
   int do_mul = 0, do_exp = 0, do_header = 1;
-  int num_tests, precision = default_precision, opt;
+  int num_tests, precision = 0, opt;
+  mp_size threshold = 0;
   unsigned int seed = (unsigned int)time(NULL);
 
   while ((opt = getopt(argc, argv, "ehmnp:s:t:")) != EOF) {
@@ -71,7 +69,7 @@ int main(int argc, char *argv[]) {
         seed = atoi(optarg);
         break;
       case 't':
-        multiply_threshold = (mp_size)atoi(optarg);
+	threshold = (mp_size) atoi(optarg);
         break;
       default:
         fprintf(stderr,
@@ -102,14 +100,15 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "You must request at least one test.\n");
     return 1;
   }
-  if (precision <= 0) {
-    fprintf(stderr, "Precision must be positive.\n");
+  if (precision < 0) {
+    fprintf(stderr, "Precision must be non-negative (0 means default).\n");
     return 1;
   }
+  mp_int_multiply_threshold(threshold);
 
   if (do_header) printf("NUM\tPREC\tBITS\tREC\tRESULT\n");
   printf("%d\t%d\t%d\t%u", num_tests, precision,
-         (int)(precision * MP_DIGIT_BIT), multiply_threshold);
+         (int)(precision * MP_DIGIT_BIT), threshold);
 
   if (do_mul) {
     double m_time = get_multiply_time(num_tests, precision);

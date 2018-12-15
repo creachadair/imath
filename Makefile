@@ -45,7 +45,7 @@ DFLAGSY=-g -DDEBUG=1
 VERS=1.27
 
 REGRESSIONS=bug-swap
-TARGETS=imtest imtimer pi bintest $(REGRESSIONS)
+TARGETS=imtest imtimer pi bintest rtest $(REGRESSIONS)
 HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
 SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
@@ -85,7 +85,7 @@ gmp-compat-test: libimath.so
 $(EXAMPLES):%: imath.o imrat.o iprime.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-$(REGRESSIONS):%: imath.o %.o
+$(TARGETS):%: imath.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 examples: $(EXAMPLES)
@@ -94,19 +94,8 @@ libimath.so: imath.so imrat.so gmp_compat.so
 	$(CC) $(CFLAGS) -shared -o $@ $^
 
 imtest: imtest.o imath.o imrat.o imdrover.o iprime.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
-
-imtimer: imath.c imtimer.c
-	$(CC) $(CFLAGS) -D_GNU_SOURCE -DIMATH_TEST -o $@ $^ $(LIBS)
-
-pi: pi.o imath.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 rtest: rtest.o imath.o rsamath.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
-
-bintest: imath.o bintest.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 # Requires clang-format: https://clang.llvm.org/docs/ClangFormat.html
 format-c:

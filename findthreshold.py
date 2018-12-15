@@ -17,8 +17,9 @@
 ## ratio    -- speedup (ratio of tnorm/trec).
 ##
 ## You are responsible for reading and interpreting the resulting table to
-## obtain a useful value for your workload.  Change the value of MP_MULT_THRESH
-## in imath.h once you have a satisfactory result.
+## obtain a useful value for your workload.  Change the default in imath.c, or
+## call mp_int_multiply_threshold(n) during program initialization, to
+## establish a satisfactory result.
 ##
 import math, os, random, sys, time
 
@@ -67,7 +68,7 @@ def compute_stats():
         sys.stderr.write('%-4d ' % prec)
         stats[prec] = (None, 1000000., 0.)
 
-        for thresh in xrange(16, 65, 2):
+        for thresh in xrange(8, 65, 2):
             s, b, t = get_timing_stats(1000, prec, thresh, seed)
             sp, bp, tp = get_timing_stats(1000, prec, prec + 1, seed)
 

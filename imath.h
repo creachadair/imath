@@ -87,13 +87,21 @@ extern const mp_result MP_MINERR;
 #define MP_MIN_RADIX    2
 #define MP_MAX_RADIX    36
 
-/* Values with fewer than this many significant digits use the standard
-   multiplication algorithm; otherwise, a recursive algorithm is used.
-   Choose a value to suit your platform.
- */
-#define MP_MULT_THRESH  22
+/* Set the default number of digits allocated to an mp_int constructed by
+   mp_int_init_size with prec == 0. Allocations are rounded up to multiples of
+   this value. MP_DEFAULT_PREC is the default value.
 
-#define MP_DEFAULT_PREC 8   /* default memory allocation, in digits */
+   This requires that ndigits > 0.
+*/
+void mp_int_default_precision(mp_size ndigits);
+
+/* Set the number of digits below which multiplication will use the standard
+   quadratic "schoolbook" multiplcation algorithm, rather than Karatsuba-Ofman.
+   Choose a value to suit your platform.
+
+   This requires that ndigits >= sizeof(mp_word).
+ */
+void mp_int_multiply_threshold(mp_size ndigits);
 
 extern const mp_sign   MP_NEG;
 extern const mp_sign   MP_ZPOS;

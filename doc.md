@@ -112,9 +112,8 @@ mp_int    mp_int_alloc();
 
 mp_result mp_int_init_size(mp_int z, mp_size prec);
           Initializes z with at least prec digits of storage, sets the value to
-          zero.  If prec is zero, the default size is used, defined in imath.h
-          as MP_DEFAULT_PREC.  The size is rounded up to the nearest word
-          boundary.
+          zero.  If prec is zero, a default size is used, defined in imath.c,
+          and the size is rounded up to the nearest word boundary.
 
 mp_result mp_int_init_copy(mp_int z, mp_int old);
           Initializes z to be a copy of an already-initialized mp_int in old.
@@ -446,19 +445,11 @@ that is usually faster.  See Knuth Vol. 2 for more details about how this
 algorithm works.
 
 The breakpoint between the "normal" and the recursive algorithm is controlled
-by a static constant `multiply_threshold` defined in imath.c, which contains
-the number of significant digits below which the standard algorithm should be
-used.  This is initialized to the value of the compile-time constant
-`MP_MULT_THRESH` from imath.h.  If you wish to be able to modify this value at
-runtime, compile imath.c with `IMATH_TEST` defined true in the preprocessor,
-and declare
-
-    extern mp_size multiply_threshold;
-
-When `IMATH_TEST` is defined, this variable is defined as a mutable global, and
-can be changed.  Otherwise, it is defined as an immutable static constant.  The
-`imtimer` program and the `findthreshold.py` script (Python) can help you find
-a suitable value for `MP_MULT_THRESH` for your particular platform.
+by a static digit threshold defined in `imath.c`. Values with fewer significant
+digits use the standard algorithm.  This value can be modified by calling
+`mp_int_multiply_threshold(n)`.  The `imtimer` program and the
+`findthreshold.py` script (Python) can help you find a suitable value for for
+your particular platform.
 
 ```
 const char *mp_error_string(mp_result res);
@@ -672,9 +663,8 @@ The number of digits allocated for an `mpz_t` is referred to in the library
 documentation as its "precision".  Operations that affect an `mpz_t` cause
 precision to increase as needed.  In any case, all allocations are measured in
 digits, and rounded up to the nearest `mp_word` boundary.  There is a default
-minimum precision stored as a static constant default_precision (imath.c); its
-value is set to `MP_DEFAULT_PREC` (imath.h).  If the preprocessor symbol
-`IMATH_TEST` is defined, this value becomes global and modifiable.
+minimum precision stored as a static constant default_precision (`imath.c`).
+This value can be set using `mp_int_default_precision(n)`.
 
 Note that the allocated size of an `mpz_t` can only grow; the library never
 reallocates in order to decrease the size.  A simple way to do so explicitly is

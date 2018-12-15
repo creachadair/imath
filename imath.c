@@ -193,18 +193,20 @@ static inline bool ADD_WILL_OVERFLOW(mp_word W, mp_word V) {
 }
 
 /* Default number of digits allocated to a new mp_int */
-#if IMATH_TEST
-mp_size default_precision = MP_DEFAULT_PREC;
-#else
-static const mp_size default_precision = MP_DEFAULT_PREC;
-#endif
+static mp_size default_precision = 8;
+
+void mp_int_default_precision(mp_size size) {
+  assert(size > 0);
+  default_precision = size;
+}
 
 /* Minimum number of digits to invoke recursive multiply */
-#if IMATH_TEST
-mp_size multiply_threshold = MP_MULT_THRESH;
-#else
-static const mp_size multiply_threshold = MP_MULT_THRESH;
-#endif
+static mp_size multiply_threshold = 32;
+
+void mp_int_multiply_threshold(mp_size thresh) {
+  assert(thresh >= sizeof(mp_word));
+  multiply_threshold = thresh;
+}
 
 /* Allocate a buffer of (at least) num digits, or return
    NULL if that couldn't be done.  */
