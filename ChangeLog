@@ -491,3 +491,21 @@
 	58f4392 Use the inherited settings in the gmp-compat-tests.
 	8a181cd Make the Linux docker test run "make check".
 	28617f2 gmp_compat: Fix overflow in the uint conversion adapter.
+
+1.28
+	Another round of cleanup, and some more invasive API changes.
+	I removed more macros, and added an API surface for setting the
+	default precision and recursive-multiply threshold.
+	The compile-time switchable statics are now strictly static.
+	The handling of temporary values was greatly reworked to make it
+	less brittle.
+
+	ba44b37 Add unit tests for mp_int_is_prime.
+	6f10877 imath: Remove lvalue uses of access macros, and the macros.
+	f4939db Fix formatting.
+	85137fa docs: Remove macro implementation comments.
+	37f046e Rework the handling of temporaries.
+	cc8ac74 imtimer: Fix a lingering lvalue use of MP_USED.
+	9736a8b imath: Drop switchable statics and stdio dependency.
+	5445ad8 Add functions to set default precision and multiply threshold.
+	58f2d6e Use alpine:latest rather than a fixed version.

@@ -42,7 +42,7 @@ DFLAGSN=$(DFLAGS)
 DFLAGSY=-g -DDEBUG=1
 
 # --- end of configuration section ---
-VERS=1.27
+VERS=1.28
 
 REGRESSIONS=bug-swap
 TARGETS=imtest imtimer pi bintest rtest $(REGRESSIONS)
