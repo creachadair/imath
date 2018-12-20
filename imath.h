@@ -35,32 +35,32 @@
 extern "C" {
 #endif
 
-typedef unsigned char      mp_sign;
-typedef unsigned int       mp_size;
-typedef int                mp_result;
-typedef long               mp_small;  /* must be a signed type */
-typedef unsigned long      mp_usmall; /* must be an unsigned type */
+typedef unsigned char  mp_sign;
+typedef unsigned int   mp_size;
+typedef int            mp_result;
+typedef long           mp_small;  /* must be a signed type */
+typedef unsigned long  mp_usmall; /* must be an unsigned type */
 
 
 /* Build with words as uint64_t by default. */
 #ifdef USE_32BIT_WORDS
-typedef uint16_t           mp_digit;
-typedef uint32_t           mp_word;
-#  define MP_DIGIT_MAX   (UINT16_MAX * 1UL)
-#  define MP_WORD_MAX    (UINT32_MAX * 1UL)
+typedef uint16_t        mp_digit;
+typedef uint32_t        mp_word;
+#  define MP_DIGIT_MAX  (UINT16_MAX * 1UL)
+#  define MP_WORD_MAX   (UINT32_MAX * 1UL)
 #else
-typedef uint32_t           mp_digit;
-typedef uint64_t           mp_word;
-#  define MP_DIGIT_MAX   (UINT32_MAX * UINT64_C(1))
-#  define MP_WORD_MAX    (UINT64_MAX)
+typedef uint32_t        mp_digit;
+typedef uint64_t        mp_word;
+#  define MP_DIGIT_MAX  (UINT32_MAX * UINT64_C(1))
+#  define MP_WORD_MAX   (UINT64_MAX)
 #endif
 
 typedef struct mpz {
-  mp_digit    single;
-  mp_digit   *digits;
-  mp_size     alloc;
-  mp_size     used;
-  mp_sign     sign;
+  mp_digit  single;
+  mp_digit* digits;
+  mp_size   alloc;
+  mp_size   used;
+  mp_sign   sign;
 } mpz_t, *mp_int;
 
 static inline mp_digit* MP_DIGITS(mp_int Z) { return Z->digits; }
@@ -78,14 +78,14 @@ extern const mp_result MP_TRUNC;
 extern const mp_result MP_BADARG;
 extern const mp_result MP_MINERR;
 
-#define MP_DIGIT_BIT    (sizeof(mp_digit) * CHAR_BIT)
-#define MP_WORD_BIT     (sizeof(mp_word) * CHAR_BIT)
-#define MP_SMALL_MIN    LONG_MIN
-#define MP_SMALL_MAX    LONG_MAX
-#define MP_USMALL_MAX   ULONG_MAX
+#define MP_DIGIT_BIT   (sizeof(mp_digit) * CHAR_BIT)
+#define MP_WORD_BIT    (sizeof(mp_word) * CHAR_BIT)
+#define MP_SMALL_MIN   LONG_MIN
+#define MP_SMALL_MAX   LONG_MAX
+#define MP_USMALL_MAX  ULONG_MAX
 
-#define MP_MIN_RADIX    2
-#define MP_MAX_RADIX    36
+#define MP_MIN_RADIX   2
+#define MP_MAX_RADIX   36
 
 /* Set the default number of digits allocated to an mp_int constructed by
    mp_int_init_size with prec == 0. Allocations are rounded up to multiples of
@@ -103,8 +103,8 @@ void mp_int_default_precision(mp_size ndigits);
  */
 void mp_int_multiply_threshold(mp_size ndigits);
 
-extern const mp_sign   MP_NEG;
-extern const mp_sign   MP_ZPOS;
+extern const mp_sign MP_NEG;
+extern const mp_sign MP_ZPOS;
 
 static inline bool mp_int_is_odd(mp_int Z) { return (Z->digits[0] & 1) != 0; }
 static inline bool mp_int_is_even(mp_int Z) { return (Z->digits[0] & 1) == 0; }
