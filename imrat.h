@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-typedef struct mpq {
+typedef struct {
   mpz_t   num;    /* Numerator         */
   mpz_t   den;    /* Denominator, <> 0 */
 } mpq_t, *mp_rat;
