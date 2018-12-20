@@ -55,7 +55,7 @@ typedef uint64_t        mp_word;
 #  define MP_WORD_MAX   (UINT64_MAX)
 #endif
 
-typedef struct mpz {
+typedef struct {
   mp_digit  single;
   mp_digit* digits;
   mp_size   alloc;
