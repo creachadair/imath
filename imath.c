@@ -1689,7 +1689,7 @@ const char *mp_error_string(mp_result res) {
 #if DEBUG
 static const mp_digit fill = (mp_digit)0xdeadbeefabad1dea;
 #endif
-  
+
 static mp_digit *s_alloc(mp_size num) {
   mp_digit *out = malloc(num * sizeof(mp_digit));
   assert(out != NULL);
@@ -1704,12 +1704,12 @@ static mp_digit *s_realloc(mp_digit *old, mp_size osize, mp_size nsize) {
 #if DEBUG
   mp_digit *new = s_alloc(nsize);
   assert(new != NULL);
-  
+
   for (mp_size ix = 0; ix < nsize; ++ix) new[ix] = fill;
   memcpy(new, old, osize * sizeof(mp_digit));
 #else
   mp_digit *new = realloc(old, nsize * sizeof(mp_digit));
-    assert(new != NULL);
+  assert(new != NULL);
 #endif
 
   return new;
@@ -2617,7 +2617,7 @@ static mp_result s_udiv_knuth(mp_int u, mp_int v) {
     /* Clamp r for the comparison. Comparisons do not like leading zeros. */
     CLAMP(&r);
     if (s_ucmp(TEMP(1), &r) > 0) { /* would the remainder be negative? */
-      qhat -= 1;              /* try a smaller q */
+      qhat -= 1;                   /* try a smaller q */
       s_dbmul(MP_DIGITS(v), (mp_digit)qhat, TEMP(1)->digits, n + 1);
       TEMP(1)->used = n + 1;
       CLAMP(TEMP(1));
@@ -2666,7 +2666,7 @@ static mp_result s_udiv_knuth(mp_int u, mp_int v) {
   CLAMP(u); /* use u here because the r.digits pointer is off-by-one */
   if (k != 0) s_qdiv(u, k);
 
-  mp_int_copy(u, v);  /* ok:  0 <= r < v */
+  mp_int_copy(u, v);       /* ok:  0 <= r < v */
   mp_int_copy(TEMP(0), u); /* ok:  q <= u     */
 
   CLEANUP_TEMP();

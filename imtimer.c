@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
         seed = atoi(optarg);
         break;
       case 't':
-	threshold = (mp_size) atoi(optarg);
+        threshold = (mp_size)atoi(optarg);
         break;
       default:
         fprintf(stderr,
