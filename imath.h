@@ -322,14 +322,13 @@ mp_result mp_int_to_uint(mp_int z, mp_usmall *out);
     terminating NUL value. A leading `-` is used to indicate a negative
     value.
 
-    Returns `MP_RANGE` if `radix` < MP_MIN_RADIX or `radix` > MP_MAX_RADIX.
-    Returns `MP_TRUNC` if `limit` was to small to write all of `z`. */
+    Returns `MP_TRUNC` if `limit` was to small to write all of `z`.
+    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
 mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit);
 
 /** Reports the minimum number of characters required to represent `z` as a
     zero-terminated string in the given `radix`.
-
-    Returns `MP_RANGE` if `radix` < MP_MIN_RADIX or `raidix` > MP_MAX_RADIX. */
+    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
 mp_result mp_int_string_len(mp_int z, mp_size radix);
 
 /** Reads a string of ASCII digits in the specified `radix` from the zero
@@ -344,7 +343,7 @@ mp_result mp_int_string_len(mp_int z, mp_size radix);
     If the whole string was consumed, `MP_OK` is returned; otherwise
     `MP_TRUNC`. is returned.
 
-    Returns `MP_RANGE` if `radix` < MP_MIN_RADIX or `radix` > MP_MAX_RADIX. */
+    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
 mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
 
 /** Reads a string of ASCII digits in the specified `radix` from the zero
@@ -362,7 +361,7 @@ mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
     string was consumed). This emulates the behavior of the standard C
     `strtol()` function.
 
-    Returns `MP_RANGE` if `radix` < MP_MIN_RADIX or `radix` > MP_MAX_RADIX. */
+    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
 mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, char **end);
 
 /** Returns the number of significant bits in z. */

@@ -1440,8 +1440,7 @@ mp_result mp_int_to_uint(mp_int z, mp_usmall *out) {
 
 mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit) {
   assert(z != NULL && str != NULL && limit >= 2);
-
-  if (radix < MP_MIN_RADIX || radix > MP_MAX_RADIX) return MP_RANGE;
+  assert(radix >= MP_MIN_RADIX && radix <= MP_MAX_RADIX);
 
   int cmp = 0;
   if (CMPZ(z) == 0) {
@@ -1490,8 +1489,7 @@ mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit) {
 
 mp_result mp_int_string_len(mp_int z, mp_size radix) {
   assert(z != NULL);
-
-  if (radix < MP_MIN_RADIX || radix > MP_MAX_RADIX) return MP_RANGE;
+  assert(radix >= MP_MIN_RADIX && radix <= MP_MAX_RADIX);
 
   int len = s_outlen(z, radix) + 1; /* for terminator */
 
@@ -1509,8 +1507,7 @@ mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str) {
 mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str,
                               char **end) {
   assert(z != NULL && str != NULL);
-
-  if (radix < MP_MIN_RADIX || radix > MP_MAX_RADIX) return MP_RANGE;
+  assert(radix >= MP_MIN_RADIX && radix <= MP_MAX_RADIX);
 
   /* Skip leading whitespace */
   while (isspace((unsigned char)*str)) ++str;
