@@ -115,7 +115,7 @@ mp_result mp_int_init(mp_int z);
 
 /** Allocates a fresh zero-valued `mpz_t` on the heap, returning NULL in case
     of error. The only possible error is out-of-memory. */
-mp_int    mp_int_alloc(void);
+mp_int mp_int_alloc(void);
 
 /** Initializes `z` with at least `prec` digits of storage, and sets it to
     zero. If `prec` is zero, the default precision is used. In either case the
@@ -139,21 +139,21 @@ mp_result mp_int_set_value(mp_int z, mp_small value);
 mp_result mp_int_set_uvalue(mp_int z, mp_usmall uvalue);
 
 /** Releases the storage used by `z`. */
-void      mp_int_clear(mp_int z);
+void mp_int_clear(mp_int z);
 
 /** Releases the storage used by `z` and also `z` itself.
     This should only be used for `z` allocated by `mp_int_alloc()`. */
-void      mp_int_free(mp_int z);
+void mp_int_free(mp_int z);
 
 /** Replaces the value of `c` with a copy of the value of `a`. No new memory is
     allocated unless `a` has more significant digits than `c` has allocated. */
 mp_result mp_int_copy(mp_int a, mp_int c);
 
 /** Swaps the values and storage between `a` and `c`. */
-void      mp_int_swap(mp_int a, mp_int c);
+void mp_int_swap(mp_int a, mp_int c);
 
 /** Sets `z` to zero. The allocated storage of `z` is not changed. */
-void      mp_int_zero(mp_int z);
+void mp_int_zero(mp_int z);
 
 /** Sets `c` to the absolute value of `a`. */
 mp_result mp_int_abs(mp_int a, mp_int c);
@@ -220,7 +220,6 @@ mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c);
     It is an error (`MP_RANGE`) if `b` < 0. */
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
 
-
 /** Sets `*r` to the remainder of `a` / `value`.
     The remainder is pinned to 0 <= `r` < `value`. */
 static inline
@@ -229,27 +228,27 @@ mp_result mp_int_mod_value(mp_int a, mp_small value, mp_small* r) {
 }
 
 /** Returns the comparator of `a` and `b`. */
-int       mp_int_compare(mp_int a, mp_int b);
+int mp_int_compare(mp_int a, mp_int b);
 
 /** Returns the comparator of the magnitudes of `a` and `b`, disregarding their
     signs. Neither `a` nor `b` is modified by the comparison. */
-int       mp_int_compare_unsigned(mp_int a, mp_int b);
+int mp_int_compare_unsigned(mp_int a, mp_int b);
 
 /** Returns the comparator of `z` and zero. */
-int       mp_int_compare_zero(mp_int z);
+int mp_int_compare_zero(mp_int z);
 
 /** Returns the comparator of `z` and the signed value `v`. */
-int       mp_int_compare_value(mp_int z, mp_small v);
+int mp_int_compare_value(mp_int z, mp_small v);
 
 /** Returns the comparator of `z` and the unsigned value `uv`. */
-int       mp_int_compare_uvalue(mp_int z, mp_usmall uv);
+int mp_int_compare_uvalue(mp_int z, mp_usmall uv);
 
 /** Reports whether `a` is divisible by `v`. */
-bool      mp_int_divisible_value(mp_int a, mp_small v);
+bool mp_int_divisible_value(mp_int a, mp_small v);
 
 /** Returns k >= 0 such that `z` is 2^k, if such a k exists. If no such k
     exists, the function returns -1. */
-int       mp_int_is_pow2(mp_int z);
+int mp_int_is_pow2(mp_int z);
 
 /** Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`.
     It is an error (`MP_RANGE`) if `b` < 0 or (`MP_UNDEF`) `m` == 0. */
@@ -307,7 +306,7 @@ mp_result mp_int_root(mp_int a, mp_small b, mp_int c);
 /** Sets `c` to the greatest integer not less than the square root of `a`.
     This is a special case of `mp_int_root()`. */
 static inline
-mp_result  mp_int_sqrt(mp_int a, mp_int c) { return mp_int_root(a, 2, c); }
+mp_result mp_int_sqrt(mp_int a, mp_int c) { return mp_int_root(a, 2, c); }
 
 /** Returns `MP_OK` if `z` is representable as `mp_small`, or `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`. */

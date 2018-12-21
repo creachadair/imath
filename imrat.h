@@ -60,7 +60,7 @@ mp_result mp_rat_init(mp_rat r);
 
 /** Allocates a fresh zero-valued `mpq_t` on the heap, returning NULL in case
     of error. The only possible error is out-of-memory. */
-mp_rat    mp_rat_alloc(void);
+mp_rat mp_rat_alloc(void);
 
 /** Reduces `r` in-place to lowest terms and canonical form.
 
@@ -88,26 +88,26 @@ mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom);
 mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom);
 
 /** Releases the storage used by `r`. */
-void      mp_rat_clear(mp_rat r);
+void mp_rat_clear(mp_rat r);
 
 /** Releases the storage used by `r` and also `r` itself.
     This should only be used for `r` allocated by `mp_rat_alloc()`. */
-void      mp_rat_free(mp_rat r);
+void mp_rat_free(mp_rat r);
 
 /** Sets `z` to a copy of the numerator of `r`. */
 mp_result mp_rat_numer(mp_rat r, mp_int z);
 
 /** Returns a pointer to the numerator of `r`. */
-mp_int    mp_rat_numer_ref(mp_rat r);
+mp_int mp_rat_numer_ref(mp_rat r);
 
 /** Sets `z` to a copy of the denominator of `r`. */
 mp_result mp_rat_denom(mp_rat r, mp_int z);
 
 /** Returns a pointer to the denominator of `r`. */
-mp_int    mp_rat_denom_ref(mp_rat r);
+mp_int mp_rat_denom_ref(mp_rat r);
 
 /** Reports the sign of `r`. */
-mp_sign   mp_rat_sign(mp_rat r);
+mp_sign mp_rat_sign(mp_rat r);
 
 
 /** Sets `c` to a copy of the value of `a`. No new memory is allocated unless a
@@ -116,7 +116,7 @@ mp_sign   mp_rat_sign(mp_rat r);
 mp_result mp_rat_copy(mp_rat a, mp_rat c);
 
 /** Sets `r` to zero. The allocated storage of `r` is not changed. */
-void      mp_rat_zero(mp_rat r);
+void mp_rat_zero(mp_rat r);
 
 /** Sets `c` to the absolute value of `a`. */
 mp_result mp_rat_abs(mp_rat a, mp_rat c);
@@ -158,23 +158,22 @@ mp_result mp_rat_div_int(mp_rat a, mp_int b, mp_rat c);
     It returns `MP_RANGE` if `b` < 0. */
 mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c);
 
-
 /** Returns the comparator of `a` and `b`. */
-int       mp_rat_compare(mp_rat a, mp_rat b);
+int mp_rat_compare(mp_rat a, mp_rat b);
 
 /** Returns the comparator of the magnitudes of `a` and `b`, disregarding their
     signs. Neither `a` nor `b` is modified by the comparison. */
-int       mp_rat_compare_unsigned(mp_rat a, mp_rat b);
+int mp_rat_compare_unsigned(mp_rat a, mp_rat b);
 
 /** Returns the comparator of `r` and zero. */
-int       mp_rat_compare_zero(mp_rat r);
+int mp_rat_compare_zero(mp_rat r);
 
 /** Returns the comparator of `r` and the signed ratio `n` / `d`.
     It returns `MP_UNDEF` if `d` is zero. */
-int       mp_rat_compare_value(mp_rat r, mp_small n, mp_small d);
+int mp_rat_compare_value(mp_rat r, mp_small n, mp_small d);
 
 /** Reports whether `r` is an integer, having canonical denominator 1. */
-bool      mp_rat_is_integer(mp_rat r);
+bool mp_rat_is_integer(mp_rat r);
 
 /** Reports whether the numerator and denominator of `r` can be represented as
     small signed integers, and if so stores the corresponding values to `num`
