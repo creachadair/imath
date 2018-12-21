@@ -141,8 +141,9 @@ value, use the following:
 
 ### Comparison Functions
 
-Unless otherwise specified, comparison between values x and y returns a value <
-0 if x is less than y, = 0 if x is equal to y, and > 0 if x is greater than y.
+Unless otherwise specified, comparison between values `x` and `y` returns a
+**comparator**, an integer value < 0 if `x` is less than `y`, 0 if `x` is equal
+to `y`, and > 0 if `x` is greater than `y`.
 
 {{insert "imath.h"
   mp_int_compare mp_int_compare_unsigned mp_int_compare_zero

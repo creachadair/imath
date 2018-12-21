@@ -357,8 +357,9 @@ mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
 
 ### Comparison Functions
 
-Unless otherwise specified, comparison between values x and y returns a value <
-0 if x is less than y, = 0 if x is equal to y, and > 0 if x is greater than y.
+Unless otherwise specified, comparison between values `x` and `y` returns a
+**comparator**, an integer value < 0 if `x` is less than `y`, 0 if `x` is equal
+to `y`, and > 0 if `x` is greater than `y`.
 
 <!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
