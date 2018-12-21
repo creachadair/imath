@@ -1071,37 +1071,40 @@ If you are adding to this library, you should be careful to preserve the
 convention that inputs and outputs can overlap, as described above.  So, for
 example, `mp_int_add(a, a, a)` is legal.  Often, this means you must maintain
 one or more temporary mpz_t structures for intermediate values.  The private
-macros `SETUP(E, C)` and `TEMP(K)` can be used to enforce a conventional
-structure like this:
+macros `DECLARE_TEMP(N)`, `CLEANUP_TEMP()`, and `TEMP(K)` can be used to
+maintain a conventional structure like this:
 
-```
+```c
 {
-  mpz_t     temp[NUM_TEMPS];  /* declare how many you need here */
-  int       last = 0;         /* number of in-use temps         */
-  mp_result res;              /* used for checking results      */
+  /* Declare how many temp values you need.
+	 Use TEMP(i) to access the ith value (0-indexed). */
+  DECLARE_TEMP(8);
   ...
 
-  /* Initialization phase */
-  SETUP(mp_int_init(TEMP(0)), last);
-  SETUP(mp_int_init_copy(TEMP(1), x), last);
+  /* Perform actions that must return MP_OK or fail. */
+  REQUIRE(mp_int_copy(x, TEMP(1)));
   ...
-  SETUP(mp_int_init_value(TEMP(7), 3), last);
-
-  /* Work phase */
+  REQUIRE(mp_int_expt(TEMP(1), TEMP(2), TEMP(3)));
   ...
 
-CLEANUP:
-  while(--last >= 0) {
-    mp_int_clear(TEMP(last));
+  /* You can also use REQUIRE directly for more complex cases. */
+  if (some_difficult_question(TEMP(3)) != answer(x)) {
+	REQUIRE(MP_RANGE);  /* falls through to cleanup (below) */
   }
-  return res;
+
+  /* Ensure temporary values are cleaned up at exit.
+
+     If control reaches here via a REQUIRE failure, the code below
+	 the cleanup will not be executed.
+   */
+  CLEANUP_TEMP();
+  return MP_OK;
 }
 ```
 
-The names `temp` and `res` are fixed -- the `SETUP` and `TEMP` macros assume
-they exist.  `TEMP(k)` returns a pointer to the kth entry of temp.  This
-structure insures that even if a failure occurs during the "initialization
-phase", no memory is leaked.
+Under the covers, these macros are just maintaining an array of `mpz_t` values,
+and a jump label to handle cleanup. You may only have one `DECLARE_TEMP` and
+its corresponding `CLEANUP_TEMP` per function body.
 
 "Small" integer values are represented by the types `mp_small` and `mp_usmall`,
 which are mapped to appropriately-sized types on the host system.  The default
@@ -1112,7 +1115,7 @@ You may change these, provided you insure that `mp_small` is signed and
     MP_SMALL_MIN, MP_SMALL_MAX
     MP_USMALL_MIN, MP_USMALL_MAX
 
-... which are defined in <imath.h>, if you change these.
+... which are defined in `<imath.h>`, if you change these.
 
 Rational numbers are represented using a pair of arbitrary precision integers,
 with the convention that the sign of the numerator is the sign of the rational
