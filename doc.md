@@ -273,7 +273,7 @@ mp_result <a href="imath.h#L187">mp_int_sqr</a>(mp_int a, mp_int c);
 
 ------------
 <a id="mp_int_root"></a><pre>
-mp_result <a href="imath.h#L305">mp_int_root</a>(mp_int a, mp_small b, mp_int c);
+mp_result <a href="imath.h#L306">mp_int_root</a>(mp_int a, mp_small b, mp_int c);
 </pre>
  -  Sets `c` to the greatest integer not less than the `b`th root of `a`,
     using Newton's root-finding algorithm.
@@ -281,7 +281,7 @@ mp_result <a href="imath.h#L305">mp_int_root</a>(mp_int a, mp_small b, mp_int c)
 
 ------------
 <a id="mp_int_sqrt"></a><pre>
-static inline mp_result <a href="imath.h#L309">mp_int_sqrt</a>(mp_int a, mp_int c);
+static inline mp_result <a href="imath.h#L310">mp_int_sqrt</a>(mp_int a, mp_int c);
 </pre>
  -  Sets `c` to the greatest integer not less than the square root of `a`.
     This is a special case of `mp_int_root()`.
@@ -438,13 +438,14 @@ mp_result <a href="imath.h#L271">mp_int_exptmod_known</a>(mp_int a, mp_int b, mp
 
 ------------
 <a id="mp_int_redux_const"></a><pre>
-mp_result <a href="imath.h#L274">mp_int_redux_const</a>(mp_int m, mp_int c);
+mp_result <a href="imath.h#L275">mp_int_redux_const</a>(mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the reduction constant for Barrett reduction by modulus `m`.
+    Requires that `c` and `m` point to distinct locations.
 
 ------------
 <a id="mp_int_invmod"></a><pre>
-mp_result <a href="imath.h#L281">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c);
+mp_result <a href="imath.h#L282">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the multiplicative inverse of `a` modulo `m`, if it exists.
     The least non-negative representative of the congruence class is computed.
@@ -454,7 +455,7 @@ mp_result <a href="imath.h#L281">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c)
 
 ------------
 <a id="mp_int_gcd"></a><pre>
-mp_result <a href="imath.h#L287">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
+mp_result <a href="imath.h#L288">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
 </pre>
  -  Sets `c` to the greatest common divisor of `a` and `b`.
 
@@ -463,7 +464,7 @@ mp_result <a href="imath.h#L287">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
 
 ------------
 <a id="mp_int_egcd"></a><pre>
-mp_result <a href="imath.h#L294">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
+mp_result <a href="imath.h#L295">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
 </pre>
  -  Sets `c` to the greatest common divisor of `a` and `b`, and sets `x` and
     `y` to values satisfying Bezout's identity `gcd(a, b) = ax + by`.
@@ -473,7 +474,7 @@ mp_result <a href="imath.h#L294">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, m
 
 ------------
 <a id="mp_int_lcm"></a><pre>
-mp_result <a href="imath.h#L300">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
+mp_result <a href="imath.h#L301">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
 </pre>
  -  Sets `c` to the least common multiple of `a` and `b`.
 
@@ -486,21 +487,21 @@ mp_result <a href="imath.h#L300">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
 
 ------------
 <a id="mp_int_to_int"></a><pre>
-mp_result <a href="imath.h#L314">mp_int_to_int</a>(mp_int z, mp_small *out);
+mp_result <a href="imath.h#L315">mp_int_to_int</a>(mp_int z, mp_small *out);
 </pre>
  -  Returns `MP_OK` if `z` is representable as `mp_small`, else `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
 ------------
 <a id="mp_int_to_uint"></a><pre>
-mp_result <a href="imath.h#L318">mp_int_to_uint</a>(mp_int z, mp_usmall *out);
+mp_result <a href="imath.h#L319">mp_int_to_uint</a>(mp_int z, mp_usmall *out);
 </pre>
  -  Returns `MP_OK` if `z` is representable as `mp_usmall`, or `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
 ------------
 <a id="mp_int_to_string"></a><pre>
-mp_result <a href="imath.h#L326">mp_int_to_string</a>(mp_int z, mp_size radix, char *str, int limit);
+mp_result <a href="imath.h#L327">mp_int_to_string</a>(mp_int z, mp_size radix, char *str, int limit);
 </pre>
  -  Converts `z` to a zero-terminated string of characters in the specified
     `radix`, writing at most `limit` characters to `str` including the
@@ -511,7 +512,7 @@ mp_result <a href="imath.h#L326">mp_int_to_string</a>(mp_int z, mp_size radix, c
 
 ------------
 <a id="mp_int_string_len"></a><pre>
-mp_result <a href="imath.h#L331">mp_int_string_len</a>(mp_int z, mp_size radix);
+mp_result <a href="imath.h#L332">mp_int_string_len</a>(mp_int z, mp_size radix);
 </pre>
  -  Reports the minimum number of characters required to represent `z` as a
     zero-terminated string in the given `radix`.
@@ -519,7 +520,7 @@ mp_result <a href="imath.h#L331">mp_int_string_len</a>(mp_int z, mp_size radix);
 
 ------------
 <a id="mp_int_read_string"></a><pre>
-mp_result <a href="imath.h#L346">mp_int_read_string</a>(mp_int z, mp_size radix, const char *str);
+mp_result <a href="imath.h#L347">mp_int_read_string</a>(mp_int z, mp_size radix, const char *str);
 </pre>
  -  Reads a string of ASCII digits in the specified `radix` from the zero
     terminated `str` provided into `z`. For values of `radix > 10`, the letters
@@ -537,7 +538,7 @@ mp_result <a href="imath.h#L346">mp_int_read_string</a>(mp_int z, mp_size radix,
 
 ------------
 <a id="mp_int_read_cstring"></a><pre>
-mp_result <a href="imath.h#L364">mp_int_read_cstring</a>(mp_int z, mp_size radix, const char *str, char **end);
+mp_result <a href="imath.h#L365">mp_int_read_cstring</a>(mp_int z, mp_size radix, const char *str, char **end);
 </pre>
  -  Reads a string of ASCII digits in the specified `radix` from the zero
     terminated `str` provided into `z`. For values of `radix > 10`, the letters
@@ -558,13 +559,13 @@ mp_result <a href="imath.h#L364">mp_int_read_cstring</a>(mp_int z, mp_size radix
 
 ------------
 <a id="mp_int_count_bits"></a><pre>
-mp_result <a href="imath.h#L367">mp_int_count_bits</a>(mp_int z);
+mp_result <a href="imath.h#L368">mp_int_count_bits</a>(mp_int z);
 </pre>
  -  Returns the number of significant bits in `z`.
 
 ------------
 <a id="mp_int_to_binary"></a><pre>
-mp_result <a href="imath.h#L382">mp_int_to_binary</a>(mp_int z, unsigned char *buf, int limit);
+mp_result <a href="imath.h#L383">mp_int_to_binary</a>(mp_int z, unsigned char *buf, int limit);
 </pre>
  -  Converts `z` to 2's complement binary, writing at most `limit` bytes into
     the given `buf`.  Returns `MP_TRUNC` if the buffer limit was too small to
@@ -582,7 +583,7 @@ mp_result <a href="imath.h#L382">mp_int_to_binary</a>(mp_int z, unsigned char *b
 
 ------------
 <a id="mp_int_read_binary"></a><pre>
-mp_result <a href="imath.h#L387">mp_int_read_binary</a>(mp_int z, unsigned char *buf, int len);
+mp_result <a href="imath.h#L388">mp_int_read_binary</a>(mp_int z, unsigned char *buf, int len);
 </pre>
  -  Reads a 2's complement binary value from `buf` into `z`, where `len` is the
     length of the buffer.  The contents of `buf` may be overwritten during
@@ -590,13 +591,13 @@ mp_result <a href="imath.h#L387">mp_int_read_binary</a>(mp_int z, unsigned char 
 
 ------------
 <a id="mp_int_binary_len"></a><pre>
-mp_result <a href="imath.h#L390">mp_int_binary_len</a>(mp_int z);
+mp_result <a href="imath.h#L391">mp_int_binary_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes to represent `z` in 2's complement binary.
 
 ------------
 <a id="mp_int_to_unsigned"></a><pre>
-mp_result <a href="imath.h#L401">mp_int_to_unsigned</a>(mp_int z, unsigned char *buf, int limit);
+mp_result <a href="imath.h#L402">mp_int_to_unsigned</a>(mp_int z, unsigned char *buf, int limit);
 </pre>
  -  Converts the magnitude of `z` to unsigned binary, writing at most `limit`
     bytes into the given `buf`.  The sign of `z` is ignored, but `z` is not
@@ -610,7 +611,7 @@ mp_result <a href="imath.h#L401">mp_int_to_unsigned</a>(mp_int z, unsigned char 
 
 ------------
 <a id="mp_int_read_unsigned"></a><pre>
-mp_result <a href="imath.h#L406">mp_int_read_unsigned</a>(mp_int z, unsigned char *buf, int len);
+mp_result <a href="imath.h#L407">mp_int_read_unsigned</a>(mp_int z, unsigned char *buf, int len);
 </pre>
  -  Reads an unsigned binary value from `buf` into `z`, where `len` is the
     length of the buffer. The contents of `buf` are not modified during
@@ -618,7 +619,7 @@ mp_result <a href="imath.h#L406">mp_int_read_unsigned</a>(mp_int z, unsigned cha
 
 ------------
 <a id="mp_int_unsigned_len"></a><pre>
-mp_result <a href="imath.h#L410">mp_int_unsigned_len</a>(mp_int z);
+mp_result <a href="imath.h#L411">mp_int_unsigned_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes required to represent `z` as an unsigned binary
     value in base 256.
@@ -642,7 +643,7 @@ your particular platform.
 
 ------------
 <a id="mp_error_string"></a><pre>
-const char *<a href="imath.h#L415">mp_error_string</a>(mp_result res);
+const char *<a href="imath.h#L416">mp_error_string</a>(mp_result res);
 </pre>
  -  Returns a pointer to a brief, human-readable, zero-terminated string
     describing `res`. The returned string is statically allocated and must not

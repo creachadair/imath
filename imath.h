@@ -270,7 +270,8 @@ mp_result mp_int_exptmod_bvalue(mp_small value, mp_int b, mp_int m, mp_int c);
     It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`. */
 mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
 
-/** Sets `c` to the reduction constant for Barrett reduction by modulus `m`. */
+/** Sets `c` to the reduction constant for Barrett reduction by modulus `m`.
+    Requires that `c` and `m` point to distinct locations. */
 mp_result mp_int_redux_const(mp_int m, mp_int c);
 
 /** Sets `c` to the multiplicative inverse of `a` modulo `m`, if it exists.
