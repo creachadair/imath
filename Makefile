@@ -54,7 +54,7 @@ VPATH += examples tests
 EXAMPLES=basecvt findprime imcalc input pi randprime rounding rsakey
 
 .PHONY: all test clean distclean dist
-.SUFFIXES: .so
+.SUFFIXES: .so .md
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
@@ -69,7 +69,7 @@ objs: $(OBJS)
 check: test gmp-compat-test
 	@ echo "Completed running imath and gmp-compat unit tests"
 
-test: imtest pi bug-swap
+test: imtest pi bug-swap doc.md
 	@ echo ""
 	@ echo "Running tests, you should not see any 'FAILED' lines here."
 	@ echo "If you do, please see doc.txt for how to report a bug."
@@ -110,6 +110,12 @@ format-py:
 
 # Format source files.
 format: format-c format-py
+
+# Generate documentation from header comments.
+# This rule depends on the header files to ensure the docs get updated when the
+# headers change.
+doc.md: doc.md.in imath.h imrat.h tools/mkdoc.py
+	tools/mkdoc.py $< $@
 
 clean:
 	rm -f *.o *.so *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
