@@ -98,6 +98,8 @@ various data types used in the library:
 | `MP_MIN_RADIX`  | the minimum radix accepted for base conversion.
 | `MP_MAX_RADIX`  | the maximum radix accepted for base conversion.
 
+#### Initialization
+
 An `mp_int` must be initialized before use. By default, an `mp_int` is
 initialized with a certain minimum amount of storage for digits, and the
 storage is expanded automatically as needed.  To initialize an `mp_int`, use
@@ -140,16 +142,7 @@ mp_result mp_int_init_value(mp_int z, mp_small value);
 
 
 
-To copy one `mp_int` to another, use:
-
-------------
-<a id="mp_int_copy"></a><pre>
-mp_result mp_int_copy(mp_int a, mp_int c);
-</pre>
- -  Replaces the value of `c` with a copy of the value of `a`. No new memory is
-    allocated unless `a` has more significant digits than `c` has allocated.
-
-
+#### Cleanup
 
 When you are finished with an `mp_int`, you must free the memory it uses:
 
@@ -168,8 +161,10 @@ void mp_int_free(mp_int z);
 
 
 
-To set an `mp_int`, which has already been initialized, to a small integer
-value, use the following:
+#### Setting Values
+
+To set an `mp_int` which has already been initialized to a small integer value,
+use:
 
 ------------
 <a id="mp_int_set_value"></a><pre>
@@ -182,6 +177,17 @@ mp_result mp_int_set_value(mp_int z, mp_small value);
 mp_result mp_int_set_uvalue(mp_int z, mp_usmall uvalue);
 </pre>
  -  Sets `z` to the value of the specified unsigned `value`.
+
+
+
+To copy one initialized `mp_int` to another, use:
+
+------------
+<a id="mp_int_copy"></a><pre>
+mp_result mp_int_copy(mp_int a, mp_int c);
+</pre>
+ -  Replaces the value of `c` with a copy of the value of `a`. No new memory is
+    allocated unless `a` has more significant digits than `c` has allocated.
 
 
 
