@@ -184,6 +184,12 @@ mp_result mp_int_set_value(mp_int z, mp_small value);
 </pre>
  -  Sets `z` to the value of the specified signed `value`.
 
+------------
+<a id="mp_int_set_uvalue"></a><pre>
+mp_result mp_int_set_uvalue(mp_int z, mp_usmall uvalue);
+</pre>
+ -  Sets `z` to the value of the specified unsigned `value`.
+
 <!-- end generated section -->
 
 

@@ -120,7 +120,7 @@ When you are finished with an `mp_int`, you must free the memory it uses:
 To set an `mp_int`, which has already been initialized, to a small integer
 value, use the following:
 
-{{insert "imath.h" mp_int_set_value}}
+{{insert "imath.h" mp_int_set_value mp_int_set_uvalue}}
 
 ### Arithmetic Functions
 
