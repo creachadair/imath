@@ -87,14 +87,15 @@ extern const mp_result MP_MINERR;
 #define MP_MIN_RADIX   2
 #define MP_MAX_RADIX   36
 
-/** Sets the default number of digits allocated to an mp_int constructed by
-    mp_int_init_size with prec == 0. Allocations are rounded up to multiples of
-    this value. MP_DEFAULT_PREC is the default value. Requires ndigits > 0. */
+/** Sets the default number of digits allocated to an `mp_int` constructed by
+    `mp_int_init_size()` with `prec == 0`. Allocations are rounded up to
+    multiples of this value. `MP_DEFAULT_PREC` is the default value. Requires
+    `ndigits > 0`. */
 void mp_int_default_precision(mp_size ndigits);
 
 /** Sets the number of digits below which multiplication will use the standard
     quadratic "schoolbook" multiplcation algorithm rather than Karatsuba-Ofman.
-    Requires ndigits >= sizeof(mp_word). */
+    Requires `ndigits >= sizeof(mp_word)`. */
 void mp_int_multiply_threshold(mp_size ndigits);
 
 /** A sign indicating a (strictly) negative value. */
@@ -179,49 +180,49 @@ mp_result mp_int_mul(mp_int a, mp_int b, mp_int c);
 /** Sets `c` to the product of `a` and `value`. */
 mp_result mp_int_mul_value(mp_int a, mp_small value, mp_int c);
 
-/** Sets `c` to the product of `a` and 2^`p2`. Requires `p2` >= 0. */
+/** Sets `c` to the product of `a` and `2^p2`. Requires `p2 >= 0`. */
 mp_result mp_int_mul_pow2(mp_int a, mp_small p2, mp_int c);
 
 /** Sets `c` to the square of `a`. */
 mp_result mp_int_sqr(mp_int a, mp_int c);
 
-/** Sets `q` and `r` to the quotent and remainder of `a` / `b`. Division by
+/** Sets `q` and `r` to the quotent and remainder of `a / b`. Division by
     powers of 2 is detected and handled efficiently.  The remainder is pinned
-    to 0 <= `r` < `b`.
+    to `0 <= r < b`.
 
     Either of `q` or `r` may be NULL, but not both, and `q` and `r` may not
     point to the same value. */
 mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r);
 
-/** Sets `q` and `*r` to the quotent and remainder of `a` / `value`. Division
-    by powers of 2 is detected and handled efficiently. The remainder is pinned
-    to 0 <= `*r` < `b`. Either of `q` or `r` may be NULL. */
+/** Sets `q` and `*r` to the quotent and remainder of `a / value`. Division by
+    powers of 2 is detected and handled efficiently. The remainder is pinned to
+    `0 <= *r < b`. Either of `q` or `r` may be NULL. */
 mp_result mp_int_div_value(mp_int a, mp_small value, mp_int q, mp_small *r);
 
-/** Sets `q` and `r` to the quotient and remainder of `a` / 2^`p2`. This is a
+/** Sets `q` and `r` to the quotient and remainder of `a / 2^p2`. This is a
     special case for division by powers of two that is more efficient than
     using ordinary division. Note that `mp_int_div()` will automatically handle
     this case, this function is for cases where you have only the exponent. */
 mp_result mp_int_div_pow2(mp_int a, mp_small p2, mp_int q, mp_int r);
 
-/** Sets `c` to the remainder of `a` / `m`.
-    The remainder is pinned to 0 <= `c` < `m`. */
+/** Sets `c` to the remainder of `a / m`.
+    The remainder is pinned to `0 <= c < m`. */
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `b` power.
-    It is an error (`MP_RANGE`) if `b` < 0. */
+    It returns `MP_RANGE` if `b < 0`. */
 mp_result mp_int_expt(mp_int a, mp_small b, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `b` power.
-    It is an error (`MP_RANGE`) if `b` < 0. */
+    It returns `MP_RANGE` if `b < 0`. */
 mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `b` power.
-    It is an error (`MP_RANGE`) if `b` < 0. */
+    It returns `MP_RANGE`) if `b < 0`. */
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
 
-/** Sets `*r` to the remainder of `a` / `value`.
-    The remainder is pinned to 0 <= `r` < `value`. */
+/** Sets `*r` to the remainder of `a / value`.
+    The remainder is pinned to `0 <= r < value`. */
 static inline
 mp_result mp_int_mod_value(mp_int a, mp_small value, mp_small* r) {
   return mp_int_div_value(a, value, 0, r);
@@ -246,27 +247,27 @@ int mp_int_compare_uvalue(mp_int z, mp_usmall uv);
 /** Reports whether `a` is divisible by `v`. */
 bool mp_int_divisible_value(mp_int a, mp_small v);
 
-/** Returns k >= 0 such that `z` is 2^k, if such a k exists. If no such k
-    exists, the function returns -1. */
+/** Returns `k >= 0` such that `z` is `2^k`, if such a `k` exists. If no such
+    `k` exists, the function returns -1. */
 int mp_int_is_pow2(mp_int z);
 
 /** Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`.
-    It is an error (`MP_RANGE`) if `b` < 0 or (`MP_UNDEF`) `m` == 0. */
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`. */
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `value` power, modulo `m`.
-    It is an error (`MP_RANGE`) if `value` < 0 or (`MP_UNDEF`) `m` == 0. */
+    It returns `MP_RANGE` if `value < 0` or `MP_UNDEF` if `m == 0`. */
 mp_result mp_int_exptmod_evalue(mp_int a, mp_small value, mp_int m, mp_int c);
 
 /** Sets `c` to the value of `value` raised to the `b` power, modulo `m`.
-    It is an error (`MP_RANGE`) if `b` < 0 or (`MP_UNDEF`) `m` == 0. */
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`. */
 mp_result mp_int_exptmod_bvalue(mp_small value, mp_int b, mp_int m, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`,
     given a precomputed reduction constant `mu` defined for Barrett's modular
     reduction algorithm.
 
-    It is an error (`MP_RANGE`) if `b` < 0 or (`MP_UNDEF`) `m` == 0. */
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`. */
 mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
 
 /** Sets `c` to the reduction constant for Barrett reduction by modulus `m`. */
@@ -275,32 +276,32 @@ mp_result mp_int_redux_const(mp_int m, mp_int c);
 /** Sets `c` to the multiplicative inverse of `a` modulo `m`, if it exists.
     The least non-negative representative of the congruence class is computed.
 
-    It is an error (`MP_UNDEF`) if the inverse does not exist, or (`MP_RANGE`)
-    if `a` is zero of `m` <= 0. */
+    It returns `MP_UNDEF` if the inverse does not exist, or `MP_RANGE` if `a ==
+    0` or `m <= 0`. */
 mp_result mp_int_invmod(mp_int a, mp_int m, mp_int c);
 
 /** Sets `c` to the greatest common divisor of `a` and `b`.
 
-    It is an error (`MP_UNDEF`) if the GCD is undefined, such as for example if
-    `a` and `b` are both zero. */
+    It returns `MP_UNDEF` if the GCD is undefined, such as for example if `a`
+    and `b` are both zero. */
 mp_result mp_int_gcd(mp_int a, mp_int b, mp_int c);
 
 /** Sets `c` to the greatest common divisor of `a` and `b`, and sets `x` and
-    `y` to values satisfying Bezout's identity gcd(a, b) = ax + by.
+    `y` to values satisfying Bezout's identity `gcd(a, b) = ax + by`.
 
-    It is an error (`MP_UNDEF`) if the GCD is undefined, such as for example if
-    `a` and `b` are both zero. */
+    It returns `MP_UNDEF` if the GCD is undefined, such as for example if `a`
+    and `b` are both zero. */
 mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
 
 /** Sets `c` to the least common multiple of `a` and `b`.
 
-    It is an error (`MP_UNDEF`) if the LCM is undefined, such as for example if
-    `a` and `b` are both zero.*/
+    It returns `MP_UNDEF` if the LCM is undefined, such as for example if `a`
+    and `b` are both zero. */
 mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c);
 
 /** Sets `c` to the greatest integer not less than the `b`th root of `a`,
     using Newton's root-finding algorithm.
-    It is an error (`MP_UNDEF`) if `a` < 0 and `b` is even. */
+    It returns `MP_UNDEF` if `a < 0` and `b` is even. */
 mp_result mp_int_root(mp_int a, mp_small b, mp_int c);
 
 /** Sets `c` to the greatest integer not less than the square root of `a`.
@@ -308,7 +309,7 @@ mp_result mp_int_root(mp_int a, mp_small b, mp_int c);
 static inline
 mp_result mp_int_sqrt(mp_int a, mp_int c) { return mp_int_root(a, 2, c); }
 
-/** Returns `MP_OK` if `z` is representable as `mp_small`, or `MP_RANGE`.
+/** Returns `MP_OK` if `z` is representable as `mp_small`, else `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`. */
 mp_result mp_int_to_int(mp_int z, mp_small *out);
 
@@ -318,40 +319,39 @@ mp_result mp_int_to_uint(mp_int z, mp_usmall *out);
 
 /** Converts `z` to a zero-terminated string of characters in the specified
     `radix`, writing at most `limit` characters to `str` including the
-    terminating NUL value. A leading `-` is used to indicate a negative
-    value.
+    terminating NUL value. A leading `-` is used to indicate a negative value.
 
     Returns `MP_TRUNC` if `limit` was to small to write all of `z`.
-    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit);
 
 /** Reports the minimum number of characters required to represent `z` as a
     zero-terminated string in the given `radix`.
-    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_int_string_len(mp_int z, mp_size radix);
 
 /** Reads a string of ASCII digits in the specified `radix` from the zero
-    terminated `str` provided into `z`. For values of `radix` > 10, the letters
+    terminated `str` provided into `z`. For values of `radix > 10`, the letters
     `A`..`Z` or `a`..`z` are accepted. Letters are interpreted without respect
     to case.
 
     Leading whitespace is ignored, and a leading `+` or `-` is interpreted as a
-    sign flag. Processing stops when a NUL or any other character out of rante
+    sign flag. Processing stops when a NUL or any other character out of range
     for a digit in the given radix is encountered.
 
     If the whole string was consumed, `MP_OK` is returned; otherwise
     `MP_TRUNC`. is returned.
 
-    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
 
 /** Reads a string of ASCII digits in the specified `radix` from the zero
-    terminated `str` provided into `z`. For values of `radix` > 10, the letters
+    terminated `str` provided into `z`. For values of `radix > 10`, the letters
     `A`..`Z` or `a`..`z` are accepted. Letters are interpreted without respect
     to case.
 
     Leading whitespace is ignored, and a leading `+` or `-` is interpreted as a
-    sign flag. Processing stops when a NUL or any other character out of rante
+    sign flag. Processing stops when a NUL or any other character out of range
     for a digit in the given radix is encountered.
 
     If the whole string was consumed, `MP_OK` is returned; otherwise
@@ -360,10 +360,10 @@ mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
     string was consumed). This emulates the behavior of the standard C
     `strtol()` function.
 
-    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, char **end);
 
-/** Returns the number of significant bits in z. */
+/** Returns the number of significant bits in `z`. */
 mp_result mp_int_count_bits(mp_int z);
 
 /** Converts `z` to 2's complement binary, writing at most `limit` bytes into
@@ -378,17 +378,15 @@ mp_result mp_int_count_bits(mp_int z);
 
     As a result, non-negative values will be padded with a leading zero byte if
     the high-order byte of the base-256 magnitude is set.  This extra byte is
-    accounted for by the mp_int_binary_len() function. */
+    accounted for by the `mp_int_binary_len()` function. */
 mp_result mp_int_to_binary(mp_int z, unsigned char *buf, int limit);
-
 
 /** Reads a 2's complement binary value from `buf` into `z`, where `len` is the
     length of the buffer.  The contents of `buf` may be overwritten during
     processing, although they will be restored when the function returns. */
 mp_result mp_int_read_binary(mp_int z, unsigned char *buf, int len);
 
-/** Returns the number of bytes required to represent `z` in 2's complement
-    binary. */
+/** Returns the number of bytes to represent `z` in 2's complement binary. */
 mp_result mp_int_binary_len(mp_int z);
 
 /** Converts the magnitude of `z` to unsigned binary, writing at most `limit`

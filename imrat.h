@@ -109,7 +109,6 @@ mp_int mp_rat_denom_ref(mp_rat r);
 /** Reports the sign of `r`. */
 mp_sign mp_rat_sign(mp_rat r);
 
-
 /** Sets `c` to a copy of the value of `a`. No new memory is allocated unless a
     term of `a` has more significant digits than the corresponding term of `c`
     has allocated. */
@@ -137,7 +136,7 @@ mp_result mp_rat_sub(mp_rat a, mp_rat b, mp_rat c);
 /** Sets `c` to the product of `a` and `b`. */
 mp_result mp_rat_mul(mp_rat a, mp_rat b, mp_rat c);
 
-/** Sets `c` to the ratio `a` / `b` if that ratio is defined.
+/** Sets `c` to the ratio `a / b` if that ratio is defined.
     It returns `MP_UNDEF` if `b` is zero. */
 mp_result mp_rat_div(mp_rat a, mp_rat b, mp_rat c);
 
@@ -150,12 +149,12 @@ mp_result mp_rat_sub_int(mp_rat a, mp_int b, mp_rat c);
 /** Sets `c` to the product of `a` and integer `b`. */
 mp_result mp_rat_mul_int(mp_rat a, mp_int b, mp_rat c);
 
-/** Sets `c` to the ratio `a` / `b` if that ratio is defined.
+/** Sets `c` to the ratio `a / b` if that ratio is defined.
     It returns `MP_UNDEF` if `b` is zero. */
 mp_result mp_rat_div_int(mp_rat a, mp_int b, mp_rat c);
 
 /** Sets `c` to the value of `a` raised to the `b` power.
-    It returns `MP_RANGE` if `b` < 0. */
+    It returns `MP_RANGE` if `b < 0`. */
 mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c);
 
 /** Returns the comparator of `a` and `b`. */
@@ -168,7 +167,7 @@ int mp_rat_compare_unsigned(mp_rat a, mp_rat b);
 /** Returns the comparator of `r` and zero. */
 int mp_rat_compare_zero(mp_rat r);
 
-/** Returns the comparator of `r` and the signed ratio `n` / `d`.
+/** Returns the comparator of `r` and the signed ratio `n / d`.
     It returns `MP_UNDEF` if `d` is zero. */
 int mp_rat_compare_value(mp_rat r, mp_small n, mp_small d);
 
@@ -180,16 +179,16 @@ bool mp_rat_is_integer(mp_rat r);
     and `den`. It returns `MP_RANGE` if either cannot be so represented. */
 mp_result mp_rat_to_ints(mp_rat r, mp_small *num, mp_small *den);
 
-/** Converts `r` to a zero-terminated string of the format `n/d` with `n` and
+/** Converts `r` to a zero-terminated string of the format `"n/d"` with `n` and
     `d` in the specified radix and writing no more than `limit` bytes to the
     given output buffer `str`. The output of the numerator includes a sign flag
-    if `r` is negative.  Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    if `r` is negative.  Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit);
 
 /** Converts the value of `r` to a string in decimal-point notation with the
     specified radix, writing no more than `limit` bytes of data to the given
-    output buffer.  Generates `prec` digits of precision, and requires that
-    MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX.
+    output buffer.  It generates `prec` digits of precision, and requires
+    `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
     Ratios usually must be rounded when they are being converted for output as
     a decimal value.  There are four rounding modes currently supported:
@@ -218,7 +217,7 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
 
 /** Reports the minimum number of characters required to represent `r` as a
     zero-terminated string in the given `radix`.
-    Requires MP_MIN_RADIX <= `radix` <= MP_MAX_RADIX. */
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
 mp_result mp_rat_string_len(mp_rat r, mp_size radix);
 
 /** Reports the length in bytes of the buffer needed to convert `r` using the
@@ -227,12 +226,12 @@ mp_result mp_rat_string_len(mp_rat r, mp_size radix);
 mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec);
 
 /** Sets `r` to the value represented by a zero-terminated string `str` in the
-    format `n/d` including a sign flag. It returns `MP_UNDEF` if the encoded
+    format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
     denominator has value zero. */
 mp_result mp_rat_read_string(mp_rat r, mp_size radix, const char *str);
 
 /** Sets `r` to the value represented by a zero-terminated string `str` in the
-    format `n/d` including a sign flag. It returns `MP_UNDEF` if the encoded
+    format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
     denominator has value zero. If `end` is not NULL then `*end` is set to
     point to the first unconsumed character in the string, after parsing.
 */
@@ -254,12 +253,12 @@ mp_result mp_rat_read_ustring(mp_rat r, mp_size radix, const char *str,
 			      char **end);
 
 /** Sets `r` to the value represented by a zero-terminated string `str` in the
-    format `z.ffff` including a sign flag. It returns `MP_UNDEF` if the
+    format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
     effective denominator. */
 mp_result mp_rat_read_decimal(mp_rat r, mp_size radix, const char *str);
 
 /** Sets `r` to the value represented by a zero-terminated string `str` in the
-    format `z.ffff` including a sign flag. It returns `MP_UNDEF` if the
+    format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
     effective denominator. If `end` is not NULL then `*end` is set to point to
     the first unconsumed character in the string, after parsing. */
 mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str,
