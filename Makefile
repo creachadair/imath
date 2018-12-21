@@ -44,15 +44,14 @@ DFLAGSY=-g -DDEBUG=1
 # --- end of configuration section ---
 VERS=1.28
 
-REGRESSIONS=bug-swap
-TARGETS=imtest imtimer pi bintest rtest $(REGRESSIONS)
+TARGETS=bintest bug-swap imtest imtimer rtest
 HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
 SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
-OTHER=LICENSE ChangeLog Makefile doc.md \
-	findthreshold.py imath.py .dockerignore
+OTHER=LICENSE ChangeLog Makefile doc.md doc.md.in \
+	tools/findthreshold.py tools/mkdoc.py .dockerignore
 VPATH += examples tests
-EXAMPLES=basecvt findprime randprime imcalc input rounding rsakey
+EXAMPLES=basecvt findprime imcalc input pi randprime rounding rsakey
 
 .PHONY: all test clean distclean dist
 .SUFFIXES: .so
@@ -117,17 +116,4 @@ clean:
 	make -C tests/gmp-compat-test clean
 
 distclean: clean
-	rm -f $(TARGETS) imath-$(VERS).tar imath-$(VERS).tar.gz
-	rm -f $(EXAMPLES)
-
-dist: distclean
-	@ echo "Packing files for distribution"
-	@ tar -cf imtemp.tar --exclude .svn \
-		$(HDRS) $(SRCS) $(OTHER) tests examples
-	@ mkdir imath-$(VERS)
-	@ (cd imath-$(VERS) && tar -xf ../imtemp.tar)
-	@ rm -f imtemp.tar
-	@ tar -cvf imath-$(VERS).tar imath-$(VERS)
-	@ echo "Compressing distribution file: " imath-$(VERS).tar
-	@ gzip -9v imath-$(VERS).tar
-	@ rm -rf imath-$(VERS)
+	rm -f $(TARGETS) $(EXAMPLES)
