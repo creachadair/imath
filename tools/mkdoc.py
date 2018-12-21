@@ -56,15 +56,64 @@ def typeset(text):
     return '\n'.join(lines)
 
 
+class LIndex(object):
+    """Represents a line offset index for text."""
+
+    def __init__(self, text):
+        pos = 0
+
+        # An array of ending offsets for each line, with a sentinel at position
+        # 0 to make the index arithmetic easier.
+        idx = [0]
+
+        # Scan forward for newlines or EOF, and push the offsets of the line
+        # breaks onto the list so we can binary search them later.
+        while pos < len(text):
+            next = text.find('\n', pos)
+            if next < 0:
+                break
+            idx.append(next)
+            pos = next + 1
+        if idx[-1] < len(text):
+            idx.append(len(text))
+        self._len = len(text)
+        self._index = idx
+
+    def linecol(self, pos):
+        """Returns the (line, col) corresponding to pos.
+
+        Line numbers are 1-based, columns are 0-based.
+        """
+        if pos < 0 or pos > self._len:
+            raise IndexError("position %d out of range" % pos)
+
+        # Binary search for the largest line number whose end marker is at or
+        # after pos and whose previous line's end is before pos.
+        idx = self._index
+        i, j = 1, len(idx)
+        while i < j:
+            m = (i + j) / 2
+            if idx[m] < pos:
+                i = m + 1
+            elif idx[m - 1] < pos:
+                return m, pos - idx[m - 1]
+            else:
+                j = m
+
+        # This happens if (and only if) the whole file is one line.
+        return 1, pos
+
+
 class Decl(object):
     """Represents a single documented declaration."""
 
-    def __init__(self, com, decl):
+    def __init__(self, com, decl, line=None):
         """Initialize a new documented declaration.
 
         Params:
           com: the raw text of the comment
           decl: the raw text of the declaration
+          line: the line number of the declaration
         """
         lp = decl.find('(')
         if lp < 0:
@@ -73,24 +122,35 @@ class Decl(object):
             self.name = last_word(decl[:lp])
         self.decl = ' '.join(decl.rstrip(';{').strip().split())
         self.comment = spc.sub('', com.rstrip())
+        self.line = line
 
     def __repr__(self):
         return '#Decl["%s"]' % self.decl
 
-    def markdown(self):
+    def markdown(self, path):
+        pos = self.decl.index(self.name)
+        decl = '%s<a href="%s#L%d">%s</a>%s' % (
+            self.decl[:pos],
+            path,
+            self.line,
+            self.name,
+            self.decl[pos + len(self.name):],
+        )
         return '''------------
 <a id="{name}"></a><pre>
 {decl};
 </pre>
 {comment}
-'''.format(name=self.name, decl=self.decl, comment=typeset(self.comment))
+'''.format(name=self.name, decl=decl, comment=typeset(self.comment))
 
 
 def parse_decls(text):
     """Parse a dictionary of declarations from text."""
     decls = collections.OrderedDict()
+    idx = LIndex(text)
     for m in doc.finditer(text):
-        d = Decl(m.group('text'), m.group('decl'))
+        line, _ = idx.linecol(m.span('decl')[0])
+        d = Decl(m.group('text'), m.group('decl'), line)
         decls[d.name] = d
     return decls
 
@@ -139,7 +199,7 @@ def main(args):
 
             # Render the selected declarations.
             for decl in decls.values():
-                print(decl.markdown(), file=output)
+                print(decl.markdown(ip.group('file')), file=output)
 
         # Clean up any remaining template bits
         output.write(template[pos:])
