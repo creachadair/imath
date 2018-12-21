@@ -74,10 +74,11 @@ fix either the function or the documentation :)
 Each of the API functions is documented here.  The general format of the
 entries is:
 
-```
-return_type function_name(parameters ...)
-            English description.
-```
+> ------------
+> <pre>
+> return_type function_name(parameters ...)
+> </pre>
+>  -  English description.
 
 Unless otherwise noted, any API function that returns `mp_result` may be
 expected to return `MP_OK`, `MP_BADARG`, or `MP_MEMORY`.  Other return values
@@ -97,344 +98,535 @@ various data types used in the library:
 | `MP_MIN_RADIX`  | the minimum radix accepted for base conversion.
 | `MP_MAX_RADIX`  | the maximum radix accepted for base conversion.
 
-An `mp_int` must be initialized before use.  This may be accomplished using the
-following functions:
+An `mp_int` must be initialized before use. By default, an `mp_int` is
+initialized with a certain minimum amount of storage for digits, and the
+storage is expanded automatically as needed.  To initialize an `mp_int`, use
+the following functions:
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_init"></a><pre>
 mp_result mp_int_init(mp_int z);
-          Initializes z with a default precision, sets the value to zero.  This
-          function cannot fail unless z is NULL.
+</pre>
+ -  Initializes `z` with 1-digit precision and sets it to zero.  This function
+    cannot fail unless `z == NULL`.
 
-mp_int    mp_int_alloc();
-          Dynamically allocates an mpz_t, initializes it to the value zero, and
-          returns a pointer to it.  Returns NULL in case of error (the only
-          error possible is MP_MEMORY in this case).
+------------
+<a id="mp_int_alloc"></a><pre>
+mp_int mp_int_alloc(void);
+</pre>
+ -  Allocates a fresh zero-valued `mpz_t` on the heap, returning NULL in case
+    of error. The only possible error is out-of-memory.
 
+------------
+<a id="mp_int_init_size"></a><pre>
 mp_result mp_int_init_size(mp_int z, mp_size prec);
-          Initializes z with at least prec digits of storage, sets the value to
-          zero.  If prec is zero, a default size is used, defined in imath.c,
-          and the size is rounded up to the nearest word boundary.
+</pre>
+ -  Initializes `z` with at least `prec` digits of storage, and sets it to
+    zero. If `prec` is zero, the default precision is used. In either case the
+    size is rounded up to the nearest multiple of the word size.
 
+------------
+<a id="mp_int_init_copy"></a><pre>
 mp_result mp_int_init_copy(mp_int z, mp_int old);
-          Initializes z to be a copy of an already-initialized mp_int in old.
-          They do not share storage.
+</pre>
+ -  Initializes `z` to be a copy of an already-initialized value in `old`. The
+    new copy does not share storage with the original.
 
+------------
+<a id="mp_int_init_value"></a><pre>
 mp_result mp_int_init_value(mp_int z, mp_small value);
-          Initializes z with default precision and sets its value to the value
-          of the supplied integer.
-```
+</pre>
+ -  Initializes `z` to the specified signed `value` at default precision.
+
+<!-- end generated section -->
+
 
 To copy one `mp_int` to another, use:
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_copy"></a><pre>
 mp_result mp_int_copy(mp_int a, mp_int c);
-          Copies the value of a into c.  Does not allocate new memory unless a
-          has more significant digits than c has room for.
-```
+</pre>
+ -  Replaces the value of `c` with a copy of the value of `a`. No new memory is
+    allocated unless `a` has more significant digits than `c` has allocated.
+
+<!-- end generated section -->
+
 
 When you are finished with an `mp_int`, you must free the memory it uses:
 
-```
-void      mp_int_clear(mp_int z);
-          Releases the storage used by z.
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_clear"></a><pre>
+void mp_int_clear(mp_int z);
+</pre>
+ -  Releases the storage used by `z`.
 
-void      mp_int_free(mp_int z);
-          Releases the storage used by z, and frees the mpz_t structure z
-          points to.  This should only be used for values allocated by
-          mp_int_alloc().
-```
+------------
+<a id="mp_int_free"></a><pre>
+void mp_int_free(mp_int z);
+</pre>
+ -  Releases the storage used by `z` and also `z` itself.
+    This should only be used for `z` allocated by `mp_int_alloc()`.
+
+<!-- end generated section -->
+
 
 To set an `mp_int`, which has already been initialized, to a small integer
 value, use the following:
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_set_value"></a><pre>
 mp_result mp_int_set_value(mp_int z, mp_small value);
-          Sets the value of z to the value of the supplied integer.
-```
+</pre>
+ -  Sets `z` to the value of the specified signed `value`.
 
-By default, an `mp_int` is initialized with a certain minimum amount of storage
-for digits.  This storage is expanded automatically as needed.
+<!-- end generated section -->
+
 
 ### Arithmetic Functions
 
-```
-int       mp_int_is_odd(mp_int z);
-          Returns true if z is an odd integer (z = 1 (mod 2))
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_is_odd"></a><pre>
+static inline bool mp_int_is_odd(mp_int z);
+</pre>
+ -  Reports whether `z` is odd, having remainder 1 when divided by 2.
 
-int       mp_int_is_even(mp_int z);
-          Returns true if z is an even integer (z = 0 (mod 2))
+------------
+<a id="mp_int_is_even"></a><pre>
+static inline bool mp_int_is_even(mp_int z);
+</pre>
+ -  Reports whether `z` is even, having remainder 0 when divided by 2.
 
-void      mp_int_zero(mp_int z);
-          Sets z to zero.
+------------
+<a id="mp_int_zero"></a><pre>
+void mp_int_zero(mp_int z);
+</pre>
+ -  Sets `z` to zero. The allocated storage of `z` is not changed.
 
+------------
+<a id="mp_int_abs"></a><pre>
 mp_result mp_int_abs(mp_int a, mp_int c);
-          Sets c to the absolute value of a.
-          If a < 0, c = -a, else c = a.
+</pre>
+ -  Sets `c` to the absolute value of `a`.
 
+------------
+<a id="mp_int_neg"></a><pre>
 mp_result mp_int_neg(mp_int a, mp_int c);
-          Sets c to be the additive inverse of a, c = -a.
+</pre>
+ -  Sets `c` to the additive inverse (negation) of `a`.
 
+------------
+<a id="mp_int_add"></a><pre>
 mp_result mp_int_add(mp_int a, mp_int b, mp_int c);
-          Computes c = a + b.
+</pre>
+ -  Sets `c` to the sum of `a` and `b`.
 
+------------
+<a id="mp_int_add_value"></a><pre>
 mp_result mp_int_add_value(mp_int a, mp_small value, mp_int c);
-          Computes c = a + value, where value is a small integer.
+</pre>
+ -  Sets `c` to the sum of `a` and `value`.
 
+------------
+<a id="mp_int_sub"></a><pre>
 mp_result mp_int_sub(mp_int a, mp_int b, mp_int c);
-          Computes c = a - b.
+</pre>
+ -  Sets `c` to the difference of `a` less `b`.
 
+------------
+<a id="mp_int_sub_value"></a><pre>
 mp_result mp_int_sub_value(mp_int a, mp_small value, mp_int c);
-          Computes c = a - value, where value is a small integer.
+</pre>
+ -  Sets `c` to the difference of `a` less `value`.
 
+------------
+<a id="mp_int_mul"></a><pre>
 mp_result mp_int_mul(mp_int a, mp_int b, mp_int c);
-          Computes c = a * b
+</pre>
+ -  Sets `c` to the product of `a` and `b`.
 
+------------
+<a id="mp_int_mul_value"></a><pre>
 mp_result mp_int_mul_value(mp_int a, mp_small value, mp_int c);
-          Computes c = a * value, where value is a small integer.
+</pre>
+ -  Sets `c` to the product of `a` and `value`.
 
+------------
+<a id="mp_int_mul_pow2"></a><pre>
 mp_result mp_int_mul_pow2(mp_int a, mp_small p2, mp_int c);
-          Computes c = a * 2^p2, where p2 >= 0.
+</pre>
+ -  Sets `c` to the product of `a` and `2^p2`. Requires `p2 >= 0`.
 
+------------
+<a id="mp_int_sqr"></a><pre>
 mp_result mp_int_sqr(mp_int a, mp_int c);
-          Computes c = a * a.  Faster than using mp_int_mul(a, a, c).
+</pre>
+ -  Sets `c` to the square of `a`.
 
+------------
+<a id="mp_int_root"></a><pre>
 mp_result mp_int_root(mp_int a, mp_small b, mp_int c);
-          Computes c = floor(a^{1/b}).  Returns MP_UNDEF if the root is
-          undefined, i.e., if a < 0 and b is even.  Uses Newton's method to
-          obtain the root.
+</pre>
+ -  Sets `c` to the greatest integer not less than the `b`th root of `a`,
+    using Newton's root-finding algorithm.
+    It returns `MP_UNDEF` if `a < 0` and `b` is even.
 
-mp_result mp_int_sqrt(mp_int a, mp_int c);
-          Computes c = floor(sqrt(a)) if a >= 0.  Returns MP_UNDEF if
-          a < 0.
+------------
+<a id="mp_int_sqrt"></a><pre>
+static inline mp_result mp_int_sqrt(mp_int a, mp_int c);
+</pre>
+ -  Sets `c` to the greatest integer not less than the square root of `a`.
+    This is a special case of `mp_int_root()`.
 
+------------
+<a id="mp_int_div"></a><pre>
 mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r);
-          Computes q, r such that a = bq + r and 0 <= r < b.
+</pre>
+ -  Sets `q` and `r` to the quotent and remainder of `a / b`. Division by
+    powers of 2 is detected and handled efficiently.  The remainder is pinned
+    to `0 <= r < b`.
 
-          Pass NULL for q or r if you don't need its value.  Detects and
-          handles division by powers of two in an efficient manner.  Returns
-          MP_UNDEF if b = 0.  If both q and r point to the same non-NULL
-          location, their values on output will be arbitrary (usually
-          incorrect).
+    Either of `q` or `r` may be NULL, but not both, and `q` and `r` may not
+    point to the same value.
 
-mp_result mp_int_div_value(mp_int a, mp_small v, mp_int q, mp_small *r);
-          Computes q, r such that a = qv + r and 0 <= r < v, where v is a small
-          integer.  Pass NULL for q or r if you don't need its value.
+------------
+<a id="mp_int_div_value"></a><pre>
+mp_result mp_int_div_value(mp_int a, mp_small value, mp_int q, mp_small *r);
+</pre>
+ -  Sets `q` and `*r` to the quotent and remainder of `a / value`. Division by
+    powers of 2 is detected and handled efficiently. The remainder is pinned to
+    `0 <= *r < b`. Either of `q` or `r` may be NULL.
 
+------------
+<a id="mp_int_div_pow2"></a><pre>
 mp_result mp_int_div_pow2(mp_int a, mp_small p2, mp_int q, mp_int r);
-          Computes q, r such that a = q * 2^p2 + r.  This is a special case for
-          division by powers of two that is much more efficient than using the
-          regular division algorithm.  Note that mp_int_div() will
-          automatically handle this case if b = 2^k for some k >= 0;
-          mp_int_div_pow2() is for when you have only the exponent, not the
-          expanded value.
+</pre>
+ -  Sets `q` and `r` to the quotient and remainder of `a / 2^p2`. This is a
+    special case for division by powers of two that is more efficient than
+    using ordinary division. Note that `mp_int_div()` will automatically handle
+    this case, this function is for cases where you have only the exponent.
 
+------------
+<a id="mp_int_mod"></a><pre>
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c);
-          Computes the least non-negative residue of a (mod m), and assigns the
-          result to c.
+</pre>
+ -  Sets `c` to the remainder of `a / m`.
+    The remainder is pinned to `0 <= c < m`.
 
-mp_result mp_int_mod_value(mp_int a, mp_int value, mp_small *r);
-          Computes the least non-negative residue of a (mod value), where value
-          is a small integer, and assigns the result to r.
+------------
+<a id="mp_int_mod_value"></a><pre>
+static inline mp_result mp_int_mod_value(mp_int a, mp_small value, mp_small* r);
+</pre>
+ -  Sets `*r` to the remainder of `a / value`.
+    The remainder is pinned to `0 <= r < value`.
 
+------------
+<a id="mp_int_expt"></a><pre>
 mp_result mp_int_expt(mp_int a, mp_small b, mp_int c);
-          Raises a to the b power, and assigns the result to c.  It is an error
-          if b < 0.
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power.
+    It returns `MP_RANGE` if `b < 0`.
 
+------------
+<a id="mp_int_expt_value"></a><pre>
 mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c);
-          Raises a to the b power, and assigns the result to c.  It is an error
-          if b < 0.
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power.
+    It returns `MP_RANGE` if `b < 0`.
 
+------------
+<a id="mp_int_expt_full"></a><pre>
 mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
-          Raises a to the b power, and assigns the result to c.  It is an error
-          if b < 0.
-```
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power.
+    It returns `MP_RANGE`) if `b < 0`.
+
+<!-- end generated section -->
+
 
 ### Comparison Functions
 
 Unless otherwise specified, comparison between values x and y returns a value <
 0 if x is less than y, = 0 if x is equal to y, and > 0 if x is greater than y.
 
-```
-int       mp_int_compare(mp_int a, mp_int b);
-          Signed comparison of a and b.
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_compare"></a><pre>
+int mp_int_compare(mp_int a, mp_int b);
+</pre>
+ -  Returns the comparator of `a` and `b`.
 
-int       mp_int_compare_unsigned(mp_int a, mp_int b);
-          Unsigned (magnitude) comparison of a and b.  The signs of a and b are
-          not modified.
+------------
+<a id="mp_int_compare_unsigned"></a><pre>
+int mp_int_compare_unsigned(mp_int a, mp_int b);
+</pre>
+ -  Returns the comparator of the magnitudes of `a` and `b`, disregarding their
+    signs. Neither `a` nor `b` is modified by the comparison.
 
-int       mp_int_compare_zero(mp_int z);
-          Compare z to zero.
+------------
+<a id="mp_int_compare_zero"></a><pre>
+int mp_int_compare_zero(mp_int z);
+</pre>
+ -  Returns the comparator of `z` and zero.
 
-int       mp_int_compare_value(mp_int z, mp_small value);
-int       mp_int_compare_uvalue(mp_int z, mp_usmall value);
-          Compare z to small signed (value) or unsigned (uvalue) integer value.
+------------
+<a id="mp_int_compare_value"></a><pre>
+int mp_int_compare_value(mp_int z, mp_small v);
+</pre>
+ -  Returns the comparator of `z` and the signed value `v`.
 
-int       mp_int_divisible_value(mp_int a, mp_small v);
-          Returns true (nonzero) if a is divisible by small integer v,
-          otherwise false (zero)
+------------
+<a id="mp_int_compare_uvalue"></a><pre>
+int mp_int_compare_uvalue(mp_int z, mp_usmall uv);
+</pre>
+ -  Returns the comparator of `z` and the unsigned value `uv`.
 
-int       mp_int_is_pow2(mp_int z);
-          Returns k >= 0 such that z = 2^k, if such a k exists; otherwise a
-          value < 0 is returned.
-```
+------------
+<a id="mp_int_divisible_value"></a><pre>
+bool mp_int_divisible_value(mp_int a, mp_small v);
+</pre>
+ -  Reports whether `a` is divisible by `v`.
+
+------------
+<a id="mp_int_is_pow2"></a><pre>
+int mp_int_is_pow2(mp_int z);
+</pre>
+ -  Returns `k >= 0` such that `z` is `2^k`, if such a `k` exists. If no such
+    `k` exists, the function returns -1.
+
+<!-- end generated section -->
+
 
 ### Modular Operations
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_exptmod"></a><pre>
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
-          Efficiently computes c = a^b (mod m).
-          Returns MP_UNDEF if m = 0; returns MP_RANGE if b < 0.
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`.
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`.
 
-mp_result mp_int_exptmod_evalue(mp_int a, mp_small v, mp_int m, mp_int c);
-          Efficiently computes c = a^v (mod m).
+------------
+<a id="mp_int_exptmod_evalue"></a><pre>
+mp_result mp_int_exptmod_evalue(mp_int a, mp_small value, mp_int m, mp_int c);
+</pre>
+ -  Sets `c` to the value of `a` raised to the `value` power, modulo `m`.
+    It returns `MP_RANGE` if `value < 0` or `MP_UNDEF` if `m == 0`.
 
-mp_result mp_int_exptmod_bvalue(mp_small v, mp_int b, mp_int m, mp_int c);
-          Efficiently computes c = v^b (mod m).
+------------
+<a id="mp_int_exptmod_bvalue"></a><pre>
+mp_result mp_int_exptmod_bvalue(mp_small value, mp_int b, mp_int m, mp_int c);
+</pre>
+ -  Sets `c` to the value of `value` raised to the `b` power, modulo `m`.
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`.
 
-          Note: These routines use Barrett's algorithm for modular reduction.
-          It is widely held (probably correctly) that using Peter Montgomery's
-          multiplication algorithm would make this operation faster; but that
-          algorithm has the restriction that a and m must be coprime, so I have
-          not implemented it here.
+------------
+<a id="mp_int_exptmod_known"></a><pre>
+mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`,
+    given a precomputed reduction constant `mu` defined for Barrett's modular
+    reduction algorithm.
 
-mp_result mp_int_exptmod_known(mp_int a, mp_int b, mp_int m, mp_int mu,
-                               mp_int c);
-          Efficiently computes c = a^b (mod m), given a precomputed reduction
-          constant mu, as defined for Barrett's modular reduction algorithm.
-          Returns MP_UNDEF if m = 0; returns MP_RANGE if b < 0.
+    It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`.
 
+------------
+<a id="mp_int_redux_const"></a><pre>
 mp_result mp_int_redux_const(mp_int m, mp_int c);
-          Computes reduction constant mu for Barrett reduction by modulus m,
-          stores the result in c.
+</pre>
+ -  Sets `c` to the reduction constant for Barrett reduction by modulus `m`.
 
+------------
+<a id="mp_int_invmod"></a><pre>
 mp_result mp_int_invmod(mp_int a, mp_int m, mp_int c);
-          Computes the modular inverse of a (mod m), if it exists, and assigns
-          the result to c.  Returns the least non-negative representative of
-          the congruence class (mod m) containing this inverse.  Returns
-          MP_UNDEF if the inverse does not exist; returns MP_RANGE if a = 0 or
-          m <= 0.
+</pre>
+ -  Sets `c` to the multiplicative inverse of `a` modulo `m`, if it exists.
+    The least non-negative representative of the congruence class is computed.
 
+    It returns `MP_UNDEF` if the inverse does not exist, or `MP_RANGE` if `a ==
+    0` or `m <= 0`.
+
+------------
+<a id="mp_int_gcd"></a><pre>
 mp_result mp_int_gcd(mp_int a, mp_int b, mp_int c);
-          Compute the greatest common divisor if a and b, and assign the result
-          to c.  Returns MP_UNDEF if the GCD is not defined (e.g., if a = 0 and
-          b = 0).
+</pre>
+ -  Sets `c` to the greatest common divisor of `a` and `b`.
 
+    It returns `MP_UNDEF` if the GCD is undefined, such as for example if `a`
+    and `b` are both zero.
+
+------------
+<a id="mp_int_egcd"></a><pre>
 mp_result mp_int_egcd(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
-          Compute the greatest common divisor of a and b, and assign the result
-          to c.  Also computes x and y satisfying Bezout's identity, namely (a,
-          b) = ax + by.  Returns MP_UNDEF if the GCD is not defined (e.g., if a
-          = b = 0).
+</pre>
+ -  Sets `c` to the greatest common divisor of `a` and `b`, and sets `x` and
+    `y` to values satisfying Bezout's identity `gcd(a, b) = ax + by`.
 
-mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c)
-          Compute the least common multiple of a and b, and assign the result
-          to c.  Returns MP_UNDEF if the LCM is not defined (e.g., if a = 0 and
-          b = 0).
-```
+    It returns `MP_UNDEF` if the GCD is undefined, such as for example if `a`
+    and `b` are both zero.
+
+------------
+<a id="mp_int_lcm"></a><pre>
+mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c);
+</pre>
+ -  Sets `c` to the least common multiple of `a` and `b`.
+
+    It returns `MP_UNDEF` if the LCM is undefined, such as for example if `a`
+    and `b` are both zero.
+
+<!-- end generated section -->
+
 
 ### Conversion of Values
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_int_to_int"></a><pre>
 mp_result mp_int_to_int(mp_int z, mp_small *out);
-          Convert z to an int type, if it is representable as such.  Returns
-          MP_RANGE if z cannot be represented as an value of type mp_small.  If
-          out is NULL no value is stored, but the return value will still be
-          correct.
+</pre>
+ -  Returns `MP_OK` if `z` is representable as `mp_small`, else `MP_RANGE`.
+    If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
+------------
+<a id="mp_int_to_uint"></a><pre>
 mp_result mp_int_to_uint(mp_int z, mp_usmall *out);
-          Convert z to an unsigned int type, if it is representable as such.
-          Returns MP_RANGE if z cannot be represented as a value of type
-          mp_usmall.  If out is NULL no value is stored, but the return value
-          will still be correct.
+</pre>
+ -  Returns `MP_OK` if `z` is representable as `mp_usmall`, or `MP_RANGE`.
+    If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
+------------
+<a id="mp_int_to_string"></a><pre>
 mp_result mp_int_to_string(mp_int z, mp_size radix, char *str, int limit);
-          Convert z to a zero-terminated string of characters in the given
-          radix, writing at most 'limit' characters including the terminating
-          NUL value.  A leading '-' is used to indicate a negative value.
+</pre>
+ -  Converts `z` to a zero-terminated string of characters in the specified
+    `radix`, writing at most `limit` characters to `str` including the
+    terminating NUL value. A leading `-` is used to indicate a negative value.
 
-          Returns MP_RANGE if radix < MP_MIN_RADIX or radix > MP_MAX_RADIX.
-          Returns MP_TRUNC if limit is too small to write out all of z.
+    Returns `MP_TRUNC` if `limit` was to small to write all of `z`.
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
+------------
+<a id="mp_int_string_len"></a><pre>
 mp_result mp_int_string_len(mp_int z, mp_size radix);
-          Return the minimum number of characters required to represent z as a
-          zero-terminated string of characters in the given radix. May
-          over-estimate (but generally will not).
+</pre>
+ -  Reports the minimum number of characters required to represent `z` as a
+    zero-terminated string in the given `radix`.
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
-          Returns MP_RANGE if radix < MP_MIN_RADIX or radix > MP_MAX_RADIX.
-
+------------
+<a id="mp_int_read_string"></a><pre>
 mp_result mp_int_read_string(mp_int z, mp_size radix, const char *str);
-mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str,
-                              char **end);
-          Read a string of ASCII digits in the specified radix from the
-          zero-terminated string provided, and assign z to the corresponding
-          value.  For radices greater than 10, the ASCII letters 'A' .. 'Z' or
-          'a' .. 'z' are used.  Letters are interpreted without respect to
-          case.
+</pre>
+ -  Reads a string of ASCII digits in the specified `radix` from the zero
+    terminated `str` provided into `z`. For values of `radix > 10`, the letters
+    `A`..`Z` or `a`..`z` are accepted. Letters are interpreted without respect
+    to case.
 
-          Leading whitespace is ignored, and a leading '+' or '-' is
-          interpreted as a sign flag.  Processing stops when ASCII NUL or any
-          character which is out of range for a digit in the given radix is
-          encountered.
+    Leading whitespace is ignored, and a leading `+` or `-` is interpreted as a
+    sign flag. Processing stops when a NUL or any other character out of range
+    for a digit in the given radix is encountered.
 
-          If the whole string was processed, MP_OK is returned; otherwise,
-          MP_TRUNC is returned.
+    If the whole string was consumed, `MP_OK` is returned; otherwise
+    `MP_TRUNC`. is returned.
 
-          Returns MP_RANGE if radix < MP_MIN_RADIX or radix > MP_MAX_RADIX.
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
-          With mp_int_read_cstring(), if end is not NULL, the target pointer is
-          set to point to the first unconsumed character of the input string
-          (the NUL byte, if the whole string was consumed).  This emulates the
-          behavior of the standard C strtol() function.
+------------
+<a id="mp_int_read_cstring"></a><pre>
+mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, char **end);
+</pre>
+ -  Reads a string of ASCII digits in the specified `radix` from the zero
+    terminated `str` provided into `z`. For values of `radix > 10`, the letters
+    `A`..`Z` or `a`..`z` are accepted. Letters are interpreted without respect
+    to case.
 
+    Leading whitespace is ignored, and a leading `+` or `-` is interpreted as a
+    sign flag. Processing stops when a NUL or any other character out of range
+    for a digit in the given radix is encountered.
+
+    If the whole string was consumed, `MP_OK` is returned; otherwise
+    `MP_TRUNC`. is returned. If `end` is not NULL, `*end` is set to point to
+    the first unconsumed byte of the input string (the NUL byte if the whole
+    string was consumed). This emulates the behavior of the standard C
+    `strtol()` function.
+
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
+
+------------
+<a id="mp_int_count_bits"></a><pre>
 mp_result mp_int_count_bits(mp_int z);
-          Returns the number of significant bits in z.
+</pre>
+ -  Returns the number of significant bits in `z`.
 
+------------
+<a id="mp_int_to_binary"></a><pre>
 mp_result mp_int_to_binary(mp_int z, unsigned char *buf, int limit);
-          Convert z to 2's complement binary, writing at most 'limit' bytes
-          into the given buffer.  Returns MP_TRUNC if the buffer limit was too
-          small to contain the whole value.  If this occurs, the contents of
-          buf will be effectively garbage, as the function uses the buffer as
-          scratch space.
+</pre>
+ -  Converts `z` to 2's complement binary, writing at most `limit` bytes into
+    the given `buf`.  Returns `MP_TRUNC` if the buffer limit was too small to
+    contain the whole value.  If this occurs, the contents of buf will be
+    effectively garbage, as the function uses the buffer as scratch space.
 
-          The binary representation of z is in base-256 with digits ordered
-          from most significant to least significant (network byte ordering).
-          The high-order bit of the first byte is set for negative values,
-          clear for non-negative values.
+    The binary representation of `z` is in base-256 with digits ordered from
+    most significant to least significant (network byte ordering).  The
+    high-order bit of the first byte is set for negative values, clear for
+    non-negative values.
 
-          As a result, non-negative values will be padded with a leading zero
-          byte if the high-order byte of the base-256 magnitude is set.  This
-          extra byte is accounted for by the mp_int_binary_len() function
-          described below.
+    As a result, non-negative values will be padded with a leading zero byte if
+    the high-order byte of the base-256 magnitude is set.  This extra byte is
+    accounted for by the `mp_int_binary_len()` function.
 
+------------
+<a id="mp_int_read_binary"></a><pre>
 mp_result mp_int_read_binary(mp_int z, unsigned char *buf, int len);
-          Read a 2's complement binary value into z, where the length of the
-          buffer is given as 'len'.  The contents of 'buf' may be overwritten
-          during processing, although they will be restored when the function
-          returns.
+</pre>
+ -  Reads a 2's complement binary value from `buf` into `z`, where `len` is the
+    length of the buffer.  The contents of `buf` may be overwritten during
+    processing, although they will be restored when the function returns.
 
+------------
+<a id="mp_int_binary_len"></a><pre>
 mp_result mp_int_binary_len(mp_int z);
-          Return the number of bytes required to represent z in 2's complement
-          binary.
+</pre>
+ -  Returns the number of bytes to represent `z` in 2's complement binary.
 
+------------
+<a id="mp_int_to_unsigned"></a><pre>
 mp_result mp_int_to_unsigned(mp_int z, unsigned char *buf, int limit);
-          Convert |z| to unsigned binary, writing at most 'limit' bytes into
-          the given buffer.  The sign of z is ignored, but z is not modified.
-          Returns MP_TRUNC if the buffer limit was too small to contain the
-          whole value.  If this occurs, the contents of buf will be effectively
-          garbage, as the function uses the buffer as scratch space during
-          conversion.
+</pre>
+ -  Converts the magnitude of `z` to unsigned binary, writing at most `limit`
+    bytes into the given `buf`.  The sign of `z` is ignored, but `z` is not
+    modified.  Returns `MP_TRUNC` if the buffer limit was too small to contain
+    the whole value.  If this occurs, the contents of `buf` will be effectively
+    garbage, as the function uses the buffer as scratch space during
+    conversion.
 
-          The binary representation of z is in base-256 with digits ordered
-          from most significant to least significant (network byte ordering).
+    The binary representation of `z` is in base-256 with digits ordered from
+    most significant to least significant (network byte ordering).
 
+------------
+<a id="mp_int_read_unsigned"></a><pre>
 mp_result mp_int_read_unsigned(mp_int z, unsigned char *buf, int len);
-          Read an unsigned binary value into z, where the length of the buffer
-          is given as 'len'.  The contents of 'buf' will not be modified during
-          processing.
+</pre>
+ -  Reads an unsigned binary value from `buf` into `z`, where `len` is the
+    length of the buffer. The contents of `buf` are not modified during
+    processing.
 
+------------
+<a id="mp_int_unsigned_len"></a><pre>
 mp_result mp_int_unsigned_len(mp_int z);
-          Return the number of bytes required to represent z as an unsigned
-          binary value using mp_int_to_unsigned().
-```
+</pre>
+ -  Returns the number of bytes required to represent `z` as an unsigned binary
+    value in base 256.
+
+<!-- end generated section -->
+
 
 ### Other Functions
 
@@ -451,180 +643,365 @@ digits use the standard algorithm.  This value can be modified by calling
 `findthreshold.py` script (Python) can help you find a suitable value for for
 your particular platform.
 
-```
+<!-- begin generated section from "imath.h", DO NOT EDIT -->
+------------
+<a id="mp_error_string"></a><pre>
 const char *mp_error_string(mp_result res);
-          Return a pointer to a brief string describing res.  These strings
-          are defined as a constant array in imath.c, if you wish to change
-          them for your application.
-```
+</pre>
+ -  Returns a pointer to a brief, human-readable, zero-terminated string
+    describing `res`. The returned string is statically allocated and must not
+    be freed by the caller.
+
+<!-- end generated section -->
+
 
 ## Rational Arithmetic
 
-```
+<!-- begin generated section from "imrat.h", DO NOT EDIT -->
+------------
+<a id="mp_rat_init"></a><pre>
 mp_result mp_rat_init(mp_rat r);
-          Initialize a new zero-valued rational number in r.
+</pre>
+ -  Initializes `r` with 1-digit precision and sets it to zero. This function
+    cannot fail unless `r` is NULL.
 
+------------
+<a id="mp_rat_alloc"></a><pre>
+mp_rat mp_rat_alloc(void);
+</pre>
+ -  Allocates a fresh zero-valued `mpq_t` on the heap, returning NULL in case
+    of error. The only possible error is out-of-memory.
+
+------------
+<a id="mp_rat_reduce"></a><pre>
+mp_result mp_rat_reduce(mp_rat r);
+</pre>
+ -  Reduces `r` in-place to lowest terms and canonical form.
+
+    Zero is represented as 0/1, one as 1/1, and signs are adjusted so that the
+    sign of the value is carried by the numerator.
+
+------------
+<a id="mp_rat_init_size"></a><pre>
 mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec);
-          As mp_rat_init(), but specifies the number of long digits of
-          precision for numerator (n_prec) and denominator (d_prec).  Use this
-          if you wish to preallocate storage for operations of known output
-          size.
+</pre>
+ -  Initializes `r` with at least `n_prec` digits of storage for the numerator
+    and `d_prec` digits of storage for the denominator, and value zero.
 
+    If either precision is zero, the default precision is used, rounded up to
+    the nearest word size.
+
+------------
+<a id="mp_rat_init_copy"></a><pre>
 mp_result mp_rat_init_copy(mp_rat r, mp_rat old);
-          As mp_rat_init(), but initializes a copy of an existing rational
-          value.
+</pre>
+ -  Initializes `r` to be a copy of an already-initialized value in `old`. The
+    new copy does not share storage with the original.
 
+------------
+<a id="mp_rat_set_value"></a><pre>
 mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom);
-          Set the value of the given rational to a ratio specified as ordinary
-          signed integers (denom != 0).  Returns MP_UNDEF if denom = 0.
+</pre>
+ -  Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
+    returns `MP_UNDEF` if `denom` is zero.
 
-void      mp_rat_clear(mp_rat r);
-          Release the memory occupied by the given rational number.
+------------
+<a id="mp_rat_set_uvalue"></a><pre>
+mp_result mp_rat_set_uvalue(mp_rat r, mp_usmall numer, mp_usmall denom);
+</pre>
+ -  Sets the value of `r` to the ratio of unsigned `numer` to unsigned
+    `denom`. It returns `MP_UNDEF` if `denom` is zero.
 
+------------
+<a id="mp_rat_clear"></a><pre>
+void mp_rat_clear(mp_rat r);
+</pre>
+ -  Releases the storage used by `r`.
+
+------------
+<a id="mp_rat_free"></a><pre>
+void mp_rat_free(mp_rat r);
+</pre>
+ -  Releases the storage used by `r` and also `r` itself.
+    This should only be used for `r` allocated by `mp_rat_alloc()`.
+
+------------
+<a id="mp_rat_numer"></a><pre>
 mp_result mp_rat_numer(mp_rat r, mp_int z);
-          Extract the numerator of r as an mp_int, and store it in z.
+</pre>
+ -  Sets `z` to a copy of the numerator of `r`.
 
+------------
+<a id="mp_rat_numer_ref"></a><pre>
+mp_int mp_rat_numer_ref(mp_rat r);
+</pre>
+ -  Returns a pointer to the numerator of `r`.
+
+------------
+<a id="mp_rat_denom"></a><pre>
 mp_result mp_rat_denom(mp_rat r, mp_int z);
-          Extract the denominator of r as an mp_int, and store it in z.
+</pre>
+ -  Sets `z` to a copy of the denominator of `r`.
 
-mp_sign   mp_rat_sign(mp_rat r);
-          Return the sign of the rational number.  Note that an mpq_t
-          is always stored so that the sign of the numerator is the
-          correct sign of the whole value.
+------------
+<a id="mp_rat_denom_ref"></a><pre>
+mp_int mp_rat_denom_ref(mp_rat r);
+</pre>
+ -  Returns a pointer to the denominator of `r`.
 
+------------
+<a id="mp_rat_sign"></a><pre>
+mp_sign mp_rat_sign(mp_rat r);
+</pre>
+ -  Reports the sign of `r`.
+
+------------
+<a id="mp_rat_copy"></a><pre>
 mp_result mp_rat_copy(mp_rat a, mp_rat c);
-          Copy a to c.  Avoids unnecessary allocations.
+</pre>
+ -  Sets `c` to a copy of the value of `a`. No new memory is allocated unless a
+    term of `a` has more significant digits than the corresponding term of `c`
+    has allocated.
 
-void      mp_rat_zero(mp_rat r);
-          Set r to have the value zero (canonical with denominator 1).
+------------
+<a id="mp_rat_zero"></a><pre>
+void mp_rat_zero(mp_rat r);
+</pre>
+ -  Sets `r` to zero. The allocated storage of `r` is not changed.
 
+------------
+<a id="mp_rat_abs"></a><pre>
 mp_result mp_rat_abs(mp_rat a, mp_rat c);
-          Set c to the absolute value of a.
+</pre>
+ -  Sets `c` to the absolute value of `a`.
 
+------------
+<a id="mp_rat_neg"></a><pre>
 mp_result mp_rat_neg(mp_rat a, mp_rat c);
-          Set c to the negative (additive inverse) of a.
+</pre>
+ -  Sets `c` to the absolute value of `a`.
 
+------------
+<a id="mp_rat_recip"></a><pre>
 mp_result mp_rat_recip(mp_rat a, mp_rat c);
-          Take the reciprocal of a and store it in c, if defined.
-          Returns MP_UNDEF if a/c = 0.
+</pre>
+ -  Sets `c` to the reciprocal of `a` if the reciprocal is defined.
+    It returns `MP_UNDEF` if `a` is zero.
 
+------------
+<a id="mp_rat_add"></a><pre>
 mp_result mp_rat_add(mp_rat a, mp_rat b, mp_rat c);
-          Add a + b and store the result in c.
+</pre>
+ -  Sets `c` to the sum of `a` and `b`.
 
+------------
+<a id="mp_rat_sub"></a><pre>
 mp_result mp_rat_sub(mp_rat a, mp_rat b, mp_rat c);
-          Subtract a - b and store the result in c.
+</pre>
+ -  Sets `c` to the difference of `a` less `b`.
 
+------------
+<a id="mp_rat_mul"></a><pre>
 mp_result mp_rat_mul(mp_rat a, mp_rat b, mp_rat c);
-          Multiply a * b and store the result in c.
+</pre>
+ -  Sets `c` to the product of `a` and `b`.
 
+------------
+<a id="mp_rat_div"></a><pre>
 mp_result mp_rat_div(mp_rat a, mp_rat b, mp_rat c);
-          Divide a / b, if possible, and store the result in c.
-          Returns MP_UNDEF if b = 0.
+</pre>
+ -  Sets `c` to the ratio `a / b` if that ratio is defined.
+    It returns `MP_UNDEF` if `b` is zero.
 
+------------
+<a id="mp_rat_add_int"></a><pre>
 mp_result mp_rat_add_int(mp_rat a, mp_int b, mp_rat c);
-          Add a + b and store the result in c.  Note:  b is an integer.
+</pre>
+ -  Sets `c` to the sum of `a` and integer `b`.
 
+------------
+<a id="mp_rat_sub_int"></a><pre>
 mp_result mp_rat_sub_int(mp_rat a, mp_int b, mp_rat c);
-          Subtract a - b and store the result in c.  Note:  b is an integer.
+</pre>
+ -  Sets `c` to the difference of `a` less integer `b`.
 
+------------
+<a id="mp_rat_mul_int"></a><pre>
 mp_result mp_rat_mul_int(mp_rat a, mp_int b, mp_rat c);
-          Multiply a * b and store the result in c.  Note:  b is an integer.
+</pre>
+ -  Sets `c` to the product of `a` and integer `b`.
 
+------------
+<a id="mp_rat_div_int"></a><pre>
 mp_result mp_rat_div_int(mp_rat a, mp_int b, mp_rat c);
-          Divide a / b, if possible, and store the result in c.
-          Note:  b is an integer.
-          Returns MP_UNDEF if b = 0.
+</pre>
+ -  Sets `c` to the ratio `a / b` if that ratio is defined.
+    It returns `MP_UNDEF` if `b` is zero.
 
+------------
+<a id="mp_rat_expt"></a><pre>
 mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c);
-          Raise a to the b power, where b >= 0, and store the result in c.
+</pre>
+ -  Sets `c` to the value of `a` raised to the `b` power.
+    It returns `MP_RANGE` if `b < 0`.
 
-int       mp_rat_compare(mp_rat a, mp_rat b);
-          Full signed comparison of rational values.
+------------
+<a id="mp_rat_compare"></a><pre>
+int mp_rat_compare(mp_rat a, mp_rat b);
+</pre>
+ -  Returns the comparator of `a` and `b`.
 
-int       mp_rat_compare_unsigned(mp_rat a, mp_rat b);
-          Compare the absolute values of a and b.
+------------
+<a id="mp_rat_compare_unsigned"></a><pre>
+int mp_rat_compare_unsigned(mp_rat a, mp_rat b);
+</pre>
+ -  Returns the comparator of the magnitudes of `a` and `b`, disregarding their
+    signs. Neither `a` nor `b` is modified by the comparison.
 
-int       mp_rat_compare_zero(mp_rat r);
-          Compare r to zero.
+------------
+<a id="mp_rat_compare_zero"></a><pre>
+int mp_rat_compare_zero(mp_rat r);
+</pre>
+ -  Returns the comparator of `r` and zero.
 
-int       mp_rat_compare_value(mp_rat r, mp_small n, mp_small d);
-          Compare r to the ratio n/d.
+------------
+<a id="mp_rat_compare_value"></a><pre>
+int mp_rat_compare_value(mp_rat r, mp_small n, mp_small d);
+</pre>
+ -  Returns the comparator of `r` and the signed ratio `n / d`.
+    It returns `MP_UNDEF` if `d` is zero.
 
-int       mp_rat_is_integer(mp_rat r);
-          Returns true if r can be represented by an integer (i.e.,
-          its denominator is one).
+------------
+<a id="mp_rat_is_integer"></a><pre>
+bool mp_rat_is_integer(mp_rat r);
+</pre>
+ -  Reports whether `r` is an integer, having canonical denominator 1.
 
+------------
+<a id="mp_rat_to_ints"></a><pre>
 mp_result mp_rat_to_ints(mp_rat r, mp_small *num, mp_small *den);
-          If it is possible to do so, extract the numerator and the denominator
-          of r as regular (signed) integers.  Returns MP_RANGE if either cannot
-          be so represented.
+</pre>
+ -  Reports whether the numerator and denominator of `r` can be represented as
+    small signed integers, and if so stores the corresponding values to `num`
+    and `den`. It returns `MP_RANGE` if either cannot be so represented.
 
+------------
+<a id="mp_rat_to_string"></a><pre>
 mp_result mp_rat_to_string(mp_rat r, mp_size radix, char *str, int limit);
-          Convert the value of r to a string of the format "n/d" with n and d
-          in the specified radix, writing no more than "limit" bytes of data to
-          the given output buffer.  Includes sign flag.
+</pre>
+ -  Converts `r` to a zero-terminated string of the format `"n/d"` with `n` and
+    `d` in the specified radix and writing no more than `limit` bytes to the
+    given output buffer `str`. The output of the numerator includes a sign flag
+    if `r` is negative.  Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
-mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
-                            mp_round_mode rmode, char *str, int limit);
-          Convert the value of r to a string in decimal-point notation with the
-          specified radix, writing no more than "limit" bytes of data to the
-          given output buffer.  Generates "prec" digits of precision.
+------------
+<a id="mp_rat_to_decimal"></a><pre>
+mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec, mp_round_mode round, char *str, int limit);
+</pre>
+ -  Converts the value of `r` to a string in decimal-point notation with the
+    specified radix, writing no more than `limit` bytes of data to the given
+    output buffer.  It generates `prec` digits of precision, and requires
+    `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
-          Values numbers may be rounded when they are being converted for
-          output as a decimal value.  There are four rounding modes currently
-          supported:
+    Ratios usually must be rounded when they are being converted for output as
+    a decimal value.  There are four rounding modes currently supported:
 
-          MP_ROUND_DOWN
-            Truncates the value toward zero.
-            Example:  12.009 to 2dp becomes 12.00
+    ```
+      MP_ROUND_DOWN
+        Truncates the value toward zero.
+        Example:  12.009 to 2dp becomes 12.00
+    ```
 
-          MP_ROUND_UP
-            Rounds the value away from zero:
-            Example:  12.001 to 2dp becomes 12.01, but
-                      12.000 to 2dp remains 12.00
+    ```
+      MP_ROUND_UP
+        Rounds the value away from zero:
+        Example:  12.001 to 2dp becomes 12.01, but
+                  12.000 to 2dp remains 12.00
+    ```
 
-          MP_ROUND_HALF_DOWN
-             Rounds the value to nearest digit, half goes toward zero.
-             Example:  12.005 to 2dp becomes 12.00, but
-                       12.006 to 2dp becomes 12.01
+    ```
+      MP_ROUND_HALF_DOWN
+         Rounds the value to nearest digit, half goes toward zero.
+         Example:  12.005 to 2dp becomes 12.00, but
+                   12.006 to 2dp becomes 12.01
+    ```
 
-          MP_ROUND_HALF_UP
-             Rounds the value to nearest digit, half rounds upward.
-             Example:  12.005 to 2dp becomes 12.01, but
-                       12.004 to 2dp becomes 12.00
+    ```
+      MP_ROUND_HALF_UP
+         Rounds the value to nearest digit, half rounds upward.
+         Example:  12.005 to 2dp becomes 12.01, but
+                   12.004 to 2dp becomes 12.00
+    ```
 
+------------
+<a id="mp_rat_string_len"></a><pre>
 mp_result mp_rat_string_len(mp_rat r, mp_size radix);
-          Return the length of buffer required to convert r using the
-          mp_rat_to_string() function.  May over-estimate slightly.
+</pre>
+ -  Reports the minimum number of characters required to represent `r` as a
+    zero-terminated string in the given `radix`.
+    Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`.
 
+------------
+<a id="mp_rat_decimal_len"></a><pre>
 mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec);
-          Return the length of buffer required to convert r using the
-          mp_rat_to_decimal() function.  May over-estimate slightly.
+</pre>
+ -  Reports the length in bytes of the buffer needed to convert `r` using the
+    `mp_rat_to_decimal()` function with the specified `radix` and `prec`. The
+    buffer size estimate may slightly exceed the actual required capacity.
 
-mp_result mp_rat_read_string(mp_rat r, mp_size radix, char *str);
-          Read a zero-terminated string in the format "n/d" (including sign
-          flag), and replace the value of r with it.
+------------
+<a id="mp_rat_read_string"></a><pre>
+mp_result mp_rat_read_string(mp_rat r, mp_size radix, const char *str);
+</pre>
+ -  Sets `r` to the value represented by a zero-terminated string `str` in the
+    format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
+    denominator has value zero.
 
-mp_result mp_rat_read_cstring(mp_rat r, mp_size radix, char *str, char **end);
-          Like mp_rat_read_string(), but with a similar interface to the
-          strtoul() library function.  Used as the back end for the
-          mp_rat_read_string() function.  Returns MP_UNDEF if the denominator
-          read has value zero.
+------------
+<a id="mp_rat_read_cstring"></a><pre>
+mp_result mp_rat_read_cstring(mp_rat r, mp_size radix, const char *str, char **end);
+</pre>
+ -  Sets `r` to the value represented by a zero-terminated string `str` in the
+    format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
+    denominator has value zero. If `end` is not NULL then `*end` is set to
+    point to the first unconsumed character in the string, after parsing.
 
-mp_result mp_rat_read_ustring(mp_rat r, mp_size radix, char *str, char **end);
-          A "universal" reader.  Capable of reading plain integers, rational
-          number written in a/b notation, and decimal values in z.f format.
-          The end parameter works as for mp_int_read_cstring().
+------------
+<a id="mp_rat_read_ustring"></a><pre>
+mp_result mp_rat_read_ustring(mp_rat r, mp_size radix, const char *str, char **end);
+</pre>
+ -  Sets `r` to the value represented by a zero-terminated string `str` having
+    one of the following formats, each with an optional leading sign flag:
 
-mp_result mp_rat_read_decimal(mp_rat r, mp_size radix, char *str);
-          A wrapper around mp_rat_read_cdecimal(), which discards the resulting
-          end pointer.
+    ```
+       n         : integer format, e.g. "123"
+       n/d       : ratio format, e.g., "-12/5"
+       z.ffff    : decimal format, e.g., "1.627"
+    ```
 
-mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, char *str, char **end);
-          Read a zero-terminated string in the format "z.f" (including sign
-          flag), and replace r with its value.  If end is not NULL, a pointer
-          to the first unconsumed character of the string is returned.
-```
+    It returns `MP_UNDEF` if the effective denominator is zero. If `end` is not
+    NULL then `*end` is set to point to the first unconsumed character in the
+    string, after parsing.
+
+------------
+<a id="mp_rat_read_decimal"></a><pre>
+mp_result mp_rat_read_decimal(mp_rat r, mp_size radix, const char *str);
+</pre>
+ -  Sets `r` to the value represented by a zero-terminated string `str` in the
+    format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
+    effective denominator.
+
+------------
+<a id="mp_rat_read_cdecimal"></a><pre>
+mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str, char **end);
+</pre>
+ -  Sets `r` to the value represented by a zero-terminated string `str` in the
+    format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
+    effective denominator. If `end` is not NULL then `*end` is set to point to
+    the first unconsumed character in the string, after parsing.
+
+<!-- end generated section -->
+
 
 ## Representation Details
 
