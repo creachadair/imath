@@ -117,9 +117,7 @@ format: format-c format-py
 doc.md: doc.md.in imath.h imrat.h tools/mkdoc.py
 	tools/mkdoc.py $< $@
 
-clean:
+clean distclean:
 	rm -f *.o *.so *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
 	make -C tests/gmp-compat-test clean
-
-distclean: clean
 	rm -f $(TARGETS) $(EXAMPLES)
