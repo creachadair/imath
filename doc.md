@@ -5,7 +5,7 @@
 
 # User Documentation for the IMath Library
 
-Author: M. J. Fromberger @creachadair
+Author: [M. J. Fromberger](https://github.com/creachadair)
 
 ## Installation
 
