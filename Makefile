@@ -51,7 +51,7 @@ SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
 OTHER=LICENSE ChangeLog Makefile doc.md \
 	findthreshold.py imath.py .dockerignore
-VPATH += examples
+VPATH += examples tests
 EXAMPLES=basecvt findprime randprime imcalc input rounding rsakey
 
 .PHONY: all test clean distclean dist
