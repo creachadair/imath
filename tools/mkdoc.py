@@ -115,6 +115,14 @@ def main(args):
         template = input.read()
 
     with file(doc_markdown, 'wt') as output:
+        print(
+            '''<!--
+  This file was generated from "{0}" by mkdoc.py
+  DO NOT EDIT
+-->
+'''.format(doc_template),
+            file=output)
+
         pos = 0  # last position of input copied
 
         # Look for substitution markers in the template, and replace them with
@@ -129,16 +137,9 @@ def main(args):
                     (key, decls[key])
                     for key in ip.group('names').strip().split())
 
-            # Render the selected declarations
-            print(
-                '<!-- begin generated section from "%s", '
-                'DO NOT EDIT -->' % ip.group('file'),
-                file=output)
-
+            # Render the selected declarations.
             for decl in decls.values():
                 print(decl.markdown(), file=output)
-
-            print('<!-- end generated section -->', file=output)
 
         # Clean up any remaining template bits
         output.write(template[pos:])

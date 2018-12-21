@@ -1,3 +1,8 @@
+<!--
+  This file was generated from "doc.md.in" by mkdoc.py
+  DO NOT EDIT
+-->
+
 # User Documentation for the IMath Library
 
 M. J. Fromberger <michael.j.fromberger+imath@gmail.com>
@@ -103,7 +108,6 @@ initialized with a certain minimum amount of storage for digits, and the
 storage is expanded automatically as needed.  To initialize an `mp_int`, use
 the following functions:
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_init"></a><pre>
 mp_result mp_int_init(mp_int z);
@@ -139,12 +143,10 @@ mp_result mp_int_init_value(mp_int z, mp_small value);
 </pre>
  -  Initializes `z` to the specified signed `value` at default precision.
 
-<!-- end generated section -->
 
 
 To copy one `mp_int` to another, use:
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_copy"></a><pre>
 mp_result mp_int_copy(mp_int a, mp_int c);
@@ -152,12 +154,10 @@ mp_result mp_int_copy(mp_int a, mp_int c);
  -  Replaces the value of `c` with a copy of the value of `a`. No new memory is
     allocated unless `a` has more significant digits than `c` has allocated.
 
-<!-- end generated section -->
 
 
 When you are finished with an `mp_int`, you must free the memory it uses:
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_clear"></a><pre>
 void mp_int_clear(mp_int z);
@@ -171,13 +171,11 @@ void mp_int_free(mp_int z);
  -  Releases the storage used by `z` and also `z` itself.
     This should only be used for `z` allocated by `mp_int_alloc()`.
 
-<!-- end generated section -->
 
 
 To set an `mp_int`, which has already been initialized, to a small integer
 value, use the following:
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_set_value"></a><pre>
 mp_result mp_int_set_value(mp_int z, mp_small value);
@@ -190,12 +188,10 @@ mp_result mp_int_set_uvalue(mp_int z, mp_usmall uvalue);
 </pre>
  -  Sets `z` to the value of the specified unsigned `value`.
 
-<!-- end generated section -->
 
 
 ### Arithmetic Functions
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_is_odd"></a><pre>
 static inline bool mp_int_is_odd(mp_int z);
@@ -352,7 +348,6 @@ mp_result mp_int_expt_full(mp_int a, mp_int b, mp_int c);
  -  Sets `c` to the value of `a` raised to the `b` power.
     It returns `MP_RANGE`) if `b < 0`.
 
-<!-- end generated section -->
 
 
 ### Comparison Functions
@@ -361,7 +356,6 @@ Unless otherwise specified, comparison between values `x` and `y` returns a
 **comparator**, an integer value < 0 if `x` is less than `y`, 0 if `x` is equal
 to `y`, and > 0 if `x` is greater than `y`.
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_compare"></a><pre>
 int mp_int_compare(mp_int a, mp_int b);
@@ -406,12 +400,10 @@ int mp_int_is_pow2(mp_int z);
  -  Returns `k >= 0` such that `z` is `2^k`, if such a `k` exists. If no such
     `k` exists, the function returns -1.
 
-<!-- end generated section -->
 
 
 ### Modular Operations
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_exptmod"></a><pre>
 mp_result mp_int_exptmod(mp_int a, mp_int b, mp_int m, mp_int c);
@@ -487,12 +479,10 @@ mp_result mp_int_lcm(mp_int a, mp_int b, mp_int c);
     It returns `MP_UNDEF` if the LCM is undefined, such as for example if `a`
     and `b` are both zero.
 
-<!-- end generated section -->
 
 
 ### Conversion of Values
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_int_to_int"></a><pre>
 mp_result mp_int_to_int(mp_int z, mp_small *out);
@@ -632,7 +622,6 @@ mp_result mp_int_unsigned_len(mp_int z);
  -  Returns the number of bytes required to represent `z` as an unsigned binary
     value in base 256.
 
-<!-- end generated section -->
 
 
 ### Other Functions
@@ -650,7 +639,6 @@ digits use the standard algorithm.  This value can be modified by calling
 `findthreshold.py` script (Python) can help you find a suitable value for for
 your particular platform.
 
-<!-- begin generated section from "imath.h", DO NOT EDIT -->
 ------------
 <a id="mp_error_string"></a><pre>
 const char *mp_error_string(mp_result res);
@@ -659,12 +647,10 @@ const char *mp_error_string(mp_result res);
     describing `res`. The returned string is statically allocated and must not
     be freed by the caller.
 
-<!-- end generated section -->
 
 
 ## Rational Arithmetic
 
-<!-- begin generated section from "imrat.h", DO NOT EDIT -->
 ------------
 <a id="mp_rat_init"></a><pre>
 mp_result mp_rat_init(mp_rat r);
@@ -1007,7 +993,6 @@ mp_result mp_rat_read_cdecimal(mp_rat r, mp_size radix, const char *str, char **
     effective denominator. If `end` is not NULL then `*end` is set to point to
     the first unconsumed character in the string, after parsing.
 
-<!-- end generated section -->
 
 
 ## Representation Details
