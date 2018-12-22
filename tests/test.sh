@@ -2,17 +2,25 @@
 ## 
 ## Name:     test.sh
 ## Purpose:  Run test suites for IMath library.
-## Author:   M. J. Fromberger
 ##
+## Copyright (C) 2002-2007 Michael J. Fromberger. All Rights Reserved.
+##
+
+set -o pipefail
 
 if [ ! -f ../imtest ] ; then
   echo "I can't find the imath test driver 'imtest', did you build it?"
   echo "I can't proceed with the unit tests until you do so, sorry."
-  exit 1
+  exit 2
 fi
 
 echo "-- Running all available unit tests"
-../imtest *.tc | grep -v OK
+if ../imtest *.tc | (grep -E -v 'tests:|OK'||true) ; then
+    echo "PASSED"
+else
+    echo "FAILED"
+    exit 1
+fi
 
 echo ""
 echo "-- Running test to compute 1024 decimal digits of pi"
