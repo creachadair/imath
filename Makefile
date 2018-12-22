@@ -42,7 +42,6 @@ DFLAGSN=$(DFLAGS)
 DFLAGSY=-g -DDEBUG=1
 
 # --- end of configuration section ---
-VERS=1.28
 
 TARGETS=bintest bug-swap imtest imtimer rtest
 HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
