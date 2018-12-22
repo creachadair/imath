@@ -57,6 +57,8 @@
   result is a textual description of the result code returned by the operation
   being tested.
 
+  The exit status is 0 if all tests passed, 1 if one or more tests failed.
+
   Note:  There is currently a fixed limit on the length of lines by this test
   ----   driver.  You can increase it if you wish, but the code doesn't check;
          lines over the length are truncated (split).
@@ -178,7 +180,7 @@ int main(int argc, char *argv[]) {
   init_testing();
 
   if (argc == 1) {
-    process_file(stdin, stdout);
+    if (process_file(stdin, stdout) != 0) exit_status = 1;
   } else {
     FILE *ifp;
     int i;
@@ -202,6 +204,8 @@ int main(int argc, char *argv[]) {
   return exit_status;
 }
 
+/** Reads and runs test cases from `ifp` and writes test results to `ofp`. The
+    return value is the number of tests that failed. */
 int process_file(FILE *ifp, FILE *ofp) {
   int res, line_num, test_num = 0, num_failed = 0, num_bogus = 0;
   clock_t start, finish;
@@ -249,6 +253,7 @@ int read_line(FILE *ifp, char *line, int limit) {
   return current_line;
 }
 
+/** Removes leading and trailing whitespace from a zero-terminated `line`. */
 void trim_line(char *line) {
   int len;
   char *fnw = line;
@@ -264,6 +269,8 @@ void trim_line(char *line) {
   while (fnw >= line && isspace((unsigned char)*fnw)) *fnw-- = '\0';
 }
 
+/** Reports whether a zero-terminated `line` contains only whitespace after a
+    line-trailing comment (`# ...`) is removed. */
 int is_blank(char *line) {
   while (*line && *line != '#' && isspace((unsigned char)*line)) ++line;
 
@@ -300,6 +307,7 @@ int parse_line(char *line, testspec_t *t) {
   return 1;
 }
 
+/** Returns the number of `delim` separated fields occur in `line`. */
 int count_fields(char *line, int delim) {
   int count = 1;
 
@@ -322,6 +330,12 @@ void parse_fields(char *line, int delim, char **start) {
   }
 }
 
+/** Runs the test cases specified by `t`, and writes its results to `ofp`. The
+    `test_num` is used in log output and should reflect the global ordering of
+    tests, but is not otherwise interpreted by this function.
+
+    This function returns 0 if the test succeeds, 1 if the test fails, and -1
+    if the test is broken (e.g., its code is unknown). */
 int run_test(int test_num, testspec_t *t, FILE *ofp) {
   test_t info;
 
@@ -365,6 +379,8 @@ int run_test(int test_num, testspec_t *t, FILE *ofp) {
   return 0;
 }
 
+/** Locates the run instructions for the specified test `code`, and if they are
+    found populates `*info` with a copy. It returns -1 if `code` is unknown. */
 int find_test(char *code, test_t *info) {
   int i = 0;
 
@@ -378,6 +394,7 @@ int find_test(char *code, test_t *info) {
   return -1;
 }
 
+/** Releases the memory occupied by a test case invocation. */
 void free_test(testspec_t *t) {
   assert(t != NULL);
 
@@ -391,6 +408,9 @@ void free_test(testspec_t *t) {
   }
 }
 
+/** Returns a static label string describing `res`. Note that this is not the
+    same as the error string returned by `mp_error_string`, but corresponds to
+    the spelling of the constant for its value. */
 char *error_string(mp_result res) {
   int v = abs(res);
 
