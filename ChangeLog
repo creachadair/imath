@@ -509,3 +509,38 @@
 	9736a8b imath: Drop switchable statics and stdio dependency.
 	5445ad8 Add functions to set default precision and multiply threshold.
 	58f2d6e Use alpine:latest rather than a fixed version.
+
+1.29
+	The Documentation Edition. The main improvement here is that the
+	API documentation is now unified in the header files, and doc.md
+	is now generated from a template that includes the text from the
+	headers. The automation for this is still unsatisfactory, but it
+	is better than it was.
+
+	d239b2e Remove imath.py.
+	e43b0f5 imath: Clean up extraneous whitespace.
+	fbbbbad Remove the mpz struct tag.
+	718fef2 imath: Add documentation comments to the header.
+	02600e5 imath: Make radix bound checks into requirements.
+	c21f49d imrat: Add documentation comments to the header.
+	ea5398f Remove the mpq struct tag.
+	c1549c7 Move tools and tests into subdirectories.
+	7187c49 Remove extraneous whitespace from declarations.
+	afa715c Comment cleanup on Aisle 2.
+	cbf9a03 Add tools/mkdoc.py.
+	58672fc Remove the "dist" target from Makefile.
+	894bb90 Move rtest.c into the tests directory.
+	d4cfc69 Add a doc.md.in template file.
+	bd929aa Add a make rule for doc.md from doc.md.in.
+	6dea44e Update doc.md using the new generator.
+	56ef9a0 doc: Include mp_int_set_uvalue.
+	13618b3 doc: Explain the comparator terminology.
+	9990b2e Make the clean and distclean make-rules equivalent.
+	13df978 doc: Update the explanation of temp handling macros.
+	b80bd8a doc: Emit one generated comment for the whole file.
+	3cde6b8 doc: Remove the markdown disclaimer.
+	045a2a6 doc: Point my address to github instead of e-mail.
+	08f2efd doc: Add headings for general API functions.
+	77159d9 mkdoc.py: Link back to source lines.
+	aec8587 doc: Include links back to the source.
+	f8c9f6c imath: Document a constraint on mp_int_redux_const.
