@@ -50,14 +50,16 @@
 
   Results are written to standard output in the following formats:
 
-  line<tab>number<tab>result<eoln>
-  line<tab>number<tab>result<tab>message<eoln>
+  filename<tab>line<tab>number<tab>result<eoln>
+  filename<tab>line<tab>number<tab>result<tab>message<eoln>
 
-  The number is the number of the test in the input (starting from 1).  The
-  result is a textual description of the result code returned by the operation
-  being tested.
+  The filename and line give the offset of the test in its input file, the
+  number is the numbet of the test among all inputs, starting from 1.
+  The result is a textual description of the result code returned by the
+  operation being tested.
 
-  The exit status is 0 if all tests passed, 1 if one or more tests failed.
+  The exit status is 0 if all tests passed, 1 if one or more tests failed or
+  had errors.
 
   Note:  There is currently a fixed limit on the length of lines by this test
   ----   driver.  You can increase it if you wish, but the code doesn't check;
@@ -162,7 +164,7 @@ extern char *imath_errmsg;
 const char *g_imath_strerr[] = {"MP_OK",    "MP_TRUE",  "MP_MEMORY", "MP_RANGE",
                                 "MP_UNDEF", "MP_TRUNC", "MP_BADARG"};
 
-int process_file(FILE *ifp, FILE *ofp);
+bool process_file(char *file_name, FILE *ifp, FILE *ofp);
 int read_line(FILE *ifp, char *line, int limit);
 void trim_line(char *line);
 int is_blank(char *line);
@@ -180,7 +182,8 @@ int main(int argc, char *argv[]) {
   init_testing();
 
   if (argc == 1) {
-    if (process_file(stdin, stdout) != 0) exit_status = 1;
+    fprintf(stderr, "[reading from stdin]\n");
+    if (!process_file("-", stdin, stdout)) exit_status = 1;
   } else {
     FILE *ifp;
     int i;
@@ -188,15 +191,11 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < argc; ++i) {
       if (strcmp(argv[i], "-") == 0) {
         ifp = stdin;
-        printf("# [stdin]\n");
       } else if ((ifp = fopen(argv[i], "r")) == NULL) {
         fprintf(stderr, "Cannot open '%s': %s\n", argv[i], strerror(errno));
         return 1;
-      } else {
-        printf("# %s\n", argv[i]);
       }
-
-      if (process_file(ifp, stdout) != 0) exit_status = 1;
+      if (!process_file(argv[i], ifp, stdout)) exit_status = 1;
 
       fclose(ifp);
     }
@@ -205,8 +204,9 @@ int main(int argc, char *argv[]) {
 }
 
 /** Reads and runs test cases from `ifp` and writes test results to `ofp`. The
-    return value is the number of tests that failed. */
-int process_file(FILE *ifp, FILE *ofp) {
+    given `file_name` is used for cosmetic attribution. The return value is
+    true if all tests passed, false if any tests failed or had errors. */
+bool process_file(char *file_name, FILE *ifp, FILE *ofp) {
   int res, line_num, test_num = 0, num_failed = 0, num_bogus = 0;
   clock_t start, finish;
 
@@ -214,24 +214,27 @@ int process_file(FILE *ifp, FILE *ofp) {
   while ((line_num = read_line(ifp, g_line, LINE_MAX)) != 0) {
     testspec_t t;
     t.line = line_num;
+    t.file = file_name;
     if (parse_line(g_line, &t)) {
       if ((res = run_test(++test_num, &t, ofp)) < 0) {
         ++num_bogus;
-      } else if (!res) {
+      } else if (res == 0) {
         ++num_failed;
       }
       free_test(&t);
     } else {
       fprintf(stderr, "Line %d: Incorrect input syntax.\n", line_num);
+      ++num_bogus;
     }
   }
   finish = clock();
 
-  fprintf(ofp, "# %d tests: %d passed, %d failed, %d errors. (%.2f seconds)\n",
-          test_num, (test_num - num_failed - num_bogus), num_failed, num_bogus,
-          ((double)(finish - start) / CLOCKS_PER_SEC));
+  fprintf(ofp,
+          "# %s %d tests: %d passed, %d failed, %d errors. (%.2f seconds)\n",
+          file_name, test_num, (test_num - num_failed - num_bogus), num_failed,
+          num_bogus, ((double)(finish - start) / CLOCKS_PER_SEC));
 
-  return num_failed;
+  return num_failed == 0 && num_bogus == 0;
 }
 
 int read_line(FILE *ifp, char *line, int limit) {
@@ -369,12 +372,14 @@ int run_test(int test_num, testspec_t *t, FILE *ofp) {
      otherwise, it is assumed that imath_errno has been set to
      a value indicating the problem. */
   if ((info.call)(t, ofp)) {
-    fprintf(ofp, "%d\t%d\tOK\n", t->line, test_num);
+    fprintf(ofp, "%s\t%d\t%d\tOK\n", t->file, t->line, test_num);
     return 1;
   } else if (imath_errno >= MP_BADARG) {
-    fprintf(ofp, "%d\t%d\t%s\n", t->line, test_num, error_string(imath_errno));
+    fprintf(ofp, "%s\t%d\t%d\t%s\n", t->file, t->line, test_num,
+            error_string(imath_errno));
   } else {
-    fprintf(ofp, "%d\t%d\tFAILED\t%s\n", t->line, test_num, imath_errmsg);
+    fprintf(ofp, "%s\t%d\t%d\tFAILED\t%s\n", t->file, t->line, test_num,
+            imath_errmsg);
   }
   return 0;
 }

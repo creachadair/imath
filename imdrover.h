@@ -32,6 +32,7 @@
 
 typedef struct {
   int    line;
+  char  *file;
   char  *code;
   int    num_inputs;
   char **input;

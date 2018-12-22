@@ -15,8 +15,8 @@ if [ ! -f ../imtest ] ; then
 fi
 
 echo "-- Running all available unit tests"
-if ../imtest *.tc | (grep -E -v 'tests:|OK'||true) ; then
-    echo "PASSED"
+if ../imtest *.tc | (grep -v 'OK'||true) ; then
+    echo "ALL PASSED"
 else
     echo "FAILED"
     exit 1
