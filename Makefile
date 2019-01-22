@@ -28,7 +28,9 @@
 
 ## Generic settings for systems with GCC (default)
 ## To build with debugging, add DEBUG=Y on the "make" command line.
+ifeq ($(origin CC),default)
 CC=gcc
+endif
 CFLAGS+=-pedantic -Wall -Werror -Wextra -Wno-unused-parameter \
 	-I. -std=c99 $(DFLAGS$(DEBUG))
 CSFLAGS=$(CFLAGS) -fPIC
