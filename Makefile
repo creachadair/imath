@@ -80,6 +80,13 @@ gmp-compat-test: libimath.so
 	@ echo "Printing progress after every 100,000 tests"
 	make -C tests/gmp-compat-test TESTS="-p 100000 random.tests"
 
+docker-test:
+	if which docker ; \
+	then \
+		docker run --rm -it -v $(PWD):/imath \
+		"$(shell docker build -q tests/linux)" ; \
+	fi
+
 $(EXAMPLES):%: imath.o imrat.o iprime.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
