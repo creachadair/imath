@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ## 
 ## Name:     test.sh
 ## Purpose:  Run test suites for IMath library.
