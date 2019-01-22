@@ -165,7 +165,7 @@ def load_file(path):
 
 def main(args):
     if len(args) != 2:
-        print("Usage: mkdoc.py <input> <output", file=sys.stderr)
+        print("Usage: mkdoc.py <input> <output>", file=sys.stderr)
         sys.exit(1)
 
     doc_template = args[0]
