@@ -544,3 +544,13 @@
 	77159d9 mkdoc.py: Link back to source lines.
 	aec8587 doc: Include links back to the source.
 	f8c9f6c imath: Document a constraint on mp_int_redux_const.
+
+1.30
+	Improve test automation; no functional changes to the library.
+
+	fc7846a imtest: Ensure the exit code is non-zero when tests fail.
+	87edcbe test.sh: Exit non-zero if any unit tests fail.
+	276d1f9 imtest: Make test output easier to read.
+	c8c90c4 Make the Linux test protocol less brittle.
+	f68ba5b Add a .gitattributes file.
+	33c2843 Add a docker-test target to the Makefile.
