@@ -54,7 +54,7 @@ OTHER=LICENSE ChangeLog Makefile doc.md doc.md.in \
 VPATH += examples tests
 EXAMPLES=basecvt findprime imcalc input pi randprime rounding rsakey
 
-.PHONY: all test clean distclean dist
+.PHONY: all test clean distclean
 .SUFFIXES: .so .md
 
 .c.o:
