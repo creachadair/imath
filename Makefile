@@ -85,8 +85,8 @@ gmp-compat-test: libimath.so
 docker-test:
 	if which docker ; \
 	then \
-		docker run --rm -it -v $(PWD):/imath \
-		"$(shell docker build -q tests/linux)" ; \
+		docker run --rm -it \
+		"$(shell docker build -f tests/linux/Dockerfile -q .)" ; \
 	fi
 
 $(EXAMPLES):%: imath.o imrat.o iprime.o %.o

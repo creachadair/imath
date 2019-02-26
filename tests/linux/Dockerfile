@@ -9,6 +9,6 @@ FROM alpine:latest AS base
 RUN apk add --no-cache bash build-base gcc gmp-dev make python2
 
 FROM base AS test
-VOLUME  /imath
+COPY . /imath
 WORKDIR /imath
 CMD make distclean examples check
