@@ -2,7 +2,7 @@
 #
 # Usage (from the imath root):
 #
-#   docker run --rm -it -v $PWD:/imath "$(docker build -q tests/linux)"
+#   docker run --rm -it "$(docker build -f tests/linux/Dockerfile -q .)"
 #
 FROM alpine:latest AS base
 
