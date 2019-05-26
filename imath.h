@@ -94,7 +94,7 @@ extern const mp_result MP_MINERR;
 void mp_int_default_precision(mp_size ndigits);
 
 /** Sets the number of digits below which multiplication will use the standard
-    quadratic "schoolbook" multiplcation algorithm rather than Karatsuba-Ofman.
+    quadratic "schoolbook" multiplication algorithm rather than Karatsuba-Ofman.
     Requires `ndigits >= sizeof(mp_word)`. */
 void mp_int_multiply_threshold(mp_size ndigits);
 
