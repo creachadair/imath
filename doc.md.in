@@ -4,13 +4,14 @@ Author: [M. J. Fromberger](https://github.com/creachadair)
 
 ## Installation
 
-1. Edit Makefile to select compiler and options.  The default uses gcc.
-   You may want to change CC to `clang` instead of `gcc`, but you should be
-   able to use the default GCC settings either way.
+1. Edit Makefile to select compiler and options.  The default is to use gcc.
+   You may want to change CC to `clang` instead of `gcc` (and on macOS that
+   what you will get anyway), but you should be able to use the default GCC
+   settings for either.
 
    By default, the Makefile assumes you can use 64-bit integer types, even
-   though they were not standard in ANSI C90. If not, add `-DUSE_32BIT_WORDS`
-   to the compiler options.
+   though they were not standard in ANSI C90. If you cannot, add
+   `-DUSE_32BIT_WORDS` to the compiler options.
 
 2. Type `make` or `make test` to build the test driver and run the unit tests.
    None of these should fail.  If they do, see below for how you can report
