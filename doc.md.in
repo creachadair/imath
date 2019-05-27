@@ -327,9 +327,10 @@ processed at the time):
 
 None of the tests should fail (but see [Note 2](#note2)); if any do, it
 probably indicates a bug in the library (or at the very least, some assumption
-I made which I shouldn't have).  Please send a bug report to the address below,
-which includes the `FAILED` test line above, as well as the output of the above
-`tail` command (so I know what inputs caused the failure).
+I made which I shouldn't have).  Please [file an
+issue](https://github.com/creachadair/imath/issues/new), including the `FAILED`
+test line(s), as well as the output of the above `tail` command (so I know what
+inputs caused the failure).
 
 If you build with the preprocessor symbol `DEBUG` defined as a positive
 integer, the digit allocators (`s_alloc`, `s_realloc`) fill all new buffers
@@ -353,11 +354,12 @@ so that you can more easily catch uninitialized reads in the debugger.
 
 The IMath library was written by Michael J. Fromberger.
 
-If you discover any bugs or testing failures, please send e-mail to the above
-address. Please be sure to include, with any bug report, a complete description
-of what goes wrong, and if possible, a test vector for imtest or a minimal test
-program that will demonstrate the bug on your system.  Please also let me know
-what hardware, operating system, and compiler you're using.
+If you discover any bugs or testing failures, please [open an
+issue](https://github.com/creachadair/imath/issues/new).  Please be sure to
+include a complete description of what went wrong, and if possible, a test
+vector for `imtest` and/or a minimal test program that will demonstrate the bug
+on your system.  Please also let me know what hardware, operating system, and
+compiler you're using.
 
 ## Acknowledgements
 
