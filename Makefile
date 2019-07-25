@@ -68,8 +68,14 @@ all: objs examples test
 objs: $(OBJS)
 
 # N.B.: With a stock installation of Python 2 on macOS, this test may fail
-# because SIP may block its attempt to load the shared library.
-# If you see this, try the Homebrew version: brew install python@2.
+# because SIP may block its attempt to load the shared library.  If you see
+# this error on macOS:
+#
+#  Reason: unsafe use of relative rpath libimath.so
+#     in imath_test.so with restricted binary
+#
+# try the Homebrew version of Python 2: brew install python@2
+#
 check: test gmp-compat-test
 	@ echo "Completed running imath and gmp-compat unit tests"
 
