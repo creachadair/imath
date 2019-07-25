@@ -554,3 +554,10 @@
 	c8c90c4 Make the Linux test protocol less brittle.
 	f68ba5b Add a .gitattributes file.
 	33c2843 Add a docker-test target to the Makefile.
+
+1.31
+	Improvements to build and test automation; add CI configuration.
+
+	d419633 Add a Travis CI configuration for imath.
+	3305c4a Ensure the Makefile respects a $CC set in the environment.
+	d2da4b6 Update instructions for reporting bugs.
