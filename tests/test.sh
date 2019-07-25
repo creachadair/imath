@@ -22,60 +22,40 @@ else
     exit 1
 fi
 
+pitest() {
+    local digits="${1:?missing digits}"
+    local radix="${2:?missing radix}"
+    local file="${3:?missing golden file}"
+
+    local tempfile="/tmp/pi.${digits}.${radix}.$$.txt"
+    
+    echo "-- Running test to compute ${digits} base-${radix} digits of pi" 1>&2
+    ../pi "$digits" "$radix" | tr -d '\r\n' > "$tempfile"
+    if cmp -s "$tempfile" "$file" ; then
+	echo "  PASSED $digits digits"
+    else
+	echo "  FAILED"
+	echo "Obtained:"
+	cat "$tempfile"
+	echo "Expected:"
+	cat "$file"
+    fi
+    rm -f "$tempfile"
+}
+
 echo ""
-echo "-- Running test to compute 1024 decimal digits of pi"
 if [ ! -f ../pi ] ; then
   echo "I can't find the pi computing program, did you build it?"
   echo "I can't proceed with the pi test until you do so, sorry."
   exit 1
 fi
 
-tempfile="/tmp/pi.1024.$$"
+pitest 1024 10 pi1024.txt
+pitest 1698 16 pi1698-16.txt
+pitest 1500 10 pi1500-10.txt
+pitest 4096 10 pi4096-10.txt
 
-../pi 1024 | tr -d '\r\n' > ${tempfile}
-if cmp -s ${tempfile} ./pi1024.txt ; then
-  echo "  PASSED 1024 digits"
-else
-  echo "  FAILED"
-  echo "Obtained:"
-  cat ${tempfile}
-  echo "Expected:"
-  cat ./pi1024.txt
-fi
-rm -f ${tempfile}
-
-tempfile="/tmp/pi.1698.$$"
-
-echo "-- Running test to compute 1698 hexadecimal digits of pi"
-
-../pi 1698 16 | tr -d '\r\n' > ${tempfile}
-if cmp -s ${tempfile} ./pi1698-16.txt ; then
-  echo "  PASSED 1698 digits"
-else
-  echo "  FAILED"
-  echo "Obtained:"
-  cat ${tempfile}
-  echo "Expected:"
-  cat ./pi1698-16.txt
-fi
-rm -f ${tempfile}
-
-tempfile="/tmp/pi.1500.$$"
-
-echo "-- Running test to compute 1500 decimal digits of pi"
-
-../pi 1500 10 | tr -d '\r\n' > ${tempfile}
-if cmp -s ${tempfile} ./pi1500-10.txt ; then
-  echo "  PASSED 1500 digits"
-else
-  echo "  FAILED"
-  echo "Obtained:"
-  cat ${tempfile}
-  echo "Expected:"
-  cat ./pi1500-10.txt
-fi
-rm -f ${tempfile}
-
+echo ""
 echo "-- Running regression tests"
 
 for bug in bug-swap ; do
