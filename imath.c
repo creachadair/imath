@@ -2597,13 +2597,13 @@ static mp_result s_udiv_knuth(mp_int u, mp_int v) {
     /* D4,D5,D6: Multiply qhat * v and test for a correct value of q
 
        We proceed a bit different than the way described by Knuth. This way is
-       simpler but less efficent. Instead of doing the multiply and subtract
+       simpler but less efficient. Instead of doing the multiply and subtract
        then checking for underflow, we first do the multiply of qhat * v and
        see if it is larger than the current remainder r. If it is larger, we
        decrease qhat by one and try again. We may need to decrease qhat one
        more time before we get a value that is smaller than r.
 
-       This way is less efficent than Knuth because we do more multiplies, but
+       This way is less efficient than Knuth because we do more multiplies, but
        we do not need to worry about underflow this way.
      */
     /* t = qhat * v */
