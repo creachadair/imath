@@ -15,7 +15,7 @@ Author: [M. J. Fromberger](https://github.com/creachadair)
    settings for either.
 
    By default, the Makefile assumes you can use 64-bit integer types, even
-   though they were not standard in ANSI C90. If you cannot, add
+   though they were not standard in ISO/IEC 9899:1990. If you cannot, add
    `-DUSE_32BIT_WORDS` to the compiler options.
 
 2. Type `make` or `make test` to build the test driver and run the unit tests.

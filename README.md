@@ -3,7 +3,7 @@ IMath
 
 Arbitrary precision integer and rational arithmetic library.
 
-IMath is an open-source ANSI C arbitrary precision integer and rational
+IMath is an open-source ISO C arbitrary precision integer and rational
 arithmetic library.
 
 IMath is copyright &copy; 2002-2009 Michael J. Fromberger.
@@ -30,7 +30,7 @@ IMath is copyright &copy; 2002-2009 Michael J. Fromberger.
 About IMath
 -----------
 
-IMath is a library written in portable ANSI C that allows you to perform
+IMath is a library written in portable ISO C that allows you to perform
 arithmetic on integers and rational numbers of arbitrary precision.  While many
 programming languages, including Java, Perl, and Python provide arbitrary
 precision numbers as a standard library or language feature, C does not.
