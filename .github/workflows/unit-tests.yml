@@ -6,8 +6,11 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         compiler: ['gcc', 'clang']
+        exclude:
+          - os: macos-latest
+            compiler: gcc  # gcc is clang on macOS
 
     runs-on: ${{ matrix.os }}
 
