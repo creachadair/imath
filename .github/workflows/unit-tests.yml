@@ -15,6 +15,8 @@ jobs:
         CC: ${{ matrix.compiler}}
 
     steps:
+    - name: Log compiler version
+      run: "$CC" --version
     - uses: actions/checkout@v2
     - name: make test    # unit tests
       run: make test
