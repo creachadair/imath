@@ -7,9 +7,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        compiler: ['gcc', 'clang']
 
     runs-on: ${{ matrix.os }}
-    
+
+    env:
+        CC: ${{ matrix.compiler}}
+
     steps:
     - uses: actions/checkout@v2
     - name: make test    # unit tests
