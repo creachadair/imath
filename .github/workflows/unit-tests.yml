@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-        CC: ${{ matrix.compiler}}
+        CC: ${{ matrix.compiler }}
 
     steps:
     - uses: actions/checkout@v2
