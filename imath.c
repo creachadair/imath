@@ -2485,7 +2485,7 @@ static mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
 
    We diverge from Knuth's algorithm in that we do not perform the subtraction
    from the remainder until we have determined that we have the correct
-   quotient digit. This makes our algorithm less efficient that Knuth because
+   quotient digit. This makes our algorithm less efficient than Knuth because
    we might have to perform multiple multiplication and comparison steps before
    the subtraction. The advantage is that it is easy to implement and ensure
    correctness without worrying about underflow from the subtraction.
@@ -2589,7 +2589,7 @@ static mp_result s_udiv_knuth(mp_int u, mp_int v) {
 
     qhat = pfx / v->digits[n - 1];
     /* Check to see if qhat > b, and decrease qhat if so.
-       Theorem B guarantess that qhat is at most 2 larger than the
+       Theorem B guarantees that qhat is at most 2 larger than the
        actual value, so it is possible that qhat is greater than
        the maximum value that will fit in a digit */
     if (qhat > MP_DIGIT_MAX) qhat = MP_DIGIT_MAX;
