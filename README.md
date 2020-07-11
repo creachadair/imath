@@ -3,6 +3,8 @@ IMath
 
 Arbitrary precision integer and rational arithmetic library.
 
+![Unit tests](https://github.com/creachadair/imath/workflows/Unit%20tests/badge.svg)
+
 IMath is an open-source ISO C arbitrary precision integer and rational
 arithmetic library.
 
