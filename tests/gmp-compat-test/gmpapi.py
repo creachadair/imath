@@ -35,8 +35,8 @@ class GMPAPI:
         return False
 
     def __str__(self):
-        return ("{} {}({})".format(self.ret_ty, self.name, ",".join(
-            map(str, self.params))))
+        return ("{} {}({})".format(self.ret_ty, self.name,
+                                   ",".join(map(str, self.params))))
 
     def __repr__(self):
         return str(self)
@@ -86,29 +86,27 @@ apis = [
     GMPAPI(void, "mpz_gcd", mpz_t, mpz_t, mpz_t),
     GMPAPI(void, "mpz_lcm", mpz_t, mpz_t, mpz_t),
     GMPAPI(void, "mpz_mul_2exp", mpz_t, mpz_t, ulong),
-    GMPAPI(
-        void,
-        "mpz_export",
-        voidp,
-        size_tp,
-        iint,
-        size_t,
-        iint,
-        size_t,
-        mpz_t,
-        custom=True),
+    GMPAPI(void,
+           "mpz_export",
+           voidp,
+           size_tp,
+           iint,
+           size_t,
+           iint,
+           size_t,
+           mpz_t,
+           custom=True),
     # The mpz_import signature is a bit of a lie, but it is ok because it is custom
-    GMPAPI(
-        void,
-        "mpz_import",
-        voidp,
-        size_t,
-        iint,
-        size_t,
-        iint,
-        size_t,
-        mpz_t,
-        custom=True),
+    GMPAPI(void,
+           "mpz_import",
+           voidp,
+           size_t,
+           iint,
+           size_t,
+           iint,
+           size_t,
+           mpz_t,
+           custom=True),
     GMPAPI(size_t, "mpz_sizeinbase", mpz_t, iint),
     GMPAPI(charp, "mpz_get_str", charp, iint, mpz_t),
 

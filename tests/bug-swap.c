@@ -1,5 +1,6 @@
 /* Regression test for mp_int_swap() bug on self-stored values. */
 #include <stdio.h>
+
 #include "imath.h"
 
 int main(int argc, char* argv[]) {

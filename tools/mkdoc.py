@@ -58,7 +58,6 @@ def typeset(text):
 
 class LIndex(object):
     """Represents a line offset index for text."""
-
     def __init__(self, text):
         pos = 0
 
@@ -106,7 +105,6 @@ class LIndex(object):
 
 class Decl(object):
     """Represents a single documented declaration."""
-
     def __init__(self, com, decl, line=None):
         """Initialize a new documented declaration.
 
@@ -175,13 +173,12 @@ def main(args):
         template = input.read()
 
     with file(doc_markdown, 'wt') as output:
-        print(
-            '''<!--
+        print('''<!--
   This file was generated from "{0}" by mkdoc.py
   DO NOT EDIT
 -->
 '''.format(doc_template),
-            file=output)
+              file=output)
 
         pos = 0  # last position of input copied
 

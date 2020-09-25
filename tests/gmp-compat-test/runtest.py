@@ -85,32 +85,28 @@ def run_tests(test_file, options):
 
 def parse_args():
     parser = OptionParser()
-    parser.add_option(
-        "-f",
-        "--fork",
-        help="fork() before each operation",
-        action="store_true",
-        default=False)
-    parser.add_option(
-        "-v",
-        "--verbose",
-        help="print PASS and FAIL tests",
-        action="store_true",
-        default=False)
-    parser.add_option(
-        "-p",
-        "--progress",
-        help="print progress every N tests ",
-        metavar="N",
-        type="int",
-        default=0)
-    parser.add_option(
-        "-s",
-        "--skip",
-        help="skip to test N",
-        metavar="N",
-        type="int",
-        default=0)
+    parser.add_option("-f",
+                      "--fork",
+                      help="fork() before each operation",
+                      action="store_true",
+                      default=False)
+    parser.add_option("-v",
+                      "--verbose",
+                      help="print PASS and FAIL tests",
+                      action="store_true",
+                      default=False)
+    parser.add_option("-p",
+                      "--progress",
+                      help="print progress every N tests ",
+                      metavar="N",
+                      type="int",
+                      default=0)
+    parser.add_option("-s",
+                      "--skip",
+                      help="skip to test N",
+                      metavar="N",
+                      type="int",
+                      default=0)
     return parser.parse_args()
 
 

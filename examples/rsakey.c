@@ -36,12 +36,11 @@
  */
 
 #include <errno.h>
+#include <getopt.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <getopt.h>
 #include <unistd.h>
 
 #include "imath.h"

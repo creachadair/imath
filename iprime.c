@@ -25,6 +25,7 @@
  */
 
 #include "iprime.h"
+
 #include <stdlib.h>
 
 static int s_ptab[] = {

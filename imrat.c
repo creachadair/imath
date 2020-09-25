@@ -25,6 +25,7 @@
  */
 
 #include "imrat.h"
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>

@@ -40,8 +40,8 @@ def get_timing_stats(num_tests, precision, threshold, seed=None):
         seed = int(time.time())
 
     line = os.popen(
-        './imtimer -mn -p %d -t %d -s %d %d' % (precision, threshold, seed,
-                                                num_tests), 'r').readline()
+        './imtimer -mn -p %d -t %d -s %d %d' %
+        (precision, threshold, seed, num_tests), 'r').readline()
 
     count, prec, bits, thresh, status = line.strip().split('\t')
     kind, total, unit = status.split()
