@@ -4,4 +4,4 @@ if [ "$(uname)" = "Darwin" ] ; then
 else
     export LD_LIBRARY_PATH=.:../..    # for everyone else
 fi
-python runtest.py $@
+python3 runtest.py $@

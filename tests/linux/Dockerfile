@@ -6,7 +6,7 @@
 #
 FROM alpine:latest AS base
 
-RUN apk add --no-cache bash build-base gcc gmp-dev make python2
+RUN apk add --no-cache bash build-base gcc gmp-dev make python3
 
 FROM base AS test
 COPY . /imath
