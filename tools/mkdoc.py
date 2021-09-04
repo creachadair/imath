@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##
 ## Name:    mkdoc.py
 ## Purpose: Extract documentation from header files.
@@ -91,7 +91,7 @@ class LIndex(object):
         idx = self._index
         i, j = 1, len(idx)
         while i < j:
-            m = (i + j) / 2
+            m = (i + j) // 2
             if idx[m] < pos:
                 i = m + 1
             elif idx[m - 1] < pos:
@@ -156,7 +156,7 @@ def parse_decls(text):
 def load_file(path):
     """Load declarations from path, or use cached results."""
     if path not in CACHE:
-        with file(path, 'rU') as fp:
+        with open(path, 'r') as fp:
             CACHE[path] = parse_decls(fp.read())
     return CACHE[path]
 
@@ -169,10 +169,10 @@ def main(args):
     doc_template = args[0]
     doc_markdown = args[1]
 
-    with file(doc_template, 'rU') as input:
+    with open(doc_template, 'r') as input:
         template = input.read()
 
-    with file(doc_markdown, 'wt') as output:
+    with open(doc_markdown, 'wt') as output:
         print('''<!--
   This file was generated from "{0}" by mkdoc.py
   DO NOT EDIT
