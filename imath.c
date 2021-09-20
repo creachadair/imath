@@ -44,11 +44,13 @@ const mp_result MP_MINERR = -6;
 const mp_sign MP_NEG = 1;  /* value is strictly negative */
 const mp_sign MP_ZPOS = 0; /* value is non-negative      */
 
-static const char *s_unknown_err = "unknown result code";
-static const char *s_error_msg[] = {"error code 0",     "boolean true",
-                                    "out of memory",    "argument out of range",
-                                    "result undefined", "output truncated",
-                                    "invalid argument", NULL};
+static const char *const s_unknown_err = "unknown result code";
+static const char *const s_error_msg[] = {
+    "error code 0",     "boolean true",
+    "out of memory",    "argument out of range",
+    "result undefined", "output truncated",
+    "invalid argument", NULL,
+};
 
 /* The ith entry of this table gives the value of log_i(2).
 
