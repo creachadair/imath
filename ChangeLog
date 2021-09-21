@@ -561,3 +561,14 @@
 	d419633 Add a Travis CI configuration for imath.
 	3305c4a Ensure the Makefile respects a $CC set in the environment.
 	d2da4b6 Update instructions for reporting bugs.
+
+1.32
+	Add const qualifiers to global static data. (#53)
+
+	Includes documentation and formatting cleanup, and some fixes to
+	the tests and test scripts.
+
+	048b49c Reorganize allocation to make cleanup simpler.
+	18404fb Add a unit test for 4096 decimal digits of pi.
+	e6d37f2 Merge pull request #42 from creachadair/pi-dynamic-output-buffer
+	9d6dfa1 Update test scripts to use Python 3.
