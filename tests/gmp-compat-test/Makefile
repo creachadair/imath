@@ -23,5 +23,5 @@ random.tests: gendata.py
 	./gendata.py > $@
 
 clean:
-	rm -f a.out *.so *.o gmp_test.c imath_test.c wrappers.py *.pyc
+	rm -f -- a.out *.so *.o random.tests gmp_test.c imath_test.c wrappers.py *.pyc
 	rm -rf __pycache__

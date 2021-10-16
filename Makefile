@@ -134,6 +134,7 @@ doc.md: doc.md.in imath.h imrat.h tools/mkdoc.py
 	tools/mkdoc.py $< $@
 
 clean distclean:
-	rm -f *.o *.so *.pyc *~ core gmon.out tests/*~ tests/gmon.out examples/*~
+	rm -f -- *.o *.so *.pyc *~ core gmon.out examples/*~
+	rm -f -- tests/*~ tests/gmon.out
 	make -C tests/gmp-compat-test clean
 	rm -f $(TARGETS) $(EXAMPLES)

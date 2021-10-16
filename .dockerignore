@@ -10,3 +10,4 @@ contrib
 tests/*.bc
 tests/*.scm
 tests/linux
+tests/random.tests
