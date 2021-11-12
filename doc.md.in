@@ -94,7 +94,7 @@ various data types used in the library:
 | `MP_MIN_RADIX`  | the minimum radix accepted for base conversion.
 | `MP_MAX_RADIX`  | the maximum radix accepted for base conversion.
 
-#### Initialization
+### Initialization
 
 An `mp_int` must be initialized before use. By default, an `mp_int` is
 initialized with a certain minimum amount of storage for digits, and the
@@ -107,13 +107,13 @@ the following functions:
   mp_int_init_value
 }}
 
-#### Cleanup
+### Cleanup
 
 When you are finished with an `mp_int`, you must free the memory it uses:
 
 {{insert "imath.h" mp_int_clear mp_int_free}}
 
-#### Setting Values
+### Setting Values
 
 To set an `mp_int` which has already been initialized to a small integer value,
 use:

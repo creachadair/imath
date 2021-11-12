@@ -99,7 +99,7 @@ various data types used in the library:
 | `MP_MIN_RADIX`  | the minimum radix accepted for base conversion.
 | `MP_MAX_RADIX`  | the maximum radix accepted for base conversion.
 
-#### Initialization
+### Initialization
 
 An `mp_int` must be initialized before use. By default, an `mp_int` is
 initialized with a certain minimum amount of storage for digits, and the
@@ -143,7 +143,7 @@ mp_result <a href="imath.h#L131">mp_int_init_value</a>(mp_int z, mp_small value)
 
 
 
-#### Cleanup
+### Cleanup
 
 When you are finished with an `mp_int`, you must free the memory it uses:
 
@@ -162,7 +162,7 @@ void <a href="imath.h#L147">mp_int_free</a>(mp_int z);
 
 
 
-#### Setting Values
+### Setting Values
 
 To set an `mp_int` which has already been initialized to a small integer value,
 use:
