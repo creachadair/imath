@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##
 ## Name:     findthreshold.py
 ## Purpose:  Find a good threshold for recursive multiplication.
@@ -62,13 +62,13 @@ def compute_stats():
     check_binary('imtimer')
     seed = int(time.time())
 
-    print >> sys.stderr, "Computing timer statistics (this may take a while)"
+    print("Computing timer statistics (this may take a while)", file=sys.stderr)
     stats = {}
     for prec in (32, 40, 64, 80, 128, 150, 256, 384, 512, 600, 768, 1024):
         sys.stderr.write('%-4d ' % prec)
         stats[prec] = (None, 1000000., 0.)
 
-        for thresh in xrange(8, 65, 2):
+        for thresh in range(8, 65, 2):
             s, b, t = get_timing_stats(1000, prec, thresh, seed)
             sp, bp, tp = get_timing_stats(1000, prec, prec + 1, seed)
 
@@ -79,15 +79,15 @@ def compute_stats():
                 sys.stderr.write('.')
         sys.stderr.write('\n')
 
-    return list((p, h, t, tp) for p, (h, t, tp) in stats.iteritems())
+    return list((p, h, t, tp) for p, (h, t, tp) in stats.items())
 
 
 if __name__ == "__main__":
     stats = compute_stats()
     stats.sort(key=lambda s: s[3] / s[2])
     for prec, thresh, trec, tnorm in stats:
-        print "%d\t%d\t%.3f\t%.3f\t%.4f" % (prec, thresh, trec, tnorm,
-                                            tnorm / trec)
+        print("%d\t%d\t%.3f\t%.3f\t%.4f" % (prec, thresh, trec, tnorm,
+                                            tnorm / trec))
 
     print
 
