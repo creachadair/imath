@@ -12,6 +12,7 @@ from gmpapi import mpq_t
 
 
 class APITest(object):
+
     def __init__(self, gmpapi):
         self.api = gmpapi
 
@@ -203,6 +204,7 @@ class APITest(object):
 
 
 class GMPTest(APITest):
+
     def __init__(self, gmpapi):
         super(GMPTest, self).__init__(gmpapi)
 
@@ -222,6 +224,7 @@ class GMPTest(APITest):
 
 
 class ImathTest(APITest):
+
     def __init__(self, gmpapi):
         super(ImathTest, self).__init__(gmpapi)
 

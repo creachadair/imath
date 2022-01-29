@@ -58,6 +58,7 @@ def typeset(text):
 
 class LIndex(object):
     """Represents a line offset index for text."""
+
     def __init__(self, text):
         pos = 0
 
@@ -105,6 +106,7 @@ class LIndex(object):
 
 class Decl(object):
     """Represents a single documented declaration."""
+
     def __init__(self, com, decl, line=None):
         """Initialize a new documented declaration.
 

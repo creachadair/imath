@@ -4,6 +4,7 @@ import sys
 
 
 class CType:
+
     def __init__(self, name):
         self.name = name
 
@@ -12,6 +13,7 @@ class CType:
 
 
 class GMPAPI:
+
     def __init__(self, ret_ty, name, *params, **kw):
         out = kw.get('out', [0])
         inout = kw.get('inout', [])

@@ -62,7 +62,8 @@ def compute_stats():
     check_binary('imtimer')
     seed = int(time.time())
 
-    print("Computing timer statistics (this may take a while)", file=sys.stderr)
+    print("Computing timer statistics (this may take a while)",
+          file=sys.stderr)
     stats = {}
     for prec in (32, 40, 64, 80, 128, 150, 256, 384, 512, 600, 768, 1024):
         sys.stderr.write('%-4d ' % prec)
@@ -86,8 +87,8 @@ if __name__ == "__main__":
     stats = compute_stats()
     stats.sort(key=lambda s: s[3] / s[2])
     for prec, thresh, trec, tnorm in stats:
-        print("%d\t%d\t%.3f\t%.3f\t%.4f" % (prec, thresh, trec, tnorm,
-                                            tnorm / trec))
+        print("%d\t%d\t%.3f\t%.3f\t%.4f" %
+              (prec, thresh, trec, tnorm, tnorm / trec))
 
     print
 
