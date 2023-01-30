@@ -18,7 +18,7 @@ jobs:
         CC: ${{ matrix.compiler }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Log compiler version
       run: |
         "$CC" --version
