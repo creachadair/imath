@@ -985,15 +985,16 @@ mp_result <a href="imrat.h#L258">mp_rat_read_decimal</a>(mp_rat r, mp_size radix
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
-    effective denominator.
+    effective denominator is zero.
 
 ------------
 <a id="mp_rat_read_cdecimal"></a><pre>
-mp_result <a href="imrat.h#L264">mp_rat_read_cdecimal</a>(mp_rat r, mp_size radix, const char *str, char **end);
+mp_result <a href="imrat.h#L265">mp_rat_read_cdecimal</a>(mp_rat r, mp_size radix, const char *str, char **end);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
-    effective denominator. If `end` is not NULL then `*end` is set to point to
+    effective denominator is zero.
+    If `end` is not NULL then `*end` is set to point to
     the first unconsumed character in the string, after parsing.
 
 
