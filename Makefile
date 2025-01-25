@@ -45,7 +45,7 @@ DFLAGSY=-g -DDEBUG=1
 
 # --- end of configuration section ---
 
-TARGETS=bintest bug-swap imtest imtimer rtest
+TARGETS=bintest bug-swap bug-qread imtest imtimer rtest
 HDRS=imath.h imrat.h iprime.h imdrover.h rsamath.h gmp_compat.h
 SRCS=$(HDRS:.h=.c) $(TARGETS:=.c)
 OBJS=$(SRCS:.c=.o)
@@ -79,7 +79,7 @@ objs: $(OBJS)
 check: test gmp-compat-test
 	@ echo "Completed running imath and gmp-compat unit tests"
 
-test: imtest pi bug-swap doc.md
+test: imtest pi bug-swap bug-qread doc.md
 	@ echo ""
 	@ echo "Running tests, you should not see any 'FAILED' lines here."
 	@ echo "If you do, please see doc.txt for how to report a bug."
@@ -100,7 +100,7 @@ docker-test: docker-image
 $(EXAMPLES):%: imath.o imrat.o iprime.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-$(TARGETS):%: imath.o %.o
+$(TARGETS):%: imath.o imrat.o %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 examples: $(EXAMPLES)

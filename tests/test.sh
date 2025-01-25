@@ -58,7 +58,7 @@ pitest 4096 10 pi4096-10.txt
 echo ""
 echo "-- Running regression tests"
 
-for bug in bug-swap ; do
+for bug in bug-qread bug-swap ; do
     ../${bug}
 done
 
