@@ -1,6 +1,6 @@
 CFLAGS+=-fPIC -I$(IMATH_DIR) $(shell pkg-config --cflags gmp)
 IMATH_DIR=../..
-LDFLAGS+=-L$(IMATH_DIR) $(shell pkg-config --libs gmp) -limath
+LDFLAGS+=$(shell pkg-config --libs gmp) -L$(IMATH_DIR) -limath
 
 runtest: imath_test.so gmp_test.so wrappers.py random.tests
 	./runtest $(TESTS)
