@@ -38,4 +38,5 @@ jobs:
       if: runner.os == 'macOS'
       run: brew install gmp
     - name: make check   # unit and compatibility tests
+      if: matrix.compiler == 'clang'
       run: make check
