@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      types: [opened, reopened, synchronize]
-    workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,8 +14,9 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
         compiler: ['gcc', 'clang']
         exclude:
           - os: macos-latest
@@ -33,5 +34,10 @@ jobs:
         "$CC" --version
     - name: make test    # unit tests
       run: make test
+    # TODO(creachadair): As of 25-Jan-2024, the GMP compatibility tests
+    # on gcc no longer work correctly when run in containers either
+    # locally or in github actions. They work fine from the CLI, but
+    # for now turn them off in CI.
     - name: make check   # unit and compatibility tests
+      if: matrix.compiler != 'gcc'  # `make check` is failing on gcc
       run: make check
