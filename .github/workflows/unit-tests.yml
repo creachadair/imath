@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      types: [opened, reopened, synchronize]
-    workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,6 +14,7 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         compiler: ['gcc', 'clang']
@@ -33,5 +34,8 @@ jobs:
         "$CC" --version
     - name: make test    # unit tests
       run: make test
+    - name: "macOS: brew install gmp"
+      if: runner.os == 'macOS'
+      run: brew install gmp
     - name: make check   # unit and compatibility tests
       run: make check
