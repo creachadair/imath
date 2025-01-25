@@ -15,8 +15,11 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         compiler: ['gcc', 'clang']
+        exclude:
+          - os: macos-latest
+            compiler: gcc  # gcc is clang on macOS
 
     runs-on: ${{ matrix.os }}
 
@@ -30,5 +33,10 @@ jobs:
         "$CC" --version
     - name: make test    # unit tests
       run: make test
-    - name: make check   # unit and compatibility tests
-      run: make check
+    # TODO(creachadair): As of 25-Jan-2024, the GMP compatibility tests
+    # no longer work correctly when run in containers either locally or
+    # in github actions. They work fine from the CLI, but for now turn
+    # them off in CI.
+    #
+    #- name: make check   # unit and compatibility tests
+    # run: make check
