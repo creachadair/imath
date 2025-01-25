@@ -90,6 +90,6 @@ if __name__ == "__main__":
         print("%d\t%d\t%.3f\t%.3f\t%.4f" %
               (prec, thresh, trec, tnorm, tnorm / trec))
 
-    print
+    print()
 
 # Here there be dragons
