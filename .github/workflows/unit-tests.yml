@@ -38,7 +38,6 @@ jobs:
     # on gcc no longer work correctly when run in containers either
     # locally or in github actions. They work fine from the CLI, but
     # for now turn them off in CI.
-    #
     - name: make check   # unit and compatibility tests
       if: matrix.compiler == 'clang'
       run: make check
