@@ -57,7 +57,7 @@ message.  The following constants are defined for processing these:
 If you obtain a zero or negative value of an `mp_result`, you can use the
 `mp_error_string()` routine to obtain a pointer to a brief human-readable
 string describing the error.  These strings are statically allocated, so they
-need not be freed by the caller; the same strings are re-used from call to
+need not be freed by the caller; the same strings are reused from call to
 call.
 
 Unless otherwise noted, it is legal to use the same parameter for both inputs
@@ -291,7 +291,7 @@ static inline mp_result <a href="imath.h#L310">mp_int_sqrt</a>(mp_int a, mp_int 
 <a id="mp_int_div"></a><pre>
 mp_result <a href="imath.h#L195">mp_int_div</a>(mp_int a, mp_int b, mp_int q, mp_int r);
 </pre>
- -  Sets `q` and `r` to the quotent and remainder of `a / b`. Division by
+ -  Sets `q` and `r` to the quotient and remainder of `a / b`. Division by
     powers of 2 is detected and handled efficiently.  The remainder is pinned
     to `0 <= r < b`.
 
@@ -302,7 +302,7 @@ mp_result <a href="imath.h#L195">mp_int_div</a>(mp_int a, mp_int b, mp_int q, mp
 <a id="mp_int_div_value"></a><pre>
 mp_result <a href="imath.h#L200">mp_int_div_value</a>(mp_int a, mp_small value, mp_int q, mp_small *r);
 </pre>
- -  Sets `q` and `*r` to the quotent and remainder of `a / value`. Division by
+ -  Sets `q` and `*r` to the quotient and remainder of `a / value`. Division by
     powers of 2 is detected and handled efficiently. The remainder is pinned to
     `0 <= *r < b`. Either of `q` or `r` may be NULL.
 

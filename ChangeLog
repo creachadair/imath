@@ -425,8 +425,8 @@
 	b5a73c4 Cleanup: Use .tc for test files instead of .t.
 	dc307ae Cleanup: Remove dead author URLs, SVN markers.
 	389a1be bug: Fix a memory leak in test_meta.
-	8fb98f7 bug: Fix a use of an uninitalized pointer.
-	fe0757a bug: Fix reads of uninitalized fields in free_test.
+	8fb98f7 bug: Fix a use of an uninitialized pointer.
+	fe0757a bug: Fix reads of uninitialized fields in free_test.
 	08fe765 bug: Fix a reachable null pointer indirection.
 	7b10453 bug: Remove a redundant initialization.
 	cebce44 bug: Fix various dead assignments.
@@ -447,7 +447,7 @@
 	f163906 Comment out a vacuously true assertion.
 	667d90e gmp_compat: Ensure a definition of ssize_t is available.
 	6c6fdd8 Fix a vacuously meaningless comparison.
-	4dac16f Silence a warning about an uninitalized variable.
+	4dac16f Silence a warning about an uninitialized variable.
 	c6119c4 Include strings.h for strcasecmp.
 
 1.27
