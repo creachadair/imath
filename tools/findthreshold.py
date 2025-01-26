@@ -21,7 +21,9 @@
 ## call mp_int_multiply_threshold(n) during program initialization, to
 ## establish a satisfactory result.
 ##
-import math, os, random, sys, time
+import os
+import sys
+import time
 
 
 def get_timing_stats(num_tests, precision, threshold, seed=None):

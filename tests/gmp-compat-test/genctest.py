@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 import sys
+
 import gmpapi
-from gmpapi import void
-from gmpapi import ilong
-from gmpapi import iint
-from gmpapi import ulong
-from gmpapi import mpz_t
-from gmpapi import size_t
-from gmpapi import charp
-from gmpapi import mpq_t
+from gmpapi import charp, iint, ilong, mpq_t, mpz_t, size_t, ulong, void
 
 
 class APITest(object):
