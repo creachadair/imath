@@ -54,7 +54,7 @@
   filename<tab>line<tab>number<tab>result<tab>message<eoln>
 
   The filename and line give the offset of the test in its input file, the
-  number is the numbet of the test among all inputs, starting from 1.
+  number is the number of the test among all inputs, starting from 1.
   The result is a textual description of the result code returned by the
   operation being tested.
 

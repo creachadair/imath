@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
       /* Convert the value to a string in the desired radix. */
       res = mp_int_to_string(MP_NUMER_P(&value), radix, obuf, buf_size);
       if (res != MP_OK) {
-        fprintf(stderr, "Converstion to base %d failed: %s\n", radix,
+        fprintf(stderr, "Conversion to base %d failed: %s\n", radix,
                 mp_error_string(res));
         mp_rat_clear(&value);
         return 1;

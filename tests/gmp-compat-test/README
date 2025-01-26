@@ -65,7 +65,7 @@ For each parameter of the given type we generate the following values:
   unsigned long: 0,1,-1, unsigned short, unsigned int, unsigned long min/max values
                  random unsigned long values
 
-The generated data for each paramater is combined to produce a series
+The generated data for each parameter is combined to produce a series
 of inputs to the function. The input data format looks like:
 
 mpz_add|0,1,2
@@ -77,12 +77,12 @@ Test Structure
 The tests are run using the python ffi (the ctypes module). We have a
 single description of each api that is used to generate the following:
 
-  * intput data
+  * input data
   * c function wrapper to call the libgmp or libimath function
   * python wrapper to call both libgmp and libimath wrappers and compare results
 
 The test_gmp.so and test_imath.so libraries are loaded at runtime by
-the python runner scrip and used to run each test input and compare
+the python runner script and used to run each test input and compare
 the results.
 
 The code generation pattern looks something like this:
