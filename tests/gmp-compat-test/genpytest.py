@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import gmpapi
 import sys
+
+import gmpapi
 
 
 def print_header(outf):

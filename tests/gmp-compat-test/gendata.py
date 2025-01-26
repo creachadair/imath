@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import random
+
 import gmpapi
 
 MAX_SLONG = "9223372036854775807"

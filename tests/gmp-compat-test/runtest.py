@@ -3,23 +3,11 @@
 from __future__ import print_function
 
 import ctypes
-import random
+from optparse import OptionParser
+
 import gmpapi
 import wrappers
-import glob
-import sys
-import os
-from optparse import OptionParser
-from gmpapi import void
-from gmpapi import ilong
-from gmpapi import ulong
-from gmpapi import mpz_t
-from gmpapi import voidp
-from gmpapi import size_t
-from gmpapi import size_tp
-from gmpapi import iint
-from gmpapi import charp
-from gmpapi import mpq_t
+from gmpapi import charp, iint, ilong, mpq_t, mpz_t, size_t, size_tp, ulong, voidp
 
 
 def print_failure(line, test):

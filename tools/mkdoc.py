@@ -9,7 +9,9 @@
 ##
 from __future__ import print_function
 
-import collections, re, sys
+import collections
+import re
+import sys
 
 # A regular expression to match commented declarations.
 # This is specific to C and not very general; it should work fine for the imath
@@ -51,8 +53,10 @@ def typeset(text):
     if fence:
         lines.append('```')
     for i, line in enumerate(lines):
-        if i == 0: lines[i] = ' -  ' + line
-        elif line: lines[i] = '    ' + line
+        if i == 0:
+            lines[i] = ' -  ' + line
+        elif line:
+            lines[i] = '    ' + line
     return '\n'.join(lines)
 
 
