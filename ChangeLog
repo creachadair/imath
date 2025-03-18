@@ -572,3 +572,12 @@
 	18404fb Add a unit test for 4096 decimal digits of pi.
 	e6d37f2 Merge pull request #42 from creachadair/pi-dynamic-output-buffer
 	9d6dfa1 Update test scripts to use Python 3.
+
+1.33
+	Make mp_rat_read_cstring more consistent with mp_int_read_cstring.
+	Add some tests for that.
+
+	Include the standard ubuntu-24.04-arm runner type in the CI matrix.
+	Exclude "gcc" builds from make check because they don't work.
+
+	Update some of the Python test support code.
