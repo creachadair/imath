@@ -10,7 +10,7 @@ Author: [M. J. Fromberger](https://github.com/creachadair)
 ## Installation
 
 1. Edit Makefile to select compiler and options.  The default is to use gcc.
-   You may want to change CC to `clang` instead of `gcc` (and on macOS that
+   You may want to change CC to `clang` instead of `gcc` (and on macOS that is
    what you will get anyway), but you should be able to use the default GCC
    settings for either.
 
