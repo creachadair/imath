@@ -809,7 +809,7 @@ size_t GMPZAPI(sizeinbase)(mp_int op, int base) {
 
   /* Compute string length in base */
   res = mp_int_string_len(op, base);
-  CHECK((res > 0) == MP_OK);
+  assert(res > 0 && "mp_int_string_len should return positive length");
 
   /* Now adjust the final size by getting rid of string artifacts */
   size = res;
