@@ -39,7 +39,7 @@ typedef SSIZE_T ssize_t;
 #endif
 
 #ifdef NDEBUG
-#define CHECK(res) (res)
+#define CHECK(res) ((void)(res))
 #else
 #define CHECK(res) assert(((res) == MP_OK) && "expected MP_OK")
 #endif
