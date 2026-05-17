@@ -266,7 +266,6 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
     if (out != NULL) out[i] = reg;
   }
-
   return true;
 }
 
@@ -1161,6 +1160,25 @@ bool test_meta(testspec_t* t, FILE* ofp) {
   }
   if (in != NULL) free(in);
   if (out != NULL) free(out);
+  return true;
+}
+
+bool test_qset(testspec_t* t, FILE* ofp) {
+  mp_int in[2];
+  mp_rat out[1];
+  mp_result expect;
+
+  mpq_t tmp;
+  mp_rat_init(&tmp);
+
+  ACHECK(parse_rat_values(t, NULL, out, &expect));
+  ACHECK(parse_int_values(t, in, NULL, &expect));
+  ECHECK(mp_rat_set(&tmp, in[0], in[1]));
+
+  if (expect == MP_OK && mp_rat_compare(&tmp, out[0]) != 0) {
+    mp_rat_to_string(&tmp, 10, g_output, OUTPUT_LIMIT);
+    FAIL(OTHER_ERROR);
+  }
   return true;
 }
 

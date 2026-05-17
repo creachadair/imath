@@ -88,6 +88,7 @@ bool test_read_uns(testspec_t* t, FILE* ofp);
 bool test_meta(testspec_t* t, FILE* ofp);
 
 /* Rational tests */
+bool test_qset(testspec_t* t, FILE* ofp);
 bool test_qneg(testspec_t* t, FILE* ofp);
 bool test_qrecip(testspec_t* t, FILE* ofp);
 bool test_qabs(testspec_t* t, FILE* ofp);
