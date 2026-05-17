@@ -1,6 +1,16 @@
 ## Miscellaneous rational arithmetic tests
 ## Generated and verified by hand
 
+# Set from signed big integers.
+qset:0,1:0
+qset:0,0:$MP_UNDEF
+qset:1234567,0:$MP_UNDEF
+qset:6,8:3/4
+qset:1000,2:500/1
+qset:8,-4:-2/1
+qset:-5,-8:5/8
+qset:-16,-24:2/3
+
 # Basic negation tests
 qneg:0,0:0
 qneg:0,=1:0

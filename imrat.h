@@ -81,6 +81,10 @@ mp_result mp_rat_init_copy(mp_rat r, mp_rat old);
 
 /** Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
     returns `MP_UNDEF` if `denom` is zero. */
+mp_result mp_rat_set(mp_rat r, mp_int numer, mp_int denom);
+
+/** Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
+    returns `MP_UNDEF` if `denom` is zero. */
 mp_result mp_rat_set_value(mp_rat r, mp_small numer, mp_small denom);
 
 /** Sets the value of `r` to the ratio of unsigned `numer` to unsigned

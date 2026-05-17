@@ -136,6 +136,7 @@ test_t g_tests[] = {
     {"to-int", 1, 1, test_to_int},       /* r1: value, o1: result */
     {"to-uint", 1, 1, test_to_uint},     /* r1: value, o1: result */
     {"meta", -1, -1, test_meta},
+    {"qset", 2, 1, test_qset},        /* r3 = r1 / r2    */
     {"qneg", 2, 1, test_qneg},        /* r2 = -r1        */
     {"qrecip", 2, 1, test_qrecip},    /* r2 = 1 / r1     */
     {"qabs", 2, 1, test_qabs},        /* r2 = |r1|       */
