@@ -44,7 +44,7 @@ void mp_int_random(mp_int z, int prec);
 
 const int g_mul_factor = 1000;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int do_mul = 0, do_exp = 0, do_header = 1;
   int num_tests, precision = 0, opt;
   mp_size threshold = 0;

@@ -30,7 +30,7 @@
 
 #include "imath.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   unsigned char buf[512];
   mpz_t v, w;
   mp_result res;
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   printf("Result code from mp_int_read_binary() = %d (%s)\n", res,
          mp_error_string(res));
   if (res == MP_OK) {
-    mp_int_to_string(&w, 10, (char *)buf, sizeof(buf));
+    mp_int_to_string(&w, 10, (char*)buf, sizeof(buf));
 
     printf("[%s]\n\n", buf);
   }
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   printf("Result code from mp_int_read_unsigned() = %d (%s)\n", res,
          mp_error_string(res));
   if (res == MP_OK) {
-    mp_int_to_string(&w, 10, (char *)buf, sizeof(buf));
+    mp_int_to_string(&w, 10, (char*)buf, sizeof(buf));
 
     printf("[%s]\n\n", buf);
   }

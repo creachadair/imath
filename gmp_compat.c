@@ -48,7 +48,7 @@ typedef SSIZE_T ssize_t;
  *     0b00000001 =  1 on big-endian
  *     0b11111111 = -1 on little-endian */
 static const uint16_t endian_test = 0x1FF;
-#define HOST_ENDIAN (*(signed char *)&endian_test)
+#define HOST_ENDIAN (*(signed char*)&endian_test)
 
 /*************************************************************************
  *
@@ -287,7 +287,7 @@ void GMPZAPI(gcd)(mp_int rop, mp_int op1, mp_int op2) {
 }
 
 /* gmp: mpz_get_str */
-char *GMPZAPI(get_str)(char *str, int radix, mp_int op) {
+char* GMPZAPI(get_str)(char* str, int radix, mp_int op) {
   int i, r, len;
 
   /* Support negative radix like gmp */
@@ -315,7 +315,7 @@ char *GMPZAPI(get_str)(char *str, int radix, mp_int op) {
 }
 
 /* gmp: mpq_get_str */
-char *GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
+char* GMPQAPI(get_str)(char* str, int radix, mp_rat op) {
   int i, r, len;
 
   /* Only print numerator if it is a whole number */
@@ -348,15 +348,15 @@ char *GMPQAPI(get_str)(char *str, int radix, mp_rat op) {
 }
 
 /* gmp: mpz_set_str */
-int GMPZAPI(set_str)(mp_int rop, char *str, int base) {
+int GMPZAPI(set_str)(mp_int rop, char* str, int base) {
   mp_result res = mp_int_read_string(rop, base, str);
   return ((res == MP_OK) ? 0 : -1);
 }
 
 /* gmp: mpq_set_str */
-int GMPQAPI(set_str)(mp_rat rop, char *s, int base) {
-  char *slash;
-  char *str;
+int GMPQAPI(set_str)(mp_rat rop, char* s, int base) {
+  char* slash;
+  char* str;
   mp_result resN;
   mp_result resD;
   int res = 0;
@@ -404,7 +404,7 @@ static unsigned long get_long_bits(mp_int op) {
     digits_to_copy = MP_USED(op);
   }
 
-  mp_digit *digits = MP_DIGITS(op);
+  mp_digit* digits = MP_DIGITS(op);
   unsigned long out = 0;
 
   for (int i = digits_to_copy - 1; i >= 0; i--) {
@@ -653,14 +653,14 @@ unsigned long GMPZAPI(fdiv_q_ui)(mp_int q, mp_int n, unsigned long d) {
 }
 
 /* gmp: mpz_export */
-void *GMPZAPI(export)(void *rop, size_t *countp, int order, size_t size,
+void* GMPZAPI(export)(void* rop, size_t* countp, int order, size_t size,
                       int endian, size_t nails, mp_int op) {
   size_t i, j;
   size_t num_used_bytes;
   size_t num_words, num_missing_bytes;
   ssize_t word_offset;
-  unsigned char *dst;
-  mp_digit *src;
+  unsigned char* dst;
+  mp_digit* src;
   int src_bits;
 
   /* We do not have a complete implementation. Assert to ensure our
@@ -703,7 +703,7 @@ void *GMPZAPI(export)(void *rop, size_t *countp, int order, size_t size,
   }
 
   /* Initialize dst and src pointers */
-  dst = (unsigned char *)rop + (order >= 0 ? (num_words - 1) * size : 0) +
+  dst = (unsigned char*)rop + (order >= 0 ? (num_words - 1) * size : 0) +
         (endian >= 0 ? size - 1 : 0);
   src = MP_DIGITS(op);
   src_bits = MP_DIGIT_BIT;
@@ -733,14 +733,14 @@ void *GMPZAPI(export)(void *rop, size_t *countp, int order, size_t size,
 
 /* gmp: mpz_import */
 void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size,
-                     int endian, size_t nails, const void *op) {
+                     int endian, size_t nails, const void* op) {
   mpz_t tmpz;
   mp_int tmp = &tmpz;
   size_t total_size;
   size_t num_digits;
   ssize_t word_offset;
-  const unsigned char *src;
-  mp_digit *dst;
+  const unsigned char* src;
+  mp_digit* dst;
   int dst_bits;
   size_t i, j;
   if (count == 0 || op == NULL) return;
@@ -764,7 +764,7 @@ void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size,
   for (i = 0; i < num_digits; i++) tmp->digits[i] = 0;
 
   /* Copy bytes */
-  src = (const unsigned char *)op + (order >= 0 ? (count - 1) * size : 0) +
+  src = (const unsigned char*)op + (order >= 0 ? (count - 1) * size : 0) +
         (endian >= 0 ? size - 1 : 0);
   dst = MP_DIGITS(tmp);
   dst_bits = 0;
@@ -789,7 +789,7 @@ void GMPZAPI(import)(mp_int rop, size_t count, int order, size_t size,
   /* Remove leading zeros from number */
   {
     mp_size uz_ = tmp->used;
-    mp_digit *dz_ = MP_DIGITS(tmp) + uz_ - 1;
+    mp_digit* dz_ = MP_DIGITS(tmp) + uz_ - 1;
     while (uz_ > 1 && (*dz_-- == 0)) --uz_;
     tmp->used = uz_;
   }

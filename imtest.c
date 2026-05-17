@@ -85,7 +85,7 @@
 #define LINE_MAX 4096
 
 typedef struct {
-  char *code;
+  char* code;
   int num_inputs;
   int num_outputs;
   test_f call;
@@ -160,24 +160,24 @@ test_t g_tests[] = {
 char g_line[LINE_MAX];
 
 extern mp_result imath_errno;
-extern char *imath_errmsg;
+extern char* imath_errmsg;
 
-const char *g_imath_strerr[] = {"MP_OK",    "MP_TRUE",  "MP_MEMORY", "MP_RANGE",
+const char* g_imath_strerr[] = {"MP_OK",    "MP_TRUE",  "MP_MEMORY", "MP_RANGE",
                                 "MP_UNDEF", "MP_TRUNC", "MP_BADARG"};
 
-bool process_file(char *file_name, FILE *ifp, FILE *ofp);
-int read_line(FILE *ifp, char *line, int limit);
-void trim_line(char *line);
-int is_blank(char *line);
-int parse_line(char *line, testspec_t *t);
-int count_fields(char *line, int delim);
-void parse_fields(char *line, int delim, char **start);
-int run_test(int test_num, testspec_t *t, FILE *ofp);
-void free_test(testspec_t *t);
-int find_test(char *code, test_t *info);
-char *error_string(mp_result res);
+bool process_file(char* file_name, FILE* ifp, FILE* ofp);
+int read_line(FILE* ifp, char* line, int limit);
+void trim_line(char* line);
+int is_blank(char* line);
+int parse_line(char* line, testspec_t* t);
+int count_fields(char* line, int delim);
+void parse_fields(char* line, int delim, char** start);
+int run_test(int test_num, testspec_t* t, FILE* ofp);
+void free_test(testspec_t* t);
+int find_test(char* code, test_t* info);
+char* error_string(mp_result res);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int exit_status = 0;
 
   init_testing();
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "[reading from stdin]\n");
     if (!process_file("-", stdin, stdout)) exit_status = 1;
   } else {
-    FILE *ifp;
+    FILE* ifp;
     int i;
 
     for (i = 1; i < argc; ++i) {
@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 /** Reads and runs test cases from `ifp` and writes test results to `ofp`. The
     given `file_name` is used for cosmetic attribution. The return value is
     true if all tests passed, false if any tests failed or had errors. */
-bool process_file(char *file_name, FILE *ifp, FILE *ofp) {
+bool process_file(char* file_name, FILE* ifp, FILE* ofp) {
   int res, line_num, test_num = 0, num_failed = 0, num_bogus = 0;
   clock_t start, finish;
 
@@ -238,8 +238,8 @@ bool process_file(char *file_name, FILE *ifp, FILE *ofp) {
   return num_failed == 0 && num_bogus == 0;
 }
 
-int read_line(FILE *ifp, char *line, int limit) {
-  static FILE *current_fp = NULL;
+int read_line(FILE* ifp, char* line, int limit) {
+  static FILE* current_fp = NULL;
   static int current_line = 0;
 
   if (ifp != current_fp) {
@@ -258,9 +258,9 @@ int read_line(FILE *ifp, char *line, int limit) {
 }
 
 /** Removes leading and trailing whitespace from a zero-terminated `line`. */
-void trim_line(char *line) {
+void trim_line(char* line) {
   int len;
-  char *fnw = line;
+  char* fnw = line;
 
   /* Remove leading whitespace */
   while (isspace((unsigned char)*fnw)) ++fnw;
@@ -275,13 +275,13 @@ void trim_line(char *line) {
 
 /** Reports whether a zero-terminated `line` contains only whitespace after a
     line-trailing comment (`# ...`) is removed. */
-int is_blank(char *line) {
+int is_blank(char* line) {
   while (*line && *line != '#' && isspace((unsigned char)*line)) ++line;
 
   return *line == '\0' || *line == '#';
 }
 
-int parse_line(char *line, testspec_t *t) {
+int parse_line(char* line, testspec_t* t) {
   char *code_brk, *in_brk;
   int num_fields;
 
@@ -301,18 +301,18 @@ int parse_line(char *line, testspec_t *t) {
   t->output = NULL;
 
   if (t->num_inputs > 0) {
-    t->input = calloc(t->num_inputs, sizeof(char *));
+    t->input = calloc(t->num_inputs, sizeof(char*));
     parse_fields(code_brk + 1, ',', t->input);
   }
   if (t->num_outputs > 0) {
-    t->output = calloc(t->num_outputs, sizeof(char *));
+    t->output = calloc(t->num_outputs, sizeof(char*));
     parse_fields(in_brk + 1, ',', t->output);
   }
   return 1;
 }
 
 /** Returns the number of `delim` separated fields occur in `line`. */
-int count_fields(char *line, int delim) {
+int count_fields(char* line, int delim) {
   int count = 1;
 
   if (*line == '\0') return 0;
@@ -324,7 +324,7 @@ int count_fields(char *line, int delim) {
   return count;
 }
 
-void parse_fields(char *line, int delim, char **start) {
+void parse_fields(char* line, int delim, char** start) {
   int pos = 0;
 
   start[pos++] = line;
@@ -340,7 +340,7 @@ void parse_fields(char *line, int delim, char **start) {
 
     This function returns 0 if the test succeeds, 1 if the test fails, and -1
     if the test is broken (e.g., its code is unknown). */
-int run_test(int test_num, testspec_t *t, FILE *ofp) {
+int run_test(int test_num, testspec_t* t, FILE* ofp) {
   test_t info;
 
   /* Look up and reality check test parameters */
@@ -387,7 +387,7 @@ int run_test(int test_num, testspec_t *t, FILE *ofp) {
 
 /** Locates the run instructions for the specified test `code`, and if they are
     found populates `*info` with a copy. It returns -1 if `code` is unknown. */
-int find_test(char *code, test_t *info) {
+int find_test(char* code, test_t* info) {
   int i = 0;
 
   while (g_tests[i].code != NULL) {
@@ -401,7 +401,7 @@ int find_test(char *code, test_t *info) {
 }
 
 /** Releases the memory occupied by a test case invocation. */
-void free_test(testspec_t *t) {
+void free_test(testspec_t* t) {
   assert(t != NULL);
 
   if (t->input != NULL) {
@@ -417,10 +417,10 @@ void free_test(testspec_t *t) {
 /** Returns a static label string describing `res`. Note that this is not the
     same as the error string returned by `mp_error_string`, but corresponds to
     the spelling of the constant for its value. */
-char *error_string(mp_result res) {
+char* error_string(mp_result res) {
   int v = abs(res);
 
-  return (char *)g_imath_strerr[v];
+  return (char*)g_imath_strerr[v];
 }
 
 /* Here there be dragons */

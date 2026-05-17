@@ -33,11 +33,11 @@
 
 #include "imrat.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   mp_size radix = 10; /* Default output radix */
   mpq_t value;
   mp_result res;
-  char *endp;
+  char* endp;
 
   if (argc < 2) {
     fprintf(stderr, "Usage: input <value> [output-base]\n");
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   printf("Here is your value in base %d\n", radix);
   {
     mp_result buf_size, res;
-    char *obuf;
+    char* obuf;
 
     if (mp_rat_is_integer(&value)) {
       /* Allocate a buffer big enough to hold the given value, including

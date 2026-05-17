@@ -33,11 +33,11 @@
 #include "imath.h"
 #include "imrat.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   mp_result mode, len, res = 0;
   mp_size prec, radix;
   mpq_t value;
-  char *buf;
+  char* buf;
 
   if (argc < 5) {
     fprintf(stderr, "Usage: rounding <mode> <precision> <radix> <value>\n");

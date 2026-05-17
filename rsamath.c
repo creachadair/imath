@@ -33,7 +33,7 @@ static mp_result s_rsa_transform(mp_int msg, mp_int exp, mp_int mod,
                                  mp_int out);
 
 /* Convert integer to octet string, per PKCS#1 v.2.1 */
-mp_result rsa_i2osp(mp_int z, unsigned char *out, int len) {
+mp_result rsa_i2osp(mp_int z, unsigned char* out, int len) {
   int excess_len = mp_int_binary_len(z);
 
   if (excess_len < len) return MP_RANGE;
@@ -47,7 +47,7 @@ mp_result rsa_i2osp(mp_int z, unsigned char *out, int len) {
 }
 
 /* Convert octet string to integer, per PKCS#1 v.2.1 */
-mp_result rsa_os2ip(mp_int z, unsigned char *in, int len) {
+mp_result rsa_os2ip(mp_int z, unsigned char* in, int len) {
   return mp_int_read_binary(z, in, len);
 }
 
@@ -84,7 +84,7 @@ int rsa_max_message_len(mp_int mod) {
   }
 }
 
-mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
+mp_result rsa_pkcs1v15_encode(unsigned char* buf, int msg_len, int buf_len,
                               int tag, random_f filler) {
   /* Make sure there is enough space for the encoded output */
   if (msg_len > (buf_len - 11)) return MP_RANGE;
@@ -111,8 +111,8 @@ mp_result rsa_pkcs1v15_encode(unsigned char *buf, int msg_len, int buf_len,
   return MP_OK;
 }
 
-mp_result rsa_pkcs1v15_decode(unsigned char *buf, int buf_len, int tag,
-                              int *msg_len) {
+mp_result rsa_pkcs1v15_decode(unsigned char* buf, int buf_len, int tag,
+                              int* msg_len) {
   /* Make sure the buffer is syntactically valid */
   if (buf_len < 11 || buf[0] != 0x00 || buf[1] != (unsigned char)tag)
     return MP_UNDEF;

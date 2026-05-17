@@ -39,7 +39,7 @@ int g_radix = 10; /* use this radix for output */
 mp_result arctan(mp_small radix, mp_small mul, mp_small x, mp_small prec,
                  mp_int sum);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   mp_result res;
   mpz_t sum1, sum2;
   int ndigits, out = 0;
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   }
 
   size_t buf_size = ndigits + 2; /* "3" prefix and terminating '\0' */
-  char *buf = malloc(buf_size);
+  char* buf = malloc(buf_size);
   if (!buf) {
     perror("malloc");
     return 1;

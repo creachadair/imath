@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 
-
 class CType:
 
     def __init__(self, name):

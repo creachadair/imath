@@ -55,23 +55,23 @@ typedef struct {
 } rsa_key;
 
 /* Load the specified buffer with random bytes */
-int randomize(unsigned char *buf, size_t len);
+int randomize(unsigned char* buf, size_t len);
 
 /* Overwrite the specified value with n_bits random bits */
 mp_result mp_int_randomize(mp_int a, mp_size n_bits);
 
 /* Find a prime starting from the given odd seed */
-mp_result find_prime(mp_int seed, FILE *fb);
+mp_result find_prime(mp_int seed, FILE* fb);
 
 /* Initialize/destroy an rsa_key structure */
-mp_result rsa_key_init(rsa_key *kp);
-void rsa_key_clear(rsa_key *kp);
-void rsa_key_write(rsa_key *kp, FILE *ofp);
+mp_result rsa_key_init(rsa_key* kp);
+void rsa_key_clear(rsa_key* kp);
+void rsa_key_write(rsa_key* kp, FILE* ofp);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int opt, modbits;
-  FILE *ofp = stdout;
-  char *expt = NULL;
+  FILE* ofp = stdout;
+  char* expt = NULL;
   rsa_key the_key;
   mp_result res;
 
@@ -197,8 +197,8 @@ EXIT:
   return 0;
 }
 
-int randomize(unsigned char *buf, size_t len) {
-  FILE *rnd = fopen("/dev/random", "rb");
+int randomize(unsigned char* buf, size_t len) {
+  FILE* rnd = fopen("/dev/random", "rb");
   size_t nr;
 
   if (rnd == NULL) return -1;
@@ -211,7 +211,7 @@ int randomize(unsigned char *buf, size_t len) {
 
 mp_result mp_int_randomize(mp_int a, mp_size n_bits) {
   mp_size n_bytes = (n_bits + CHAR_BIT - 1) / CHAR_BIT;
-  unsigned char *buf;
+  unsigned char* buf;
   mp_result res = MP_OK;
 
   if ((buf = malloc(n_bytes)) == NULL) return MP_MEMORY;
@@ -242,7 +242,7 @@ CLEANUP:
   return res;
 }
 
-mp_result find_prime(mp_int seed, FILE *fb) {
+mp_result find_prime(mp_int seed, FILE* fb) {
   mp_result res;
   int count = 0;
 
@@ -262,7 +262,7 @@ mp_result find_prime(mp_int seed, FILE *fb) {
   return res;
 }
 
-mp_result rsa_key_init(rsa_key *kp) {
+mp_result rsa_key_init(rsa_key* kp) {
   mp_int_init(&(kp->p));
   mp_int_init(&(kp->q));
   mp_int_init(&(kp->n));
@@ -272,7 +272,7 @@ mp_result rsa_key_init(rsa_key *kp) {
   return MP_OK;
 }
 
-void rsa_key_clear(rsa_key *kp) {
+void rsa_key_clear(rsa_key* kp) {
   mp_int_clear(&(kp->p));
   mp_int_clear(&(kp->q));
   mp_int_clear(&(kp->n));
@@ -280,9 +280,9 @@ void rsa_key_clear(rsa_key *kp) {
   mp_int_clear(&(kp->d));
 }
 
-void rsa_key_write(rsa_key *kp, FILE *ofp) {
+void rsa_key_write(rsa_key* kp, FILE* ofp) {
   int len;
-  char *obuf;
+  char* obuf;
 
   len = mp_int_string_len(&(kp->n), 10);
   obuf = malloc(len);

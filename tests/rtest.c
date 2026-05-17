@@ -32,12 +32,12 @@
 
 #include "rsamath.h"
 
-void random_fill(unsigned char *buf, int len);
-void print_buf(unsigned char *buf, int len, int brk, FILE *ofp);
+void random_fill(unsigned char* buf, int len);
+void print_buf(unsigned char* buf, int len, int brk, FILE* ofp);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int buf_len, msg_len, i;
-  unsigned char *buf;
+  unsigned char* buf;
   mp_result res;
 
   if (argc < 3) {
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void random_fill(unsigned char *buf, int len) {
+void random_fill(unsigned char* buf, int len) {
   int i;
 
   for (i = 0; i < len; ++i) {
@@ -105,7 +105,7 @@ void random_fill(unsigned char *buf, int len) {
   }
 }
 
-void print_buf(unsigned char *buf, int len, int brk, FILE *ofp) {
+void print_buf(unsigned char* buf, int len, int brk, FILE* ofp) {
   int i;
 
   for (i = 0; i < len; ++i) {

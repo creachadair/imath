@@ -32,7 +32,7 @@
 
 #include "iprime.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   char buf[4096];
   mpz_t seed;
   mp_result res;

@@ -32,7 +32,7 @@
 #include "imath.h"
 #include "imrat.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   mp_size in_rdx, out_rdx;
   mpq_t value;
   mp_result res;

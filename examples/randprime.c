@@ -46,20 +46,20 @@
 #include "iprime.h"
 
 /* Load the specified buffer with random bytes */
-int randomize(unsigned char *buf, size_t len);
+int randomize(unsigned char* buf, size_t len);
 
 /* Overwrite the specified value with n_bits random bits */
 mp_result mp_int_randomize(mp_int a, mp_size n_bits);
 
 /* Find a prime starting from the given odd seed */
-mp_result find_prime(mp_int seed, FILE *fb);
-mp_result find_strong_prime(mp_int seed, FILE *fb);
+mp_result find_prime(mp_int seed, FILE* fb);
+mp_result find_strong_prime(mp_int seed, FILE* fb);
 
-typedef mp_result (*find_f)(mp_int, FILE *);
+typedef mp_result (*find_f)(mp_int, FILE*);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   int opt, modbits;
-  FILE *ofp = stdout;
+  FILE* ofp = stdout;
   mp_result res;
   find_f find_func = find_prime;
   char tag = 'p';
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   /* Write the completed value to the specified output file */
   {
     int len;
-    char *obuf;
+    char* obuf;
 
     len = mp_int_string_len(&value, 10);
     obuf = malloc(len);
@@ -135,8 +135,8 @@ EXIT:
   return 0;
 }
 
-int randomize(unsigned char *buf, size_t len) {
-  FILE *rnd = fopen("/dev/random", "rb");
+int randomize(unsigned char* buf, size_t len) {
+  FILE* rnd = fopen("/dev/random", "rb");
   size_t nr;
 
   if (rnd == NULL) return -1;
@@ -149,7 +149,7 @@ int randomize(unsigned char *buf, size_t len) {
 
 mp_result mp_int_randomize(mp_int a, mp_size n_bits) {
   mp_size n_bytes = (n_bits + CHAR_BIT - 1) / CHAR_BIT;
-  unsigned char *buf;
+  unsigned char* buf;
   mp_result res = MP_OK;
 
   if ((buf = malloc(n_bytes)) == NULL) return MP_MEMORY;
@@ -180,7 +180,7 @@ CLEANUP:
   return res;
 }
 
-mp_result find_prime(mp_int seed, FILE *fb) {
+mp_result find_prime(mp_int seed, FILE* fb) {
   mp_result res;
   int count = 0;
 
@@ -206,7 +206,7 @@ mp_result find_prime(mp_int seed, FILE *fb) {
   return res;
 }
 
-mp_result find_strong_prime(mp_int seed, FILE *fb) {
+mp_result find_strong_prime(mp_int seed, FILE* fb) {
   mp_result res = MP_OK;
   mpz_t t;
 

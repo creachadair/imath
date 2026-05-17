@@ -47,82 +47,82 @@
  */
 typedef struct {
   /* Operand stack    */
-  mp_int *elts;
+  mp_int* elts;
   mp_size alloc; /* number of slots available */
   mp_size used;  /* number of slots free      */
 
   /* Named variables  */
-  mp_int *mem;    /* named memory slots        */
-  char **names;   /* names of memory slots     */
+  mp_int* mem;    /* named memory slots        */
+  char** names;   /* names of memory slots     */
   mp_size mslots; /* number of memory slots    */
   mp_size mused;  /* number of used memories   */
 
   /* I/O components   */
-  FILE *ifp;  /* input file handle         */
-  char *ibuf; /* input scratch buffer      */
+  FILE* ifp;  /* input file handle         */
+  char* ibuf; /* input scratch buffer      */
   int buflen; /* size of scratch buffer    */
 } cstate_t;
 
-static mp_result state_init(cstate_t *sp, mp_size n_elts);
-static void state_clear(cstate_t *sp);
-static void stack_flush(cstate_t *sp);
-static mp_result stack_push(cstate_t *sp, mp_int elt);
-static mp_result stack_pop(cstate_t *sp);
-static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value);
-static mp_result mem_recall(cstate_t *sp, const char *name, mp_int value);
-static mp_result mem_clear(cstate_t *sp);
+static mp_result state_init(cstate_t* sp, mp_size n_elts);
+static void state_clear(cstate_t* sp);
+static void stack_flush(cstate_t* sp);
+static mp_result stack_push(cstate_t* sp, mp_int elt);
+static mp_result stack_pop(cstate_t* sp);
+static mp_result mem_insert(cstate_t* sp, const char* name, mp_int value);
+static mp_result mem_recall(cstate_t* sp, const char* name, mp_int value);
+static mp_result mem_clear(cstate_t* sp);
 
-typedef mp_result (*op_func)(cstate_t *);
+typedef mp_result (*op_func)(cstate_t*);
 
-static mp_result cf_abs(cstate_t *sp);
-static mp_result cf_neg(cstate_t *sp);
-static mp_result cf_add(cstate_t *sp);
-static mp_result cf_sub(cstate_t *sp);
-static mp_result cf_mul(cstate_t *sp);
-static mp_result cf_divmod(cstate_t *sp);
-static mp_result cf_div(cstate_t *sp);
-static mp_result cf_mod(cstate_t *sp);
-static mp_result cf_expt(cstate_t *sp);
-static mp_result cf_exptmod(cstate_t *sp);
-static mp_result cf_square(cstate_t *sp);
-static mp_result cf_invmod(cstate_t *sp);
-static mp_result cf_gcd(cstate_t *sp);
-static mp_result cf_xgcd(cstate_t *sp);
-static mp_result cf_sqrt(cstate_t *sp);
-static mp_result cf_root(cstate_t *sp);
-static mp_result cf_cmplt(cstate_t *sp);
-static mp_result cf_cmpgt(cstate_t *sp);
-static mp_result cf_cmple(cstate_t *sp);
-static mp_result cf_cmpge(cstate_t *sp);
-static mp_result cf_cmpeq(cstate_t *sp);
-static mp_result cf_cmpne(cstate_t *sp);
-static mp_result cf_inc(cstate_t *sp);
-static mp_result cf_dec(cstate_t *sp);
-static mp_result cf_fact(cstate_t *sp);
-static mp_result cf_pprint(cstate_t *sp);
-static mp_result cf_print(cstate_t *sp);
-static mp_result cf_pstack(cstate_t *sp);
-static mp_result cf_clstk(cstate_t *sp);
-static mp_result cf_pop(cstate_t *sp);
-static mp_result cf_dup(cstate_t *sp);
-static mp_result cf_copy(cstate_t *sp);
-static mp_result cf_swap(cstate_t *sp);
-static mp_result cf_rot(cstate_t *sp);
-static mp_result cf_pick(cstate_t *sp);
-static mp_result cf_setr(cstate_t *sp);
-static mp_result cf_setbin(cstate_t *sp);
-static mp_result cf_help(cstate_t *sp);
-static mp_result cf_store(cstate_t *sp);
-static mp_result cf_recall(cstate_t *sp);
-static mp_result cf_cmem(cstate_t *sp);
-static mp_result cf_pmem(cstate_t *sp);
-static mp_result cf_qrecall(cstate_t *sp);
+static mp_result cf_abs(cstate_t* sp);
+static mp_result cf_neg(cstate_t* sp);
+static mp_result cf_add(cstate_t* sp);
+static mp_result cf_sub(cstate_t* sp);
+static mp_result cf_mul(cstate_t* sp);
+static mp_result cf_divmod(cstate_t* sp);
+static mp_result cf_div(cstate_t* sp);
+static mp_result cf_mod(cstate_t* sp);
+static mp_result cf_expt(cstate_t* sp);
+static mp_result cf_exptmod(cstate_t* sp);
+static mp_result cf_square(cstate_t* sp);
+static mp_result cf_invmod(cstate_t* sp);
+static mp_result cf_gcd(cstate_t* sp);
+static mp_result cf_xgcd(cstate_t* sp);
+static mp_result cf_sqrt(cstate_t* sp);
+static mp_result cf_root(cstate_t* sp);
+static mp_result cf_cmplt(cstate_t* sp);
+static mp_result cf_cmpgt(cstate_t* sp);
+static mp_result cf_cmple(cstate_t* sp);
+static mp_result cf_cmpge(cstate_t* sp);
+static mp_result cf_cmpeq(cstate_t* sp);
+static mp_result cf_cmpne(cstate_t* sp);
+static mp_result cf_inc(cstate_t* sp);
+static mp_result cf_dec(cstate_t* sp);
+static mp_result cf_fact(cstate_t* sp);
+static mp_result cf_pprint(cstate_t* sp);
+static mp_result cf_print(cstate_t* sp);
+static mp_result cf_pstack(cstate_t* sp);
+static mp_result cf_clstk(cstate_t* sp);
+static mp_result cf_pop(cstate_t* sp);
+static mp_result cf_dup(cstate_t* sp);
+static mp_result cf_copy(cstate_t* sp);
+static mp_result cf_swap(cstate_t* sp);
+static mp_result cf_rot(cstate_t* sp);
+static mp_result cf_pick(cstate_t* sp);
+static mp_result cf_setr(cstate_t* sp);
+static mp_result cf_setbin(cstate_t* sp);
+static mp_result cf_help(cstate_t* sp);
+static mp_result cf_store(cstate_t* sp);
+static mp_result cf_recall(cstate_t* sp);
+static mp_result cf_cmem(cstate_t* sp);
+static mp_result cf_pmem(cstate_t* sp);
+static mp_result cf_qrecall(cstate_t* sp);
 
 typedef struct {
-  char *name;      /* The name of the operator.           */
+  char* name;      /* The name of the operator.           */
   int stack_size;  /* Number of stack arguments required. */
   op_func handler; /* Function implementing operation.    */
-  char *descript;  /* Human-readable description.         */
+  char* descript;  /* Human-readable description.         */
 } calcop_t;
 
 static calcop_t g_ops[] = {
@@ -192,24 +192,24 @@ static calcop_t g_ops[] = {
 /* Token types from the primitive lexical analyzer */
 typedef enum { t_eof, t_symbol, t_number, t_error } token_t;
 
-static token_t next_token(FILE *ifp, char *buf, int size);
-static mp_result read_number(char *buf, mp_int *out);
-static int find_command(cstate_t *ops);
+static token_t next_token(FILE* ifp, char* buf, int size);
+static mp_result read_number(char* buf, mp_int* out);
+static int find_command(cstate_t* ops);
 static void print_value(mp_int v);
-static mp_result run_file(FILE *ifp, cstate_t *op_state);
+static mp_result run_file(FILE* ifp, cstate_t* op_state);
 
 /* Error code used internally to signal input problems. */
 static mp_result MP_INPUT;
 
 static int g_output_radix = 10; /* output radix */
-static FILE *g_output_file = NULL;
+static FILE* g_output_file = NULL;
 
-int main(int argc, char *argv[]) {
-  extern char *optarg;
+int main(int argc, char* argv[]) {
+  extern char* optarg;
   extern int optind;
 
   int opt, errs = 0;
-  FILE *ifp;
+  FILE* ifp;
 
   cstate_t op_state;
   mp_result res;
@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
   }
 }
 
-static token_t next_token(FILE *ifp, char *buf, int size) {
+static token_t next_token(FILE* ifp, char* buf, int size) {
   int ch, pos = 0;
   token_t res;
 
@@ -321,7 +321,7 @@ static token_t next_token(FILE *ifp, char *buf, int size) {
   return res;
 }
 
-static mp_result read_number(char *buf, mp_int *out) {
+static mp_result read_number(char* buf, mp_int* out) {
   int radix = 10, pos = 0;
   mp_result res;
   mp_int value;
@@ -368,9 +368,9 @@ static mp_result read_number(char *buf, mp_int *out) {
   return res;
 }
 
-static int find_command(cstate_t *op) {
+static int find_command(cstate_t* op) {
   int ix, jx;
-  char *buf = op->ibuf;
+  char* buf = op->ibuf;
 
   /* First, try to find the command by name */
   for (ix = 0; g_ops[ix].name != NULL; ++ix) {
@@ -389,7 +389,7 @@ static int find_command(cstate_t *op) {
 static void print_value(mp_int v) {
   if (g_output_radix == 0) {
     mp_result len = mp_int_binary_len(v);
-    unsigned char *buf = malloc(len);
+    unsigned char* buf = malloc(len);
     int ix;
 
     if (buf != NULL) {
@@ -404,7 +404,7 @@ static void print_value(mp_int v) {
     }
   } else {
     mp_result len = mp_int_string_len(v, g_output_radix);
-    char *buf = malloc(len);
+    char* buf = malloc(len);
 
     if (buf != NULL) {
       mp_int_to_string(v, g_output_radix, buf, len);
@@ -417,7 +417,7 @@ static void print_value(mp_int v) {
   }
 }
 
-static mp_result run_file(FILE *ifp, cstate_t *op_state) {
+static mp_result run_file(FILE* ifp, cstate_t* op_state) {
   mp_result res = MP_OK;
   token_t next;
 
@@ -459,7 +459,7 @@ EXIT:
   return res;
 }
 
-static mp_result state_init(cstate_t *sp, mp_size n_elts) {
+static mp_result state_init(cstate_t* sp, mp_size n_elts) {
   int ix;
 
   assert(sp != NULL && n_elts > 0);
@@ -497,7 +497,7 @@ static mp_result state_init(cstate_t *sp, mp_size n_elts) {
   return MP_OK;
 }
 
-static void state_clear(cstate_t *sp) {
+static void state_clear(cstate_t* sp) {
   assert(sp != NULL);
 
   if (sp->elts != NULL) {
@@ -541,7 +541,7 @@ static void state_clear(cstate_t *sp) {
   }
 }
 
-static void stack_flush(cstate_t *sp) {
+static void stack_flush(cstate_t* sp) {
   int ix;
 
   assert(sp != NULL && sp->elts != NULL);
@@ -554,10 +554,10 @@ static void stack_flush(cstate_t *sp) {
   sp->used = 0;
 }
 
-static mp_result stack_push(cstate_t *sp, mp_int elt) {
+static mp_result stack_push(cstate_t* sp, mp_int elt) {
   if (sp->used >= sp->alloc) {
     mp_size nsize = 2 * sp->alloc;
-    mp_int *tmp;
+    mp_int* tmp;
     int ix;
 
     if ((tmp = malloc(nsize * sizeof(*(sp->elts)))) == NULL) return MP_MEMORY;
@@ -575,7 +575,7 @@ static mp_result stack_push(cstate_t *sp, mp_int elt) {
   return MP_OK;
 }
 
-static mp_result stack_pop(cstate_t *sp) {
+static mp_result stack_pop(cstate_t* sp) {
   assert(sp != NULL && sp->elts != NULL);
 
   if (sp->used == 0) return MP_UNDEF;
@@ -587,7 +587,7 @@ static mp_result stack_pop(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
+static mp_result mem_insert(cstate_t* sp, const char* name, mp_int value) {
   int ix;
 
   for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
@@ -603,8 +603,8 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
   } else {
     if (sp->mused >= sp->mslots) {
       mp_size nsize = 2 * sp->mslots;
-      mp_int *tz;
-      char **tc;
+      mp_int* tz;
+      char** tc;
       int jx;
 
       if ((tz = malloc(nsize * sizeof(*(sp->mem)))) == NULL) return MP_MEMORY;
@@ -635,7 +635,7 @@ static mp_result mem_insert(cstate_t *sp, const char *name, mp_int value) {
   return mp_int_copy(value, sp->mem[ix]);
 }
 
-static mp_result mem_recall(cstate_t *sp, const char *name, mp_int value) {
+static mp_result mem_recall(cstate_t* sp, const char* name, mp_int value) {
   int ix;
 
   for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
@@ -647,7 +647,7 @@ static mp_result mem_recall(cstate_t *sp, const char *name, mp_int value) {
   return MP_UNDEF; /* not found */
 }
 
-static mp_result mem_clear(cstate_t *sp) {
+static mp_result mem_clear(cstate_t* sp) {
   int ix;
 
   for (ix = 0; (mp_size)ix < sp->mused; ++ix) {
@@ -659,19 +659,19 @@ static mp_result mem_clear(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_abs(cstate_t *sp) {
+static mp_result cf_abs(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_abs(a, a);
 }
 
-static mp_result cf_neg(cstate_t *sp) {
+static mp_result cf_neg(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_neg(a, a);
 }
 
-static mp_result cf_add(cstate_t *sp) {
+static mp_result cf_add(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_add(a, b, a);
@@ -681,7 +681,7 @@ static mp_result cf_add(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_sub(cstate_t *sp) {
+static mp_result cf_sub(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_sub(a, b, a);
@@ -691,7 +691,7 @@ static mp_result cf_sub(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_mul(cstate_t *sp) {
+static mp_result cf_mul(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_mul(a, b, a);
@@ -701,14 +701,14 @@ static mp_result cf_mul(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_divmod(cstate_t *sp) {
+static mp_result cf_divmod(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
 
   return mp_int_div(a, b, a, b);
 }
 
-static mp_result cf_div(cstate_t *sp) {
+static mp_result cf_div(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_div(a, b, a, NULL);
@@ -718,7 +718,7 @@ static mp_result cf_div(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_mod(cstate_t *sp) {
+static mp_result cf_mod(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_mod(a, b, a);
@@ -728,7 +728,7 @@ static mp_result cf_mod(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_expt(cstate_t *sp) {
+static mp_result cf_expt(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -740,7 +740,7 @@ static mp_result cf_expt(cstate_t *sp) {
   return mp_int_expt(a, bval, a);
 }
 
-static mp_result cf_exptmod(cstate_t *sp) {
+static mp_result cf_exptmod(cstate_t* sp) {
   mp_int m = sp->elts[sp->used - 1];
   mp_int b = sp->elts[sp->used - 2];
   mp_int a = sp->elts[sp->used - 3];
@@ -754,13 +754,13 @@ static mp_result cf_exptmod(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_square(cstate_t *sp) {
+static mp_result cf_square(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_sqr(a, a);
 }
 
-static mp_result cf_invmod(cstate_t *sp) {
+static mp_result cf_invmod(cstate_t* sp) {
   mp_int m = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_invmod(a, m, a);
@@ -770,7 +770,7 @@ static mp_result cf_invmod(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_gcd(cstate_t *sp) {
+static mp_result cf_gcd(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res = mp_int_gcd(a, b, a);
@@ -780,7 +780,7 @@ static mp_result cf_gcd(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_xgcd(cstate_t *sp) {
+static mp_result cf_xgcd(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_int t;
@@ -797,13 +797,13 @@ static mp_result cf_xgcd(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_sqrt(cstate_t *sp) {
+static mp_result cf_sqrt(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_sqrt(a, a);
 }
 
-static mp_result cf_root(cstate_t *sp) {
+static mp_result cf_root(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 2];
   mp_int bp = sp->elts[sp->used - 1];
   mp_small b;
@@ -815,7 +815,7 @@ static mp_result cf_root(cstate_t *sp) {
   return mp_int_root(a, b, a);
 }
 
-static mp_result cf_cmplt(cstate_t *sp) {
+static mp_result cf_cmplt(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -825,7 +825,7 @@ static mp_result cf_cmplt(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_cmpgt(cstate_t *sp) {
+static mp_result cf_cmpgt(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -835,7 +835,7 @@ static mp_result cf_cmpgt(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_cmple(cstate_t *sp) {
+static mp_result cf_cmple(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -845,7 +845,7 @@ static mp_result cf_cmple(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_cmpge(cstate_t *sp) {
+static mp_result cf_cmpge(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -855,7 +855,7 @@ static mp_result cf_cmpge(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_cmpeq(cstate_t *sp) {
+static mp_result cf_cmpeq(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -865,7 +865,7 @@ static mp_result cf_cmpeq(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_cmpne(cstate_t *sp) {
+static mp_result cf_cmpne(cstate_t* sp) {
   mp_int b = sp->elts[sp->used - 1];
   mp_int a = sp->elts[sp->used - 2];
   mp_result res;
@@ -875,19 +875,19 @@ static mp_result cf_cmpne(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_inc(cstate_t *sp) {
+static mp_result cf_inc(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_add_value(a, 1, a);
 }
 
-static mp_result cf_dec(cstate_t *sp) {
+static mp_result cf_dec(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
 
   return mp_int_sub_value(a, 1, a);
 }
 
-static mp_result cf_fact(cstate_t *sp) {
+static mp_result cf_fact(cstate_t* sp) {
   mpz_t tmp;
   mp_int x = sp->elts[sp->used - 1];
   mp_result res = MP_OK;
@@ -908,18 +908,18 @@ CLEANUP:
   return res;
 }
 
-static mp_result cf_pprint(cstate_t *sp) {
+static mp_result cf_pprint(cstate_t* sp) {
   print_value(sp->elts[sp->used - 1]);
   stack_pop(sp);
   return MP_OK;
 }
 
-static mp_result cf_print(cstate_t *sp) {
+static mp_result cf_print(cstate_t* sp) {
   print_value(sp->elts[sp->used - 1]);
   return MP_OK;
 }
 
-static mp_result cf_pstack(cstate_t *sp) {
+static mp_result cf_pstack(cstate_t* sp) {
   int ix;
 
   if (sp->used == 0) {
@@ -934,15 +934,15 @@ static mp_result cf_pstack(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_clstk(cstate_t *sp) {
+static mp_result cf_clstk(cstate_t* sp) {
   stack_flush(sp);
 
   return MP_OK;
 }
 
-static mp_result cf_pop(cstate_t *sp) { return stack_pop(sp); }
+static mp_result cf_pop(cstate_t* sp) { return stack_pop(sp); }
 
-static mp_result cf_dup(cstate_t *sp) {
+static mp_result cf_dup(cstate_t* sp) {
   mp_int cp = mp_int_alloc();
   mp_result res;
 
@@ -958,7 +958,7 @@ static mp_result cf_dup(cstate_t *sp) {
   return res;
 }
 
-static mp_result cf_copy(cstate_t *sp) {
+static mp_result cf_copy(cstate_t* sp) {
   mp_int n = sp->elts[sp->used - 1];
   mp_result res;
   mp_small ncopy;
@@ -986,7 +986,7 @@ static mp_result cf_copy(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_swap(cstate_t *sp) {
+static mp_result cf_swap(cstate_t* sp) {
   mp_int t = sp->elts[sp->used - 1];
 
   sp->elts[sp->used - 1] = sp->elts[sp->used - 2];
@@ -995,7 +995,7 @@ static mp_result cf_swap(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_rot(cstate_t *sp) {
+static mp_result cf_rot(cstate_t* sp) {
   mp_int t = sp->elts[sp->used - 3];
 
   sp->elts[sp->used - 3] = sp->elts[sp->used - 2];
@@ -1005,7 +1005,7 @@ static mp_result cf_rot(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_pick(cstate_t *sp) {
+static mp_result cf_pick(cstate_t* sp) {
   mp_int n = sp->elts[sp->used - 1];
   mp_result res;
   mp_small pos = 0;
@@ -1017,7 +1017,7 @@ static mp_result cf_pick(cstate_t *sp) {
   return mp_int_copy(sp->elts[sp->used - 2 - pos], n);
 }
 
-static mp_result cf_setr(cstate_t *sp) {
+static mp_result cf_setr(cstate_t* sp) {
   mp_int a = sp->elts[sp->used - 1];
   mp_result res;
   mp_small rdx = 0;
@@ -1031,12 +1031,12 @@ static mp_result cf_setr(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_setbin(cstate_t *sp) {
+static mp_result cf_setbin(cstate_t* sp) {
   g_output_radix = 0;
   return MP_OK;
 }
 
-static mp_result cf_help(cstate_t *sp) {
+static mp_result cf_help(cstate_t* sp) {
   int ix, maxlen = 10; /* minimum width */
 
   for (ix = 0; g_ops[ix].name != NULL; ++ix) {
@@ -1059,7 +1059,7 @@ static mp_result cf_help(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_store(cstate_t *sp) {
+static mp_result cf_store(cstate_t* sp) {
   mp_result res;
 
   if (next_token(sp->ifp, sp->ibuf, sp->buflen) != t_symbol) return MP_INPUT;
@@ -1070,7 +1070,7 @@ static mp_result cf_store(cstate_t *sp) {
   return stack_pop(sp);
 }
 
-static mp_result cf_recall(cstate_t *sp) {
+static mp_result cf_recall(cstate_t* sp) {
   mp_result res;
   mp_int val;
 
@@ -1085,9 +1085,9 @@ static mp_result cf_recall(cstate_t *sp) {
   return stack_push(sp, val);
 }
 
-static mp_result cf_cmem(cstate_t *sp) { return mem_clear(sp); }
+static mp_result cf_cmem(cstate_t* sp) { return mem_clear(sp); }
 
-static mp_result cf_pmem(cstate_t *sp) {
+static mp_result cf_pmem(cstate_t* sp) {
   int ix, max_len = 0;
 
   if (sp->mused == 0) {
@@ -1116,7 +1116,7 @@ static mp_result cf_pmem(cstate_t *sp) {
   return MP_OK;
 }
 
-static mp_result cf_qrecall(cstate_t *sp) {
+static mp_result cf_qrecall(cstate_t* sp) {
   mp_result res;
   mp_int val;
 
