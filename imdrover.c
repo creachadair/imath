@@ -212,7 +212,10 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
       trim_line(str);
 
-      if (*str == '=') {
+      if (strcmp(str, "NULL") == 0) {
+        in[i] = NULL;
+        continue;
+      } else if (*str == '=') {
         int k = abs(atoi(str + 1)) - 1;
 
         if (k < 0 || k >= i) {
@@ -242,9 +245,12 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
 
     trim_line(str);
 
-    if (strcmp(str, "?") == 0)
+    if (strcmp(str, "?") == 0) {
       mp_int_zero(reg);
-    else if (*str == '$') {
+    } else if (strcmp(str, "NULL") == 0) {
+      if (out != NULL) out[i] = NULL;
+      continue;
+    } else if (*str == '$') {
       mp_result code;
 
       if (!parse_result_code(str, &code)) {
@@ -254,8 +260,9 @@ static bool parse_int_values(testspec_t* t, mp_int* in, mp_int* out,
         fprintf(stderr, "Line %d: Result code not permitted here [%s]\n",
                 t->line, str);
         return false;
-      } else
+      } else {
         *rval = code;
+      }
 
       /* Provide a dummy value for the corresponding output */
       mp_int_zero(reg);
@@ -282,7 +289,10 @@ static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
 
       trim_line(str);
 
-      if (*str == '=') {
+      if (strcmp(str, "NULL") == 0) {
+        in[i] = NULL;
+        continue;
+      } else if (*str == '=') {
         int k = abs(atoi(str + 1)) - 1;
 
         if (k < 0 || k >= i) {
@@ -312,9 +322,12 @@ static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
 
     trim_line(str);
 
-    if (strcmp(str, "?") == 0)
+    if (strcmp(str, "?") == 0) {
       mp_rat_zero(reg);
-    else if (*str == '$') {
+    } else  if (strcmp(str, "NULL") == 0) {
+      if (out != NULL) out[i] = NULL;
+      continue;
+    } else if (*str == '$') {
       mp_result code;
 
       if (!parse_result_code(str, &code)) {
@@ -324,8 +337,9 @@ static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
         fprintf(stderr, "Line %d: Result code not permitted here [%s]\n",
                 t->line, str);
         return false;
-      } else
+      } else {
         *rval = code;
+      }
 
       /* Provide a dummy value for the corresponding output */
       mp_rat_zero(reg);
