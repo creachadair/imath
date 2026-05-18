@@ -186,9 +186,9 @@ mp_result mp_int_mul_pow2(mp_int a, mp_small p2, mp_int c);
 /** Sets `c` to the square of `a`. */
 mp_result mp_int_sqr(mp_int a, mp_int c);
 
-/** Sets `q` and `r` to the quotient and remainder of `a / b`. Division by
-    powers of 2 is detected and handled efficiently.  The remainder is pinned
-    to `0 <= r < b`.
+/** Sets `q` and `r` to the quotient and remainder of `a / b`, so that the
+    equation `a == b*q + r` is satisfied and `0 <= |r| < |b|`.
+    Division by powers of 2 is detected and handled efficiently.
 
     Either of `q` or `r` may be NULL, but not both, and `q` and `r` may not
     point to the same value. */
@@ -206,7 +206,8 @@ mp_result mp_int_div_value(mp_int a, mp_small value, mp_int q, mp_small *r);
 mp_result mp_int_div_pow2(mp_int a, mp_small p2, mp_int q, mp_int r);
 
 /** Sets `c` to the remainder of `a / m`.
-    The remainder is pinned to `0 <= c < m`. */
+    It returns `MP_UNDEF` if `m == 0`, or `MP_RANGE` if `m < 0` .
+    Otherwise the remainder is pinned to `0 <= c < m`. */
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c);
 
 /** Sets `c` to the value of `a` raised to the `b` power.

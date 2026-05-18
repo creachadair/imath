@@ -274,7 +274,7 @@ mp_result <a href="imath.h#L187">mp_int_sqr</a>(mp_int a, mp_int c);
 
 ------------
 <a id="mp_int_root"></a><pre>
-mp_result <a href="imath.h#L306">mp_int_root</a>(mp_int a, mp_small b, mp_int c);
+mp_result <a href="imath.h#L307">mp_int_root</a>(mp_int a, mp_small b, mp_int c);
 </pre>
  -  Sets `c` to the greatest integer not less than the `b`th root of `a`,
     using Newton's root-finding algorithm.
@@ -282,7 +282,7 @@ mp_result <a href="imath.h#L306">mp_int_root</a>(mp_int a, mp_small b, mp_int c)
 
 ------------
 <a id="mp_int_sqrt"></a><pre>
-static inline mp_result <a href="imath.h#L310">mp_int_sqrt</a>(mp_int a, mp_int c);
+static inline mp_result <a href="imath.h#L311">mp_int_sqrt</a>(mp_int a, mp_int c);
 </pre>
  -  Sets `c` to the greatest integer not less than the square root of `a`.
     This is a special case of `mp_int_root()`.
@@ -291,9 +291,9 @@ static inline mp_result <a href="imath.h#L310">mp_int_sqrt</a>(mp_int a, mp_int 
 <a id="mp_int_div"></a><pre>
 mp_result <a href="imath.h#L195">mp_int_div</a>(mp_int a, mp_int b, mp_int q, mp_int r);
 </pre>
- -  Sets `q` and `r` to the quotient and remainder of `a / b`. Division by
-    powers of 2 is detected and handled efficiently.  The remainder is pinned
-    to `0 <= r < b`.
+ -  Sets `q` and `r` to the quotient and remainder of `a / b`, so that the
+    equation `a == b*q + r` is satisfied and `0 <= |r| < |b|`.
+    Division by powers of 2 is detected and handled efficiently.
 
     Either of `q` or `r` may be NULL, but not both, and `q` and `r` may not
     point to the same value.
@@ -317,35 +317,36 @@ mp_result <a href="imath.h#L206">mp_int_div_pow2</a>(mp_int a, mp_small p2, mp_i
 
 ------------
 <a id="mp_int_mod"></a><pre>
-mp_result <a href="imath.h#L210">mp_int_mod</a>(mp_int a, mp_int m, mp_int c);
+mp_result <a href="imath.h#L211">mp_int_mod</a>(mp_int a, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the remainder of `a / m`.
-    The remainder is pinned to `0 <= c < m`.
+    It returns `MP_UNDEF` if `m == 0`, or `MP_RANGE` if `m < 0` .
+    Otherwise the remainder is pinned to `0 <= c < m`.
 
 ------------
 <a id="mp_int_mod_value"></a><pre>
-static inline mp_result <a href="imath.h#L226">mp_int_mod_value</a>(mp_int a, mp_small value, mp_small* r);
+static inline mp_result <a href="imath.h#L227">mp_int_mod_value</a>(mp_int a, mp_small value, mp_small* r);
 </pre>
  -  Sets `*r` to the remainder of `a / value`.
     The remainder is pinned to `0 <= r < value`.
 
 ------------
 <a id="mp_int_expt"></a><pre>
-mp_result <a href="imath.h#L214">mp_int_expt</a>(mp_int a, mp_small b, mp_int c);
+mp_result <a href="imath.h#L215">mp_int_expt</a>(mp_int a, mp_small b, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power.
     It returns `MP_RANGE` if `b < 0`.
 
 ------------
 <a id="mp_int_expt_value"></a><pre>
-mp_result <a href="imath.h#L218">mp_int_expt_value</a>(mp_small a, mp_small b, mp_int c);
+mp_result <a href="imath.h#L219">mp_int_expt_value</a>(mp_small a, mp_small b, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power.
     It returns `MP_RANGE` if `b < 0`.
 
 ------------
 <a id="mp_int_expt_full"></a><pre>
-mp_result <a href="imath.h#L222">mp_int_expt_full</a>(mp_int a, mp_int b, mp_int c);
+mp_result <a href="imath.h#L223">mp_int_expt_full</a>(mp_int a, mp_int b, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power.
     It returns `MP_RANGE`) if `b < 0`.
@@ -360,44 +361,44 @@ to `y`, and > 0 if `x` is greater than `y`.
 
 ------------
 <a id="mp_int_compare"></a><pre>
-int <a href="imath.h#L232">mp_int_compare</a>(mp_int a, mp_int b);
+int <a href="imath.h#L233">mp_int_compare</a>(mp_int a, mp_int b);
 </pre>
  -  Returns the comparator of `a` and `b`.
 
 ------------
 <a id="mp_int_compare_unsigned"></a><pre>
-int <a href="imath.h#L236">mp_int_compare_unsigned</a>(mp_int a, mp_int b);
+int <a href="imath.h#L237">mp_int_compare_unsigned</a>(mp_int a, mp_int b);
 </pre>
  -  Returns the comparator of the magnitudes of `a` and `b`, disregarding their
     signs. Neither `a` nor `b` is modified by the comparison.
 
 ------------
 <a id="mp_int_compare_zero"></a><pre>
-int <a href="imath.h#L239">mp_int_compare_zero</a>(mp_int z);
+int <a href="imath.h#L240">mp_int_compare_zero</a>(mp_int z);
 </pre>
  -  Returns the comparator of `z` and zero.
 
 ------------
 <a id="mp_int_compare_value"></a><pre>
-int <a href="imath.h#L242">mp_int_compare_value</a>(mp_int z, mp_small v);
+int <a href="imath.h#L243">mp_int_compare_value</a>(mp_int z, mp_small v);
 </pre>
  -  Returns the comparator of `z` and the signed value `v`.
 
 ------------
 <a id="mp_int_compare_uvalue"></a><pre>
-int <a href="imath.h#L245">mp_int_compare_uvalue</a>(mp_int z, mp_usmall uv);
+int <a href="imath.h#L246">mp_int_compare_uvalue</a>(mp_int z, mp_usmall uv);
 </pre>
  -  Returns the comparator of `z` and the unsigned value `uv`.
 
 ------------
 <a id="mp_int_divisible_value"></a><pre>
-bool <a href="imath.h#L248">mp_int_divisible_value</a>(mp_int a, mp_small v);
+bool <a href="imath.h#L249">mp_int_divisible_value</a>(mp_int a, mp_small v);
 </pre>
  -  Reports whether `a` is divisible by `v`.
 
 ------------
 <a id="mp_int_is_pow2"></a><pre>
-int <a href="imath.h#L252">mp_int_is_pow2</a>(mp_int z);
+int <a href="imath.h#L253">mp_int_is_pow2</a>(mp_int z);
 </pre>
  -  Returns `k >= 0` such that `z` is `2^k`, if such a `k` exists. If no such
     `k` exists, the function returns -1.
@@ -408,28 +409,28 @@ int <a href="imath.h#L252">mp_int_is_pow2</a>(mp_int z);
 
 ------------
 <a id="mp_int_exptmod"></a><pre>
-mp_result <a href="imath.h#L256">mp_int_exptmod</a>(mp_int a, mp_int b, mp_int m, mp_int c);
+mp_result <a href="imath.h#L257">mp_int_exptmod</a>(mp_int a, mp_int b, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`.
     It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`.
 
 ------------
 <a id="mp_int_exptmod_evalue"></a><pre>
-mp_result <a href="imath.h#L260">mp_int_exptmod_evalue</a>(mp_int a, mp_small value, mp_int m, mp_int c);
+mp_result <a href="imath.h#L261">mp_int_exptmod_evalue</a>(mp_int a, mp_small value, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `value` power, modulo `m`.
     It returns `MP_RANGE` if `value < 0` or `MP_UNDEF` if `m == 0`.
 
 ------------
 <a id="mp_int_exptmod_bvalue"></a><pre>
-mp_result <a href="imath.h#L264">mp_int_exptmod_bvalue</a>(mp_small value, mp_int b, mp_int m, mp_int c);
+mp_result <a href="imath.h#L265">mp_int_exptmod_bvalue</a>(mp_small value, mp_int b, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the value of `value` raised to the `b` power, modulo `m`.
     It returns `MP_RANGE` if `b < 0` or `MP_UNDEF` if `m == 0`.
 
 ------------
 <a id="mp_int_exptmod_known"></a><pre>
-mp_result <a href="imath.h#L271">mp_int_exptmod_known</a>(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
+mp_result <a href="imath.h#L272">mp_int_exptmod_known</a>(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power, reduced modulo `m`,
     given a precomputed reduction constant `mu` defined for Barrett's modular
@@ -439,14 +440,14 @@ mp_result <a href="imath.h#L271">mp_int_exptmod_known</a>(mp_int a, mp_int b, mp
 
 ------------
 <a id="mp_int_redux_const"></a><pre>
-mp_result <a href="imath.h#L275">mp_int_redux_const</a>(mp_int m, mp_int c);
+mp_result <a href="imath.h#L276">mp_int_redux_const</a>(mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the reduction constant for Barrett reduction by modulus `m`.
     Requires that `c` and `m` point to distinct locations.
 
 ------------
 <a id="mp_int_invmod"></a><pre>
-mp_result <a href="imath.h#L282">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c);
+mp_result <a href="imath.h#L283">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c);
 </pre>
  -  Sets `c` to the multiplicative inverse of `a` modulo `m`, if it exists.
     The least non-negative representative of the congruence class is computed.
@@ -456,7 +457,7 @@ mp_result <a href="imath.h#L282">mp_int_invmod</a>(mp_int a, mp_int m, mp_int c)
 
 ------------
 <a id="mp_int_gcd"></a><pre>
-mp_result <a href="imath.h#L288">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
+mp_result <a href="imath.h#L289">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
 </pre>
  -  Sets `c` to the greatest common divisor of `a` and `b`.
 
@@ -465,7 +466,7 @@ mp_result <a href="imath.h#L288">mp_int_gcd</a>(mp_int a, mp_int b, mp_int c);
 
 ------------
 <a id="mp_int_egcd"></a><pre>
-mp_result <a href="imath.h#L295">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
+mp_result <a href="imath.h#L296">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, mp_int x, mp_int y);
 </pre>
  -  Sets `c` to the greatest common divisor of `a` and `b`, and sets `x` and
     `y` to values satisfying Bezout's identity `gcd(a, b) = ax + by`.
@@ -475,7 +476,7 @@ mp_result <a href="imath.h#L295">mp_int_egcd</a>(mp_int a, mp_int b, mp_int c, m
 
 ------------
 <a id="mp_int_lcm"></a><pre>
-mp_result <a href="imath.h#L301">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
+mp_result <a href="imath.h#L302">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
 </pre>
  -  Sets `c` to the least common multiple of `a` and `b`.
 
@@ -488,21 +489,21 @@ mp_result <a href="imath.h#L301">mp_int_lcm</a>(mp_int a, mp_int b, mp_int c);
 
 ------------
 <a id="mp_int_to_int"></a><pre>
-mp_result <a href="imath.h#L315">mp_int_to_int</a>(mp_int z, mp_small *out);
+mp_result <a href="imath.h#L316">mp_int_to_int</a>(mp_int z, mp_small *out);
 </pre>
  -  Returns `MP_OK` if `z` is representable as `mp_small`, else `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
 ------------
 <a id="mp_int_to_uint"></a><pre>
-mp_result <a href="imath.h#L319">mp_int_to_uint</a>(mp_int z, mp_usmall *out);
+mp_result <a href="imath.h#L320">mp_int_to_uint</a>(mp_int z, mp_usmall *out);
 </pre>
  -  Returns `MP_OK` if `z` is representable as `mp_usmall`, or `MP_RANGE`.
     If `out` is not NULL, `*out` is set to the value of `z` when `MP_OK`.
 
 ------------
 <a id="mp_int_to_string"></a><pre>
-mp_result <a href="imath.h#L327">mp_int_to_string</a>(mp_int z, mp_size radix, char *str, int limit);
+mp_result <a href="imath.h#L328">mp_int_to_string</a>(mp_int z, mp_size radix, char *str, int limit);
 </pre>
  -  Converts `z` to a zero-terminated string of characters in the specified
     `radix`, writing at most `limit` characters to `str` including the
@@ -513,7 +514,7 @@ mp_result <a href="imath.h#L327">mp_int_to_string</a>(mp_int z, mp_size radix, c
 
 ------------
 <a id="mp_int_string_len"></a><pre>
-mp_size <a href="imath.h#L332">mp_int_string_len</a>(mp_int z, mp_size radix);
+mp_size <a href="imath.h#L333">mp_int_string_len</a>(mp_int z, mp_size radix);
 </pre>
  -  Reports the minimum number of characters required to represent `z` as a
     zero-terminated string in the given `radix`.
@@ -521,7 +522,7 @@ mp_size <a href="imath.h#L332">mp_int_string_len</a>(mp_int z, mp_size radix);
 
 ------------
 <a id="mp_int_read_string"></a><pre>
-mp_result <a href="imath.h#L347">mp_int_read_string</a>(mp_int z, mp_size radix, const char *str);
+mp_result <a href="imath.h#L348">mp_int_read_string</a>(mp_int z, mp_size radix, const char *str);
 </pre>
  -  Reads a string of ASCII digits in the specified `radix` from the zero
     terminated `str` provided into `z`. For values of `radix > 10`, the letters
@@ -539,7 +540,7 @@ mp_result <a href="imath.h#L347">mp_int_read_string</a>(mp_int z, mp_size radix,
 
 ------------
 <a id="mp_int_read_cstring"></a><pre>
-mp_result <a href="imath.h#L365">mp_int_read_cstring</a>(mp_int z, mp_size radix, const char *str, char **end);
+mp_result <a href="imath.h#L366">mp_int_read_cstring</a>(mp_int z, mp_size radix, const char *str, char **end);
 </pre>
  -  Reads a string of ASCII digits in the specified `radix` from the zero
     terminated `str` provided into `z`. For values of `radix > 10`, the letters
@@ -560,13 +561,13 @@ mp_result <a href="imath.h#L365">mp_int_read_cstring</a>(mp_int z, mp_size radix
 
 ------------
 <a id="mp_int_count_bits"></a><pre>
-mp_size <a href="imath.h#L368">mp_int_count_bits</a>(mp_int z);
+mp_size <a href="imath.h#L369">mp_int_count_bits</a>(mp_int z);
 </pre>
  -  Returns the number of significant bits in `z`.
 
 ------------
 <a id="mp_int_to_binary"></a><pre>
-mp_result <a href="imath.h#L383">mp_int_to_binary</a>(mp_int z, unsigned char *buf, int limit);
+mp_result <a href="imath.h#L384">mp_int_to_binary</a>(mp_int z, unsigned char *buf, int limit);
 </pre>
  -  Converts `z` to 2's complement binary, writing at most `limit` bytes into
     the given `buf`.  Returns `MP_TRUNC` if the buffer limit was too small to
@@ -584,7 +585,7 @@ mp_result <a href="imath.h#L383">mp_int_to_binary</a>(mp_int z, unsigned char *b
 
 ------------
 <a id="mp_int_read_binary"></a><pre>
-mp_result <a href="imath.h#L388">mp_int_read_binary</a>(mp_int z, unsigned char *buf, int len);
+mp_result <a href="imath.h#L389">mp_int_read_binary</a>(mp_int z, unsigned char *buf, int len);
 </pre>
  -  Reads a 2's complement binary value from `buf` into `z`, where `len` is the
     length of the buffer.  The contents of `buf` may be overwritten during
@@ -592,13 +593,13 @@ mp_result <a href="imath.h#L388">mp_int_read_binary</a>(mp_int z, unsigned char 
 
 ------------
 <a id="mp_int_binary_len"></a><pre>
-mp_size <a href="imath.h#L391">mp_int_binary_len</a>(mp_int z);
+mp_size <a href="imath.h#L392">mp_int_binary_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes to represent `z` in 2's complement binary.
 
 ------------
 <a id="mp_int_to_unsigned"></a><pre>
-mp_result <a href="imath.h#L402">mp_int_to_unsigned</a>(mp_int z, unsigned char *buf, int limit);
+mp_result <a href="imath.h#L403">mp_int_to_unsigned</a>(mp_int z, unsigned char *buf, int limit);
 </pre>
  -  Converts the magnitude of `z` to unsigned binary, writing at most `limit`
     bytes into the given `buf`.  The sign of `z` is ignored, but `z` is not
@@ -612,7 +613,7 @@ mp_result <a href="imath.h#L402">mp_int_to_unsigned</a>(mp_int z, unsigned char 
 
 ------------
 <a id="mp_int_read_unsigned"></a><pre>
-mp_result <a href="imath.h#L407">mp_int_read_unsigned</a>(mp_int z, unsigned char *buf, int len);
+mp_result <a href="imath.h#L408">mp_int_read_unsigned</a>(mp_int z, unsigned char *buf, int len);
 </pre>
  -  Reads an unsigned binary value from `buf` into `z`, where `len` is the
     length of the buffer. The contents of `buf` are not modified during
@@ -620,7 +621,7 @@ mp_result <a href="imath.h#L407">mp_int_read_unsigned</a>(mp_int z, unsigned cha
 
 ------------
 <a id="mp_int_unsigned_len"></a><pre>
-mp_size <a href="imath.h#L411">mp_int_unsigned_len</a>(mp_int z);
+mp_size <a href="imath.h#L412">mp_int_unsigned_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes required to represent `z` as an unsigned binary
     value in base 256.
@@ -644,7 +645,7 @@ your particular platform.
 
 ------------
 <a id="mp_error_string"></a><pre>
-const char *<a href="imath.h#L416">mp_error_string</a>(mp_result res);
+const char *<a href="imath.h#L417">mp_error_string</a>(mp_result res);
 </pre>
  -  Returns a pointer to a brief, human-readable, zero-terminated string
     describing `res`. The returned string is statically allocated and must not

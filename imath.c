@@ -860,6 +860,10 @@ mp_result mp_int_div(mp_int a, mp_int b, mp_int q, mp_int r) {
 
 mp_result mp_int_mod(mp_int a, mp_int m, mp_int c) {
   DECLARE_TEMP(1);
+  if (CMPZ(m) < 0) {
+    return MP_RANGE;
+  }
+
   mp_int out = (m == c) ? TEMP(0) : c;
   REQUIRE(mp_int_div(a, m, NULL, out));
   if (CMPZ(out) < 0) {
