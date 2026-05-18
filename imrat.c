@@ -398,6 +398,61 @@ mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c) {
   return mp_int_expt(MP_DENOM_P(a), b, MP_DENOM_P(c));
 }
 
+mp_result mp_rat_decompose(mp_rat r, mp_int ipart, mp_rat fpart) {
+  if (ipart == NULL && fpart == NULL) {
+    return MP_BADARG;
+  }
+
+  int cmp;
+  if ((cmp = mp_int_compare_unsigned(MP_NUMER_P(r), MP_DENOM_P(r))) == 0) {
+    // Case 1: The value is 1/1,  no division required.
+    if (fpart != NULL) mp_rat_zero(fpart);
+    if (ipart != NULL) {
+      return mp_int_set_uvalue(ipart, 1);
+    }
+    return MP_OK;
+  } else if (cmp < 0) {
+    // Case 2: The numerator is smaller than the denominator, no division
+    // required.
+    if (ipart != NULL) mp_int_zero(ipart);
+    if (fpart != NULL) {
+      return mp_rat_copy(r, fpart);
+    }
+    return MP_OK;
+  }
+
+  // Case 3: The numerator is strictly greater (magnitude) than the denominator.
+  mpz_t temp[3];
+  mp_result res;
+  int last = 0;
+
+  SETUP(mp_int_init_copy(TEMP(last), MP_NUMER_P(r)), last);
+  mp_int_abs(TEMP(0), TEMP(0));
+
+  SETUP(mp_int_init(TEMP(last)), last);
+  SETUP(mp_int_init(TEMP(last)), last);
+
+  if ((res = mp_int_div(TEMP(0), MP_DENOM_P(r), TEMP(1), TEMP(2))) != MP_OK) {
+    goto CLEANUP;
+  }
+  if (ipart != NULL) {
+    if ((res = mp_int_copy(TEMP(1), ipart)) != MP_OK) {
+      goto CLEANUP;
+    }
+    ipart->sign = MP_NUMER_SIGN(r);
+  }
+  if (fpart != NULL) {
+    if ((res = mp_rat_set(fpart, TEMP(2), MP_DENOM_P(r))) != MP_OK) {
+      goto CLEANUP;
+    }
+    MP_NUMER_P(fpart)->sign = MP_NUMER_SIGN(r);
+  }
+
+CLEANUP:
+  while (--last >= 0) mp_int_clear(TEMP(last));
+  return res;
+}
+
 int mp_rat_compare(mp_rat a, mp_rat b) {
   /* Quick check for opposite signs.  Works because the sign of the numerator
      is always definitive. */
