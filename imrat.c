@@ -643,9 +643,9 @@ CLEANUP:
   return res;
 }
 
-mp_result mp_rat_string_len(mp_rat r, mp_size radix) {
-  mp_result d_len = 0;
-  mp_result n_len = mp_int_string_len(MP_NUMER_P(r), radix);
+mp_size mp_rat_string_len(mp_rat r, mp_size radix) {
+  mp_size d_len = 0;
+  mp_size n_len = mp_int_string_len(MP_NUMER_P(r), radix);
 
   if (mp_int_compare_zero(MP_NUMER_P(r)) != 0) {
     d_len = mp_int_string_len(MP_DENOM_P(r), radix);
@@ -659,7 +659,7 @@ mp_result mp_rat_string_len(mp_rat r, mp_size radix) {
   return n_len + d_len;
 }
 
-mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec) {
+mp_size mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec) {
   int f_len;
   int z_len = mp_int_string_len(MP_NUMER_P(r), radix);
 

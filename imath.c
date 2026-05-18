@@ -1489,7 +1489,7 @@ mp_result mp_int_to_string(mp_int z, mp_size radix, char* str, int limit) {
   }
 }
 
-mp_result mp_int_string_len(mp_int z, mp_size radix) {
+mp_size mp_int_string_len(mp_int z, mp_size radix) {
   assert(z != NULL);
   assert(radix >= MP_MIN_RADIX && radix <= MP_MAX_RADIX);
 
@@ -1559,7 +1559,7 @@ mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char* str,
   }
 }
 
-mp_result mp_int_count_bits(mp_int z) {
+mp_size mp_int_count_bits(mp_int z) {
   assert(z != NULL);
 
   mp_size uz = MP_USED(z);
@@ -1619,11 +1619,11 @@ mp_result mp_int_read_binary(mp_int z, unsigned char* buf, int len) {
   return MP_OK;
 }
 
-mp_result mp_int_binary_len(mp_int z) {
-  mp_result res = mp_int_count_bits(z);
-  if (res <= 0) return res;
+mp_size mp_int_binary_len(mp_int z) {
+  mp_size res = mp_int_count_bits(z);
+  if (res == 0) return res;
 
-  int bytes = mp_int_unsigned_len(z);
+  mp_size bytes = mp_int_unsigned_len(z);
 
   /* If the highest-order bit falls exactly on a byte boundary, we need to pad
      with an extra byte so that the sign will be read correctly when reading it
@@ -1659,11 +1659,9 @@ mp_result mp_int_read_unsigned(mp_int z, unsigned char* buf, int len) {
   return MP_OK;
 }
 
-mp_result mp_int_unsigned_len(mp_int z) {
-  mp_result res = mp_int_count_bits(z);
-  if (res <= 0) return res;
-
-  int bytes = (res + (CHAR_BIT - 1)) / CHAR_BIT;
+mp_size mp_int_unsigned_len(mp_int z) {
+  mp_size res = mp_int_count_bits(z);
+  mp_size bytes = (res + (CHAR_BIT - 1)) / CHAR_BIT;
   return bytes;
 }
 

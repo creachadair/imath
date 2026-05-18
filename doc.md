@@ -513,7 +513,7 @@ mp_result <a href="imath.h#L327">mp_int_to_string</a>(mp_int z, mp_size radix, c
 
 ------------
 <a id="mp_int_string_len"></a><pre>
-mp_result <a href="imath.h#L332">mp_int_string_len</a>(mp_int z, mp_size radix);
+mp_size <a href="imath.h#L332">mp_int_string_len</a>(mp_int z, mp_size radix);
 </pre>
  -  Reports the minimum number of characters required to represent `z` as a
     zero-terminated string in the given `radix`.
@@ -560,7 +560,7 @@ mp_result <a href="imath.h#L365">mp_int_read_cstring</a>(mp_int z, mp_size radix
 
 ------------
 <a id="mp_int_count_bits"></a><pre>
-mp_result <a href="imath.h#L368">mp_int_count_bits</a>(mp_int z);
+mp_size <a href="imath.h#L368">mp_int_count_bits</a>(mp_int z);
 </pre>
  -  Returns the number of significant bits in `z`.
 
@@ -592,7 +592,7 @@ mp_result <a href="imath.h#L388">mp_int_read_binary</a>(mp_int z, unsigned char 
 
 ------------
 <a id="mp_int_binary_len"></a><pre>
-mp_result <a href="imath.h#L391">mp_int_binary_len</a>(mp_int z);
+mp_size <a href="imath.h#L391">mp_int_binary_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes to represent `z` in 2's complement binary.
 
@@ -620,7 +620,7 @@ mp_result <a href="imath.h#L407">mp_int_read_unsigned</a>(mp_int z, unsigned cha
 
 ------------
 <a id="mp_int_unsigned_len"></a><pre>
-mp_result <a href="imath.h#L411">mp_int_unsigned_len</a>(mp_int z);
+mp_size <a href="imath.h#L411">mp_int_unsigned_len</a>(mp_int z);
 </pre>
  -  Returns the number of bytes required to represent `z` as an unsigned binary
     value in base 256.
@@ -939,7 +939,7 @@ mp_result <a href="imrat.h#L220">mp_rat_to_decimal</a>(mp_rat r, mp_size radix, 
 
 ------------
 <a id="mp_rat_string_len"></a><pre>
-mp_result <a href="imrat.h#L226">mp_rat_string_len</a>(mp_rat r, mp_size radix);
+mp_size <a href="imrat.h#L226">mp_rat_string_len</a>(mp_rat r, mp_size radix);
 </pre>
  -  Reports the minimum number of characters required to represent `r` as a
     zero-terminated string in the given `radix`.
@@ -947,7 +947,7 @@ mp_result <a href="imrat.h#L226">mp_rat_string_len</a>(mp_rat r, mp_size radix);
 
 ------------
 <a id="mp_rat_decimal_len"></a><pre>
-mp_result <a href="imrat.h#L231">mp_rat_decimal_len</a>(mp_rat r, mp_size radix, mp_size prec);
+mp_size <a href="imrat.h#L231">mp_rat_decimal_len</a>(mp_rat r, mp_size radix, mp_size prec);
 </pre>
  -  Reports the length in bytes of the buffer needed to convert `r` using the
     `mp_rat_to_decimal()` function with the specified `radix` and `prec`. The
