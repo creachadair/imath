@@ -106,16 +106,20 @@ mp_result mp_rat_init_copy(mp_rat r, mp_rat old) {
 mp_result mp_rat_set(mp_rat r, mp_int numer, mp_int denom) {
   mp_result res;
 
+  if (numer == NULL && denom == NULL) return MP_BADARG;
   if (denom != NULL && mp_int_compare_zero(denom) == 0) {
     return MP_UNDEF;
   }
-  if ((res = mp_int_copy(numer, MP_NUMER_P(r))) != MP_OK) {
+
+  if (numer == NULL) {
+    mp_int_set_uvalue(MP_NUMER_P(r), 1);
+  } else if ((res = mp_int_copy(numer, MP_NUMER_P(r))) != MP_OK) {
     return res;
   }
+
   if (denom == NULL) {
-    return mp_int_set_uvalue(MP_DENOM_P(r), 1); // no reduction is required
-  }
-  if ((res = mp_int_copy(denom, MP_DENOM_P(r))) != MP_OK) {
+    mp_int_set_uvalue(MP_DENOM_P(r), 1);
+  } else if ((res = mp_int_copy(denom, MP_DENOM_P(r))) != MP_OK) {
     return res;
   }
   return s_rat_reduce(r);

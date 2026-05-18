@@ -375,6 +375,8 @@ static bool parse_result_code(char* str, mp_result* code) {
       *code = MP_UNDEF;
     } else if (strcmp(str + 1, "MP_TRUNC") == 0) {
       *code = MP_TRUNC;
+    } else if (strcmp(str + 1, "MP_BADARG") == 0) {
+      *code = MP_BADARG;
     } else if (strcmp(str + 1, "MP_ROUND_UP") == 0) {
       *code = MP_ROUND_UP;
     } else if (strcmp(str + 1, "MP_ROUND_DOWN") == 0) {

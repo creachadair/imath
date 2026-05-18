@@ -13,6 +13,12 @@ qset:-16,-24:2/3
 qset:12,-16:-3/4
 qset:0,NULL:0
 qset:-31,NULL:-31/1
+qset:NULL,1:1
+qset:NULL,-1:-1
+qset:NULL,15:1/15
+qset:NULL,-7:-1/7
+qset:NULL,0:$MP_UNDEF
+qset:NULL,NULL:$MP_BADARG
 
 # Basic negation tests
 qneg:0,0:0

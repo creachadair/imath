@@ -696,72 +696,75 @@ mp_result <a href="imrat.h#L80">mp_rat_init_copy</a>(mp_rat r, mp_rat old);
 
 ------------
 <a id="mp_rat_set"></a><pre>
-mp_result <a href="imrat.h#L85">mp_rat_set</a>(mp_rat r, mp_int numer, mp_int denom);
+mp_result <a href="imrat.h#L88">mp_rat_set</a>(mp_rat r, mp_int numer, mp_int denom);
 </pre>
  -  Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
-    returns `MP_UNDEF` if `denom` is zero. If `denom` is NULL, the value of `r`
-    is set to `numer` / 1. The `numer` must not be NULL.
+    returns `MP_UNDEF` if `denom` is zero.
+
+    At least one of `numer` and `denom` must be non-NULL.
+    If `numer` is NULL, the value of `r` is set to 1 / `denom`.
+    If `denom` is NULL, the value of `r` is set to `numer` / 1.
 
 ------------
 <a id="mp_rat_set_value"></a><pre>
-mp_result <a href="imrat.h#L89">mp_rat_set_value</a>(mp_rat r, mp_small numer, mp_small denom);
+mp_result <a href="imrat.h#L92">mp_rat_set_value</a>(mp_rat r, mp_small numer, mp_small denom);
 </pre>
  -  Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
     returns `MP_UNDEF` if `denom` is zero.
 
 ------------
 <a id="mp_rat_set_uvalue"></a><pre>
-mp_result <a href="imrat.h#L93">mp_rat_set_uvalue</a>(mp_rat r, mp_usmall numer, mp_usmall denom);
+mp_result <a href="imrat.h#L96">mp_rat_set_uvalue</a>(mp_rat r, mp_usmall numer, mp_usmall denom);
 </pre>
  -  Sets the value of `r` to the ratio of unsigned `numer` to unsigned
     `denom`. It returns `MP_UNDEF` if `denom` is zero.
 
 ------------
 <a id="mp_rat_clear"></a><pre>
-void <a href="imrat.h#L96">mp_rat_clear</a>(mp_rat r);
+void <a href="imrat.h#L99">mp_rat_clear</a>(mp_rat r);
 </pre>
  -  Releases the storage used by `r`.
 
 ------------
 <a id="mp_rat_free"></a><pre>
-void <a href="imrat.h#L100">mp_rat_free</a>(mp_rat r);
+void <a href="imrat.h#L103">mp_rat_free</a>(mp_rat r);
 </pre>
  -  Releases the storage used by `r` and also `r` itself.
     This should only be used for `r` allocated by `mp_rat_alloc()`.
 
 ------------
 <a id="mp_rat_numer"></a><pre>
-mp_result <a href="imrat.h#L103">mp_rat_numer</a>(mp_rat r, mp_int z);
+mp_result <a href="imrat.h#L106">mp_rat_numer</a>(mp_rat r, mp_int z);
 </pre>
  -  Sets `z` to a copy of the numerator of `r`.
 
 ------------
 <a id="mp_rat_numer_ref"></a><pre>
-mp_int <a href="imrat.h#L106">mp_rat_numer_ref</a>(mp_rat r);
+mp_int <a href="imrat.h#L109">mp_rat_numer_ref</a>(mp_rat r);
 </pre>
  -  Returns a pointer to the numerator of `r`.
 
 ------------
 <a id="mp_rat_denom"></a><pre>
-mp_result <a href="imrat.h#L109">mp_rat_denom</a>(mp_rat r, mp_int z);
+mp_result <a href="imrat.h#L112">mp_rat_denom</a>(mp_rat r, mp_int z);
 </pre>
  -  Sets `z` to a copy of the denominator of `r`.
 
 ------------
 <a id="mp_rat_denom_ref"></a><pre>
-mp_int <a href="imrat.h#L112">mp_rat_denom_ref</a>(mp_rat r);
+mp_int <a href="imrat.h#L115">mp_rat_denom_ref</a>(mp_rat r);
 </pre>
  -  Returns a pointer to the denominator of `r`.
 
 ------------
 <a id="mp_rat_sign"></a><pre>
-mp_sign <a href="imrat.h#L115">mp_rat_sign</a>(mp_rat r);
+mp_sign <a href="imrat.h#L118">mp_rat_sign</a>(mp_rat r);
 </pre>
  -  Reports the sign of `r`.
 
 ------------
 <a id="mp_rat_copy"></a><pre>
-mp_result <a href="imrat.h#L120">mp_rat_copy</a>(mp_rat a, mp_rat c);
+mp_result <a href="imrat.h#L123">mp_rat_copy</a>(mp_rat a, mp_rat c);
 </pre>
  -  Sets `c` to a copy of the value of `a`. No new memory is allocated unless a
     term of `a` has more significant digits than the corresponding term of `c`
@@ -769,121 +772,121 @@ mp_result <a href="imrat.h#L120">mp_rat_copy</a>(mp_rat a, mp_rat c);
 
 ------------
 <a id="mp_rat_zero"></a><pre>
-void <a href="imrat.h#L123">mp_rat_zero</a>(mp_rat r);
+void <a href="imrat.h#L126">mp_rat_zero</a>(mp_rat r);
 </pre>
  -  Sets `r` to zero. The allocated storage of `r` is not changed.
 
 ------------
 <a id="mp_rat_abs"></a><pre>
-mp_result <a href="imrat.h#L126">mp_rat_abs</a>(mp_rat a, mp_rat c);
+mp_result <a href="imrat.h#L129">mp_rat_abs</a>(mp_rat a, mp_rat c);
 </pre>
  -  Sets `c` to the absolute value of `a`.
 
 ------------
 <a id="mp_rat_neg"></a><pre>
-mp_result <a href="imrat.h#L129">mp_rat_neg</a>(mp_rat a, mp_rat c);
+mp_result <a href="imrat.h#L132">mp_rat_neg</a>(mp_rat a, mp_rat c);
 </pre>
  -  Sets `c` to the absolute value of `a`.
 
 ------------
 <a id="mp_rat_recip"></a><pre>
-mp_result <a href="imrat.h#L133">mp_rat_recip</a>(mp_rat a, mp_rat c);
+mp_result <a href="imrat.h#L136">mp_rat_recip</a>(mp_rat a, mp_rat c);
 </pre>
  -  Sets `c` to the reciprocal of `a` if the reciprocal is defined.
     It returns `MP_UNDEF` if `a` is zero.
 
 ------------
 <a id="mp_rat_add"></a><pre>
-mp_result <a href="imrat.h#L136">mp_rat_add</a>(mp_rat a, mp_rat b, mp_rat c);
+mp_result <a href="imrat.h#L139">mp_rat_add</a>(mp_rat a, mp_rat b, mp_rat c);
 </pre>
  -  Sets `c` to the sum of `a` and `b`.
 
 ------------
 <a id="mp_rat_sub"></a><pre>
-mp_result <a href="imrat.h#L139">mp_rat_sub</a>(mp_rat a, mp_rat b, mp_rat c);
+mp_result <a href="imrat.h#L142">mp_rat_sub</a>(mp_rat a, mp_rat b, mp_rat c);
 </pre>
  -  Sets `c` to the difference of `a` less `b`.
 
 ------------
 <a id="mp_rat_mul"></a><pre>
-mp_result <a href="imrat.h#L142">mp_rat_mul</a>(mp_rat a, mp_rat b, mp_rat c);
+mp_result <a href="imrat.h#L145">mp_rat_mul</a>(mp_rat a, mp_rat b, mp_rat c);
 </pre>
  -  Sets `c` to the product of `a` and `b`.
 
 ------------
 <a id="mp_rat_div"></a><pre>
-mp_result <a href="imrat.h#L146">mp_rat_div</a>(mp_rat a, mp_rat b, mp_rat c);
+mp_result <a href="imrat.h#L149">mp_rat_div</a>(mp_rat a, mp_rat b, mp_rat c);
 </pre>
  -  Sets `c` to the ratio `a / b` if that ratio is defined.
     It returns `MP_UNDEF` if `b` is zero.
 
 ------------
 <a id="mp_rat_add_int"></a><pre>
-mp_result <a href="imrat.h#L149">mp_rat_add_int</a>(mp_rat a, mp_int b, mp_rat c);
+mp_result <a href="imrat.h#L152">mp_rat_add_int</a>(mp_rat a, mp_int b, mp_rat c);
 </pre>
  -  Sets `c` to the sum of `a` and integer `b`.
 
 ------------
 <a id="mp_rat_sub_int"></a><pre>
-mp_result <a href="imrat.h#L152">mp_rat_sub_int</a>(mp_rat a, mp_int b, mp_rat c);
+mp_result <a href="imrat.h#L155">mp_rat_sub_int</a>(mp_rat a, mp_int b, mp_rat c);
 </pre>
  -  Sets `c` to the difference of `a` less integer `b`.
 
 ------------
 <a id="mp_rat_mul_int"></a><pre>
-mp_result <a href="imrat.h#L155">mp_rat_mul_int</a>(mp_rat a, mp_int b, mp_rat c);
+mp_result <a href="imrat.h#L158">mp_rat_mul_int</a>(mp_rat a, mp_int b, mp_rat c);
 </pre>
  -  Sets `c` to the product of `a` and integer `b`.
 
 ------------
 <a id="mp_rat_div_int"></a><pre>
-mp_result <a href="imrat.h#L159">mp_rat_div_int</a>(mp_rat a, mp_int b, mp_rat c);
+mp_result <a href="imrat.h#L162">mp_rat_div_int</a>(mp_rat a, mp_int b, mp_rat c);
 </pre>
  -  Sets `c` to the ratio `a / b` if that ratio is defined.
     It returns `MP_UNDEF` if `b` is zero.
 
 ------------
 <a id="mp_rat_expt"></a><pre>
-mp_result <a href="imrat.h#L163">mp_rat_expt</a>(mp_rat a, mp_small b, mp_rat c);
+mp_result <a href="imrat.h#L166">mp_rat_expt</a>(mp_rat a, mp_small b, mp_rat c);
 </pre>
  -  Sets `c` to the value of `a` raised to the `b` power.
     It returns `MP_RANGE` if `b < 0`.
 
 ------------
 <a id="mp_rat_compare"></a><pre>
-int <a href="imrat.h#L166">mp_rat_compare</a>(mp_rat a, mp_rat b);
+int <a href="imrat.h#L169">mp_rat_compare</a>(mp_rat a, mp_rat b);
 </pre>
  -  Returns the comparator of `a` and `b`.
 
 ------------
 <a id="mp_rat_compare_unsigned"></a><pre>
-int <a href="imrat.h#L170">mp_rat_compare_unsigned</a>(mp_rat a, mp_rat b);
+int <a href="imrat.h#L173">mp_rat_compare_unsigned</a>(mp_rat a, mp_rat b);
 </pre>
  -  Returns the comparator of the magnitudes of `a` and `b`, disregarding their
     signs. Neither `a` nor `b` is modified by the comparison.
 
 ------------
 <a id="mp_rat_compare_zero"></a><pre>
-int <a href="imrat.h#L173">mp_rat_compare_zero</a>(mp_rat r);
+int <a href="imrat.h#L176">mp_rat_compare_zero</a>(mp_rat r);
 </pre>
  -  Returns the comparator of `r` and zero.
 
 ------------
 <a id="mp_rat_compare_value"></a><pre>
-int <a href="imrat.h#L177">mp_rat_compare_value</a>(mp_rat r, mp_small n, mp_small d);
+int <a href="imrat.h#L180">mp_rat_compare_value</a>(mp_rat r, mp_small n, mp_small d);
 </pre>
  -  Returns the comparator of `r` and the signed ratio `n / d`.
     It returns `MP_UNDEF` if `d` is zero.
 
 ------------
 <a id="mp_rat_is_integer"></a><pre>
-bool <a href="imrat.h#L180">mp_rat_is_integer</a>(mp_rat r);
+bool <a href="imrat.h#L183">mp_rat_is_integer</a>(mp_rat r);
 </pre>
  -  Reports whether `r` is an integer, having canonical denominator 1.
 
 ------------
 <a id="mp_rat_to_ints"></a><pre>
-mp_result <a href="imrat.h#L185">mp_rat_to_ints</a>(mp_rat r, mp_small *num, mp_small *den);
+mp_result <a href="imrat.h#L188">mp_rat_to_ints</a>(mp_rat r, mp_small *num, mp_small *den);
 </pre>
  -  Reports whether the numerator and denominator of `r` can be represented as
     small signed integers, and if so stores the corresponding values to `num`
@@ -891,7 +894,7 @@ mp_result <a href="imrat.h#L185">mp_rat_to_ints</a>(mp_rat r, mp_small *num, mp_
 
 ------------
 <a id="mp_rat_to_string"></a><pre>
-mp_result <a href="imrat.h#L191">mp_rat_to_string</a>(mp_rat r, mp_size radix, char *str, int limit);
+mp_result <a href="imrat.h#L194">mp_rat_to_string</a>(mp_rat r, mp_size radix, char *str, int limit);
 </pre>
  -  Converts `r` to a zero-terminated string of the format `"n/d"` with `n` and
     `d` in the specified radix and writing no more than `limit` bytes to the
@@ -900,7 +903,7 @@ mp_result <a href="imrat.h#L191">mp_rat_to_string</a>(mp_rat r, mp_size radix, c
 
 ------------
 <a id="mp_rat_to_decimal"></a><pre>
-mp_result <a href="imrat.h#L220">mp_rat_to_decimal</a>(mp_rat r, mp_size radix, mp_size prec, mp_round_mode round, char *str, int limit);
+mp_result <a href="imrat.h#L223">mp_rat_to_decimal</a>(mp_rat r, mp_size radix, mp_size prec, mp_round_mode round, char *str, int limit);
 </pre>
  -  Converts the value of `r` to a string in decimal-point notation with the
     specified radix, writing no more than `limit` bytes of data to the given
@@ -939,7 +942,7 @@ mp_result <a href="imrat.h#L220">mp_rat_to_decimal</a>(mp_rat r, mp_size radix, 
 
 ------------
 <a id="mp_rat_string_len"></a><pre>
-mp_size <a href="imrat.h#L226">mp_rat_string_len</a>(mp_rat r, mp_size radix);
+mp_size <a href="imrat.h#L229">mp_rat_string_len</a>(mp_rat r, mp_size radix);
 </pre>
  -  Reports the minimum number of characters required to represent `r` as a
     zero-terminated string in the given `radix`.
@@ -947,7 +950,7 @@ mp_size <a href="imrat.h#L226">mp_rat_string_len</a>(mp_rat r, mp_size radix);
 
 ------------
 <a id="mp_rat_decimal_len"></a><pre>
-mp_size <a href="imrat.h#L231">mp_rat_decimal_len</a>(mp_rat r, mp_size radix, mp_size prec);
+mp_size <a href="imrat.h#L234">mp_rat_decimal_len</a>(mp_rat r, mp_size radix, mp_size prec);
 </pre>
  -  Reports the length in bytes of the buffer needed to convert `r` using the
     `mp_rat_to_decimal()` function with the specified `radix` and `prec`. The
@@ -955,7 +958,7 @@ mp_size <a href="imrat.h#L231">mp_rat_decimal_len</a>(mp_rat r, mp_size radix, m
 
 ------------
 <a id="mp_rat_read_string"></a><pre>
-mp_result <a href="imrat.h#L236">mp_rat_read_string</a>(mp_rat r, mp_size radix, const char *str);
+mp_result <a href="imrat.h#L239">mp_rat_read_string</a>(mp_rat r, mp_size radix, const char *str);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
@@ -963,7 +966,7 @@ mp_result <a href="imrat.h#L236">mp_rat_read_string</a>(mp_rat r, mp_size radix,
 
 ------------
 <a id="mp_rat_read_cstring"></a><pre>
-mp_result <a href="imrat.h#L243">mp_rat_read_cstring</a>(mp_rat r, mp_size radix, const char *str, char **end);
+mp_result <a href="imrat.h#L246">mp_rat_read_cstring</a>(mp_rat r, mp_size radix, const char *str, char **end);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
@@ -972,7 +975,7 @@ mp_result <a href="imrat.h#L243">mp_rat_read_cstring</a>(mp_rat r, mp_size radix
 
 ------------
 <a id="mp_rat_read_ustring"></a><pre>
-mp_result <a href="imrat.h#L257">mp_rat_read_ustring</a>(mp_rat r, mp_size radix, const char *str, char **end);
+mp_result <a href="imrat.h#L260">mp_rat_read_ustring</a>(mp_rat r, mp_size radix, const char *str, char **end);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` having
     one of the following formats, each with an optional leading sign flag:
@@ -989,7 +992,7 @@ mp_result <a href="imrat.h#L257">mp_rat_read_ustring</a>(mp_rat r, mp_size radix
 
 ------------
 <a id="mp_rat_read_decimal"></a><pre>
-mp_result <a href="imrat.h#L263">mp_rat_read_decimal</a>(mp_rat r, mp_size radix, const char *str);
+mp_result <a href="imrat.h#L266">mp_rat_read_decimal</a>(mp_rat r, mp_size radix, const char *str);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the
@@ -997,7 +1000,7 @@ mp_result <a href="imrat.h#L263">mp_rat_read_decimal</a>(mp_rat r, mp_size radix
 
 ------------
 <a id="mp_rat_read_cdecimal"></a><pre>
-mp_result <a href="imrat.h#L270">mp_rat_read_cdecimal</a>(mp_rat r, mp_size radix, const char *str, char **end);
+mp_result <a href="imrat.h#L273">mp_rat_read_cdecimal</a>(mp_rat r, mp_size radix, const char *str, char **end);
 </pre>
  -  Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"z.ffff"` including a sign flag. It returns `MP_UNDEF` if the

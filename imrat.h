@@ -80,8 +80,11 @@ mp_result mp_rat_init_size(mp_rat r, mp_size n_prec, mp_size d_prec);
 mp_result mp_rat_init_copy(mp_rat r, mp_rat old);
 
 /** Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
-    returns `MP_UNDEF` if `denom` is zero. If `denom` is NULL, the value of `r`
-    is set to `numer` / 1. The `numer` must not be NULL. */
+    returns `MP_UNDEF` if `denom` is zero.
+
+    At least one of `numer` and `denom` must be non-NULL.
+    If `numer` is NULL, the value of `r` is set to 1 / `denom`.
+    If `denom` is NULL, the value of `r` is set to `numer` / 1. */
 mp_result mp_rat_set(mp_rat r, mp_int numer, mp_int denom);
 
 /** Sets the value of `r` to the ratio of signed `numer` to signed `denom`.  It
