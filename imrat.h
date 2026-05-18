@@ -223,12 +223,12 @@ mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
 /** Reports the minimum number of characters required to represent `r` as a
     zero-terminated string in the given `radix`.
     Requires `MP_MIN_RADIX <= radix <= MP_MAX_RADIX`. */
-mp_result mp_rat_string_len(mp_rat r, mp_size radix);
+mp_size mp_rat_string_len(mp_rat r, mp_size radix);
 
 /** Reports the length in bytes of the buffer needed to convert `r` using the
     `mp_rat_to_decimal()` function with the specified `radix` and `prec`. The
     buffer size estimate may slightly exceed the actual required capacity. */
-mp_result mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec);
+mp_size mp_rat_decimal_len(mp_rat r, mp_size radix, mp_size prec);
 
 /** Sets `r` to the value represented by a zero-terminated string `str` in the
     format `"n/d"` including a sign flag. It returns `MP_UNDEF` if the encoded
