@@ -1,3 +1,9 @@
+1.35
+	Add mp_rat_set to set an mp_rat from two mp_int values (#71)
+	Use mp_size for length and counter results instead of mp_result (#73)
+	Improve documentation and tests for signed div and mod
+	Add mp_rat_decompose to split mp_rat into integer and fractional parts (#74)
+
 1.34
 	Minor documentation fixes.
 	Reverse the ChangeLog so new items are first.
