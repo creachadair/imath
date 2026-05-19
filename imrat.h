@@ -165,6 +165,15 @@ mp_result mp_rat_div_int(mp_rat a, mp_int b, mp_rat c);
     It returns `MP_RANGE` if `b < 0`. */
 mp_result mp_rat_expt(mp_rat a, mp_small b, mp_rat c);
 
+/** Sets `ipart` to the integer part of `r` and `fpart` to the difference
+    of `r - ipart`. If `r < 0` then the signs of `ipart` and `fpart` will also
+    be negative, unless they are zero.
+
+    At least one of `ipart` and `fpart` must be non-NULL.
+    If `ipart` is NULL the integer part is discarded.
+    If `fpart` is NULL, the fractional part is discarded. */
+mp_result mp_rat_decompose(mp_rat r, mp_int ipart, mp_rat fpart);
+
 /** Returns the comparator of `a` and `b`. */
 int mp_rat_compare(mp_rat a, mp_rat b);
 

@@ -324,7 +324,7 @@ static bool parse_rat_values(testspec_t* t, mp_rat* in, mp_rat* out,
 
     if (strcmp(str, "?") == 0) {
       mp_rat_zero(reg);
-    } else  if (strcmp(str, "NULL") == 0) {
+    } else if (strcmp(str, "NULL") == 0) {
       if (out != NULL) out[i] = NULL;
       continue;
     } else if (*str == '$') {
@@ -1481,6 +1481,45 @@ bool test_qrdec(testspec_t* t, FILE* ofp) {
   if (expect == MP_OK && mp_rat_compare(reg, out[0]) != 0) {
     mp_rat_to_string(reg, 10, g_output, OUTPUT_LIMIT);
     FAIL(OTHER_ERROR);
+  }
+  return true;
+}
+
+bool test_qdecompose(testspec_t* t, FILE* ofp) {
+  mp_rat in[3];   // N.B. offset 1 has to be an int, though.
+  mp_rat out[2];  // N.B. offset 0 has to be an int, though.
+  mp_int ipart = NULL;
+  mp_rat fpart = NULL;
+  mp_result expect;
+
+  ACHECK(parse_rat_values(t, in, out, &expect));
+  if (in[1] != NULL) {
+    if (!mp_rat_is_integer(in[1])) {
+      fprintf(stderr, "Line %d: argument 2 is not an integer [%s]\n", t->line,
+              t->input[1]);
+      return false;
+    }
+    ipart = MP_NUMER_P(in[1]);
+  }
+  if (in[2] != NULL) {
+    fpart = in[2];
+  }
+  if (!mp_rat_is_integer(out[0])) {
+    fprintf(stderr, "Line %d: output 2 is not an integer [%s]\n", t->line,
+            t->output[0]);
+    return false;
+  }
+
+  ECHECK(mp_rat_decompose(in[0], ipart, fpart));
+  if (expect == MP_OK) {
+    if (ipart != NULL && mp_int_compare(ipart, MP_NUMER_P(out[0])) != 0) {
+      mp_int_to_string(ipart, 10, g_output, OUTPUT_LIMIT);
+      FAIL(OTHER_ERROR);
+    }
+    if (fpart != NULL && mp_rat_compare(fpart, out[1]) != 0) {
+      mp_rat_to_string(fpart, 10, g_output, OUTPUT_LIMIT);
+      FAIL(OTHER_ERROR);
+    }
   }
   return true;
 }

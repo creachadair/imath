@@ -1,0 +1,25 @@
+# Decompose rational values into integer and fraction parts.
+
+# Error conditions
+qdecompose:0,NULL,NULL:$MP_BADARG,?
+
+# Zero and positive values
+qdecompose:0,1,NULL:0,0
+qdecompose:0,NULL,1:0,0
+qdecompose:32,0,1:32,0
+qdecompose:32/8,1,NULL:4,?
+qdecompose:3/7,1,2:0,3/7
+qdecompose:3/7,NULL,2:?,3/7
+qdecompose:3/7,1,NULL:0,?
+qdecompose:9/5,1,2:1,4/5
+qdecompose:9/5,999,=1:1,4/5
+qdecompose:37/19,1,999:1,18/19
+
+# Negative values
+qdecompose:-2/5,1,2:0,-2/5
+qdecompose:-11/3,1,2:-3,-2/3
+qdecompose:-11/3,NULL,2:?,-2/3
+qdecompose:-11/3,1,NULL:-3,?
+qdecompose:174/8,999,999:21,@0.75
+qdecompose:174/8,999,=1:21,@0.75
+qdecompose:174/8,NULL,=1:?,@0.75
