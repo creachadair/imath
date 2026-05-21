@@ -555,7 +555,7 @@ mp_result mp_rat_to_string(mp_rat r, mp_size radix, char* str, int limit) {
 mp_result mp_rat_to_decimal(mp_rat r, mp_size radix, mp_size prec,
                             mp_round_mode round, char* str, int limit) {
   DECLARE_TEMP(3);
-  mp_result res;
+  mp_result res = MP_BADARG;
 
   REQUIRE(mp_int_copy(MP_NUMER_P(r), TEMP(0)));
 
@@ -950,7 +950,7 @@ CLEANUP:
 
 static mp_result s_rat_combine(mp_rat a, mp_rat b, mp_rat c,
                                mp_result (*comb_f)(mp_int, mp_int, mp_int)) {
-  mp_result res;
+  mp_result res = MP_BADARG;
 
   /* Shortcut when denominators are already common */
   if (mp_int_compare(MP_DENOM_P(a), MP_DENOM_P(b)) == 0) {
