@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define USE_IMATH_INTERNAL_TEMP_MACROS
+#include "macros.c"  // for temp value handling
+
 const mp_result MP_OK = 0;      /* no error, all is well  */
 const mp_result MP_FALSE = 0;   /* boolean false          */
 const mp_result MP_TRUE = -1;   /* boolean true           */
@@ -128,51 +131,6 @@ static inline mp_size MAX(mp_size A, mp_size B) { return (B > A ? B : A); }
     T t_ = (A);       \
     A = (B);          \
     B = t_;           \
-  } while (0)
-
-/* Declare a block of N temporary mpz_t values.
-   These values are initialized to zero.
-   You must add CLEANUP_TEMP() at the end of the function.
-   Use TEMP(i) to access a pointer to the ith value.
- */
-#define DECLARE_TEMP(N)                   \
-  struct {                                \
-    mpz_t value[(N)];                     \
-    int len;                              \
-    mp_result err;                        \
-  } temp_ = {                             \
-      .len = (N),                         \
-      .err = MP_OK,                       \
-  };                                      \
-  do {                                    \
-    for (int i = 0; i < temp_.len; i++) { \
-      mp_int_init(TEMP(i));               \
-    }                                     \
-  } while (0)
-
-/* Clear all allocated temp values. */
-#define CLEANUP_TEMP()                    \
-  CLEANUP:                                \
-  do {                                    \
-    for (int i = 0; i < temp_.len; i++) { \
-      mp_int_clear(TEMP(i));              \
-    }                                     \
-    if (temp_.err != MP_OK) {             \
-      return temp_.err;                   \
-    }                                     \
-  } while (0)
-
-/* A pointer to the kth temp value. */
-#define TEMP(K) (temp_.value + (K))
-
-/* Evaluate E, an expression of type mp_result expected to return MP_OK.  If
-   the value is not MP_OK, the error is cached and control resumes at the
-   cleanup handler, which returns it.
-*/
-#define REQUIRE(E)                        \
-  do {                                    \
-    temp_.err = (E);                      \
-    if (temp_.err != MP_OK) goto CLEANUP; \
   } while (0)
 
 /* Compare value to zero. */
