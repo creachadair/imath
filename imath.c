@@ -1665,6 +1665,7 @@ static mp_digit* s_realloc(mp_digit* old, mp_size osize, mp_size nsize) {
 
   for (mp_size ix = 0; ix < nsize; ++ix) new[ix] = fill;
   memcpy(new, old, osize * sizeof(mp_digit));
+  free(old);
 #else
   mp_digit* new = realloc(old, nsize * sizeof(mp_digit));
   assert(new != NULL);
