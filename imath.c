@@ -2459,6 +2459,177 @@ static mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c) {
   outputs: u / v stored in u
            u % v stored in v
  */
+/* -- Recursive divide-and-conquer division ----------------------------------
+   Schoolbook division costs O(m*n) digit operations.  For large operands
+   we instead use the recursive algorithm (cf. Burnikel & Ziegler, and
+   Brent & Zimmermann, "Modern Computer Arithmetic", alg. 1.8): divide by
+   the high half of the divisor, correct, and recurse.  The work then
+   collapses into large multiplications, which use recursive (Karatsuba)
+   multiplication, giving a subquadratic division overall. */
+
+#define RECDIV_THRESHOLD 24 /* digits; below this, use schoolbook */
+
+/* out = z / RADIX^words (word-aligned right shift) */
+static mp_result s_wshr(mp_int out, mp_int z, mp_size words) {
+  mp_result res = mp_int_copy(z, out);
+  if (res == MP_OK) s_qdiv(out, words * MP_DIGIT_BIT);
+  return res;
+}
+
+/* out = z mod RADIX^words */
+static mp_result s_wmod(mp_int out, mp_int z, mp_size words) {
+  mp_result res = mp_int_copy(z, out);
+  if (res == MP_OK) s_qmod(out, words * MP_DIGIT_BIT);
+  return res;
+}
+
+/* out = hi * RADIX^words + lo; hi, lo >= 0, out distinct from hi, lo */
+static mp_result s_wjoin(mp_int out, mp_int hi, mp_size words, mp_int lo) {
+  mp_result res = mp_int_copy(hi, out);
+  if (res != MP_OK) return res;
+  if (!s_qmul(out, words * MP_DIGIT_BIT)) return MP_MEMORY;
+  return mp_int_add(out, lo, out);
+}
+
+/* Balanced recursive division core.  Requires A >= 0, B > 0 with the high
+   bit of its top digit set, and used(A) <= 2*used(B).  Computes Q and R
+   with A = Q*B + R, 0 <= R < B.  Q, R must be distinct from A and B. */
+static mp_result s_rdivrem(mp_int A, mp_int B, mp_int Q, mp_int R) {
+  if (s_ucmp(A, B) < 0) { /* trivial case: Q = 0, R = A */
+    mp_result res = mp_int_copy(A, R);
+    if (res == MP_OK) mp_int_zero(Q);
+    return res;
+  }
+
+  mp_size n = MP_USED(B);
+  mp_size m = MP_USED(A) - n; /* used(A) >= n since A >= B */
+  mp_size k = m / 2;
+
+  DECLARE_TEMP(12);
+  mp_int AC = TEMP(0), B1 = TEMP(1), B0 = TEMP(2), Q1 = TEMP(3), R1 = TEMP(4),
+         Q0 = TEMP(5), R0 = TEMP(6), TA = TEMP(7), T0 = TEMP(8), T1 = TEMP(9),
+         U = TEMP(10), V = TEMP(11);
+
+  if (m <= RECDIV_THRESHOLD || n <= RECDIV_THRESHOLD) {
+    /* Base case: schoolbook division is O(m*n), cheap when m is small. */
+    REQUIRE(mp_int_copy(A, U));
+    REQUIRE(mp_int_copy(B, V));
+    REQUIRE(s_udiv_knuth(U, V));
+    REQUIRE(mp_int_copy(U, Q));
+    REQUIRE(mp_int_copy(V, R));
+  } else {
+    int qbit = 0;
+
+    /* If A >= B*R^m the quotient needs m+1 digits; since B is normalized,
+       A < 2*B*R^m, so a single subtraction reduces it and the extra
+       quotient bit is added back at the end. */
+    REQUIRE(mp_int_copy(A, AC));
+    REQUIRE(mp_int_copy(B, T0));
+    if (!s_qmul(T0, m * MP_DIGIT_BIT)) {
+      REQUIRE(MP_MEMORY);
+    }
+    if (s_ucmp(AC, T0) >= 0) {
+      REQUIRE(mp_int_sub(AC, T0, AC));
+      qbit = 1;
+    }
+
+    /* Split the divisor: B = B1*R^k + B0. B1 keeps the normalized top. */
+    REQUIRE(s_wshr(B1, B, k));
+    REQUIRE(s_wmod(B0, B, k));
+
+    /* First half: divide the top of A by B1, then correct. */
+    REQUIRE(s_wshr(T0, AC, 2 * k));
+    REQUIRE(s_rdivrem(T0, B1, Q1, R1));
+
+    /* TA = R1*R^2k + (AC mod R^2k) - Q1*B0*R^k */
+    REQUIRE(s_wmod(T1, AC, 2 * k));
+    REQUIRE(s_wjoin(TA, R1, 2 * k, T1));
+    REQUIRE(mp_int_mul(Q1, B0, T0));
+    if (!s_qmul(T0, k * MP_DIGIT_BIT)) {
+      REQUIRE(MP_MEMORY);
+    }
+    REQUIRE(mp_int_sub(TA, T0, TA));
+
+    if (CMPZ(TA) < 0) { /* T1 = B*R^k, used by the correction loop */
+      REQUIRE(mp_int_copy(B, T1));
+      if (!s_qmul(T1, k * MP_DIGIT_BIT)) {
+        REQUIRE(MP_MEMORY);
+      }
+      do { /* at most twice, since B is normalized */
+        REQUIRE(mp_int_sub_value(Q1, 1, Q1));
+        REQUIRE(mp_int_add(TA, T1, TA));
+      } while (CMPZ(TA) < 0);
+    }
+
+    /* Second half: same again on the reduced remainder TA. */
+    REQUIRE(s_wshr(T0, TA, k));
+    REQUIRE(s_rdivrem(T0, B1, Q0, R0));
+
+    /* T0 = R0*R^k + (TA mod R^k) - Q0*B0 */
+    REQUIRE(s_wmod(T1, TA, k));
+    REQUIRE(s_wjoin(T0, R0, k, T1));
+    REQUIRE(mp_int_mul(Q0, B0, T1));
+    REQUIRE(mp_int_sub(T0, T1, T0));
+
+    while (CMPZ(T0) < 0) { /* at most twice */
+      REQUIRE(mp_int_sub_value(Q0, 1, Q0));
+      REQUIRE(mp_int_add(T0, B, T0));
+    }
+
+    /* Q = Q1*R^k + Q0 (+ R^m), R = T0 */
+    REQUIRE(s_wjoin(Q, Q1, k, Q0));
+    if (qbit) {
+      REQUIRE(mp_int_set_value(T1, 1));
+      if (!s_qmul(T1, m * MP_DIGIT_BIT)) {
+        REQUIRE(MP_MEMORY);
+      }
+      REQUIRE(mp_int_add(Q, T1, Q));
+    }
+    REQUIRE(mp_int_copy(T0, R));
+  }
+
+  CLEANUP_TEMP();
+  return MP_OK;
+}
+
+/* Unsigned magnitude division for large operands.  Same contract as
+   s_udiv_knuth: assumes |u| > |v|, overwrites u with the quotient and v
+   with the remainder.  Wide dividends are consumed in 2n-digit chunks so
+   the balanced core always sees used(A) <= 2*used(B). */
+static mp_result s_udiv_recursive(mp_int u, mp_int v) {
+  int norm = s_norm(u, v);
+  mp_size n = MP_USED(v);
+
+  DECLARE_TEMP(5);
+  mp_int Q = TEMP(0), RR = TEMP(1), HI = TEMP(2), LO = TEMP(3), Q1 = TEMP(4);
+
+  REQUIRE(mp_int_copy(u, RR));
+  mp_int_zero(Q);
+
+  while (MP_USED(RR) > 2 * n) {
+    mp_size s = MP_USED(RR) - 2 * n;
+
+    REQUIRE(s_wshr(HI, RR, s));
+    REQUIRE(s_wmod(LO, RR, s));
+    REQUIRE(s_rdivrem(HI, v, Q1, u));
+    if (!s_qmul(Q1, s * MP_DIGIT_BIT)) {
+      REQUIRE(MP_MEMORY);
+    }
+    REQUIRE(mp_int_add(Q, Q1, Q));
+    REQUIRE(s_wjoin(RR, u, s, LO));
+  }
+
+  REQUIRE(s_rdivrem(RR, v, Q1, u));
+  REQUIRE(mp_int_add(Q, Q1, Q));
+
+  if (norm) s_qdiv(u, (mp_size)norm); /* denormalize R */
+  REQUIRE(mp_int_copy(u, v));
+  REQUIRE(mp_int_copy(Q, u));
+
+  CLEANUP_TEMP();
+  return MP_OK;
+}
+
 static mp_result s_udiv_knuth(mp_int u, mp_int v) {
   /* Force signs to positive */
   u->sign = MP_ZPOS;
@@ -2471,6 +2642,13 @@ static mp_result s_udiv_knuth(mp_int u, mp_int v) {
     rem = s_ddiv(u, d);
     mp_int_set_value(v, rem);
     return MP_OK;
+  }
+
+  /* Use divide-and-conquer division for large operands; it needs both a
+     large divisor and a large quotient to be worthwhile. */
+  if (MP_USED(v) > RECDIV_THRESHOLD &&
+      MP_USED(u) > MP_USED(v) + RECDIV_THRESHOLD) {
+    return s_udiv_recursive(u, v);
   }
 
   /* Algorithm D
