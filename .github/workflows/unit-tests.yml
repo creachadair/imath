@@ -12,6 +12,11 @@ permissions:
   contents: read
 
 jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: codespell-project/actions-codespell@v2
   build:
     strategy:
       fail-fast: false
