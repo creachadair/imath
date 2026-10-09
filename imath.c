@@ -219,7 +219,7 @@ static void s_umul(mp_digit* da, mp_digit* db, mp_digit* dc, mp_size size_a,
                    mp_size size_b);
 
 /* Unsigned recursive squaring.  Assumes dc is big enough. */
-static int s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a);
+static void s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a);
 
 /* Unsigned magnitude squaring.  Assumes dc is big enough. */
 static void s_usqr(mp_digit* da, mp_digit* dc, mp_size size_a);
@@ -318,7 +318,7 @@ static inline void USQR(mp_int X, mp_int Z) {
   mp_size ua_ = MP_USED(X);
   mp_size o_ = ua_ + ua_;
   ZERO(MP_DIGITS(Z), o_);
-  (void)s_ksqr(MP_DIGITS(X), MP_DIGITS(Z), ua_);
+  s_ksqr(MP_DIGITS(X), MP_DIGITS(Z), ua_);
   Z->used = o_;
   CLAMP(Z);
 }
@@ -1930,7 +1930,7 @@ static void s_umul(mp_digit* da, mp_digit* db, mp_digit* dc, mp_size size_a,
   }
 }
 
-static int s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a) {
+static void s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a) {
   if (multiply_threshold && size_a > multiply_threshold) {
     mp_size bot_size = (size_a + 1) / 2;
     mp_digit* a_top = da + bot_size;
@@ -1938,13 +1938,13 @@ static int s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a) {
     mp_size at_size = size_a - bot_size;
     mp_size buf_size = 2 * bot_size;
 
-    if ((t1 = s_alloc(4 * buf_size)) == NULL) return 0;
+    if ((t1 = s_alloc(4 * buf_size)) == NULL) return;
     t2 = t1 + buf_size;
     t3 = t2 + buf_size;
     ZERO(t1, 4 * buf_size);
 
-    (void)s_ksqr(da, t1, bot_size);   /* t1 = a0 ^ 2 */
-    (void)s_ksqr(a_top, t2, at_size); /* t2 = a1 ^ 2 */
+    s_ksqr(da, t1, bot_size);   /* t1 = a0 ^ 2 */
+    s_ksqr(a_top, t2, at_size); /* t2 = a1 ^ 2 */
 
     (void)s_kmul(da, a_top, t3, bot_size, at_size); /* t3 = a0 * a1 */
 
@@ -1966,18 +1966,16 @@ static int s_ksqr(mp_digit* da, mp_digit* dc, mp_size size_a) {
     COPY(t1, dc, 2 * bot_size);
     carry = s_uadd(t3, dc + bot_size, dc + bot_size, buf_size + 1, buf_size);
     assert(carry == 0);
-
     carry =
         s_uadd(t2, dc + 2 * bot_size, dc + 2 * bot_size, buf_size, buf_size);
     assert(carry == 0);
+    (void)carry; /* suppress unused warning with NDEBUG */
 
     s_free(t1); /* note that t2 and t2 are internal pointers only */
 
   } else {
     s_usqr(da, dc, size_a);
   }
-
-  return 1;
 }
 
 static void s_usqr(mp_digit* da, mp_digit* dc, mp_size size_a) {

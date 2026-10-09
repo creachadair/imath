@@ -692,6 +692,7 @@ void* GMPZAPI(export)(void* rop, size_t* countp, int order, size_t size,
    */
   num_missing_bytes = (size * num_words) - num_used_bytes;
   assert(num_missing_bytes < size);
+  (void)num_missing_bytes; /* suppress unused warning with NDEBUG */
 
   /* Allocate space for the result if needed */
   if (rop == NULL) {
