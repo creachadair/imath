@@ -42,16 +42,22 @@ char* imath_errmsg;
 /* Set imath_errno and return failure from a test. */
 #define FAIL(E) return (imath_errno = (E), false)
 
+/* Terminate the program unconditionally. */
+#define ABORT(E) \
+  do {           \
+    abort();     \
+  } while (0)
+
 /* Check that an expression X yields the expected mp_result value V. */
-#define VCHECK(X, V)           \
+#define VCHECK(X, V, F)        \
   do {                         \
     mp_result res_;            \
     if ((res_ = (X)) != (V)) { \
-      FAIL(res_);              \
+      F(res_);                 \
     }                          \
   } while (0)
-#define CHECK(X) VCHECK(X, MP_OK)
-#define ECHECK(X) VCHECK(X, expect)
+#define CHECK(X) VCHECK(X, MP_OK, FAIL)
+#define ECHECK(X) VCHECK(X, expect, FAIL)
 #define ACHECK(X)      \
   do {                 \
     if (!(X)) {        \
@@ -430,13 +436,13 @@ void init_testing(void) {
   if (is_done) return;
 
   for (int i = 0; i < NUM_REGS; ++i) {
-    assert(mp_int_init(g_zreg + i) == MP_OK);
-    assert(mp_rat_init(g_qreg + i) == MP_OK);
+    VCHECK(mp_int_init(g_zreg + i), MP_OK, ABORT);
+    VCHECK(mp_rat_init(g_qreg + i), MP_OK, ABORT);
   }
 
   imath_errmsg = g_output;
 
-  assert(atexit(done_testing) == 0);
+  VCHECK(atexit(done_testing), 0, ABORT);
   is_done = 1;
 }
 
