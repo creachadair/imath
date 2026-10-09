@@ -1,3 +1,9 @@
+1.36
+	Silence unused warnings in NDEBUG builds
+	Fix improper use of assert for non-checks
+	Add missing free in DEBUG builds
+	Fix uninitialized variable warnings
+
 1.35
 	Add mp_rat_set to set an mp_rat from two mp_int values (#71)
 	Use mp_size for length and counter results instead of mp_result (#73)
